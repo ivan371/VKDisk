@@ -4,3 +4,5 @@ frontend/node_modules
 media/
 env/
 django.conf
+__pycache__/
+src/db.sqlite3
