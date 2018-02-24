@@ -38,7 +38,7 @@ class Named(models.Model):
 
 
 class Authored(models.Model):
-    author = models.ForeignKey(User, verbose_name=u'отправитель')
+    author = models.ForeignKey(User, on_delete=models.CASCADE, verbose_name=u'отправитель')
 
     class Meta:
         abstract = True
