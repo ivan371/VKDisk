@@ -7,7 +7,8 @@ from django.utils.translation import ugettext_lazy as _
 
 
 class Folder(Named, Authored):
-    type = models.CharField(max_length=128, blank=False, default=_(u'folder'), verbose_name=_(u'type of folder'))
+    type = models.CharField(choices=((_(u'folder'), _(u'folder')), (_(u'chat'), _(u'chat'))),
+                            max_length=128, default=_(u'folder'), verbose_name=_(u'type of folder'))
     root = models.ForeignKey('self', on_delete=models.CASCADE, null=True, blank=True, verbose_name=_(u'root'))
 
     def __str__(self):
