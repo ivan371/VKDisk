@@ -11,16 +11,20 @@ https://docs.djangoproject.com/en/2.0/ref/settings/
 """
 
 import os
+from configparser import ConfigParser
 
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 PROJECT_DIR = os.path.dirname(BASE_DIR)
 
+config = ConfigParser()
+config.read(os.path.join(os.path.dirname(BASE_DIR), 'django.conf'))
+
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/2.0/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = '47&oocq396s2h1rjje&w-c!-f%$jh=zpv_n8!0(h(!cxdo-2yr'
+SECRET_KEY = config.get('main', 'SECRET')
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
@@ -75,8 +79,16 @@ WSGI_APPLICATION = 'application.wsgi.application'
 
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': os.path.join(BASE_DIR, 'db.sqlite3'),
+        'ENGINE': 'django.db.backends.postgresql_psycopg2',
+        'NAME': config.get('db', 'NAME'),
+        'USER': config.get('db', 'USER'),
+        'PASSWORD': config.get('db', 'PASSWORD'),
+        'HOST': 'localhost',
+        'OPTIONS': {
+                    'init_command': 'SET character_set_connection=utf8,collation_connection=utf8_unicode_ci',
+                    'charset': 'utf8',
+                    'use_unicode': True,
+},
     }
 }
 
