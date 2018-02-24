@@ -11,6 +11,7 @@ https://docs.djangoproject.com/en/2.0/ref/settings/
 """
 
 import os
+import dj_database_url
 from configparser import ConfigParser
 
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
@@ -78,18 +79,7 @@ WSGI_APPLICATION = 'application.wsgi.application'
 # https://docs.djangoproject.com/en/2.0/ref/settings/#databases
 
 DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.postgresql_psycopg2',
-        'NAME': config.get('db', 'NAME'),
-        'USER': config.get('db', 'USER'),
-        'PASSWORD': config.get('db', 'PASSWORD'),
-        'HOST': 'localhost',
-        'OPTIONS': {
-                    'init_command': 'SET character_set_connection=utf8,collation_connection=utf8_unicode_ci',
-                    'charset': 'utf8',
-                    'use_unicode': True,
-},
-    }
+    'default': dj_database_url.parse(config.get("main", "DB_URL"))
 }
 
 
