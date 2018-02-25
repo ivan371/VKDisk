@@ -61,7 +61,13 @@ a{
     padding: 10px;
     box-shadow: 0 1px 0 0 #d7d8db;
 }
-.content-item:hover{
+.page-content-link-item:hover{
     background-color: #EDEEF0;
     cursor: pointer;
+}
+.content-item input{
+    border: 0px;
+}
+input[type="text"]:focus {
+    outline: none;
 }

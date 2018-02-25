@@ -6,7 +6,7 @@ import PropTypes from 'prop-types';
 class FolderComponent extends React.Component {
     render() {
         return (
-            <div className="content-item">
+            <div className="content-item page-content-link-item">
                 {this.props.title}
             </div>
         );

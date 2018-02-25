@@ -26,9 +26,7 @@ class LayoutComponent extends React.Component {
                         <VkLink link="/chat" content="Dialogs" />
                     </div>
                     <div className="page-content-content">
-                        <div className="page-content-content-wrap">
-                            {this.props.children}
-                        </div>
+                        {this.props.children}
                     </div>
                 </div>
             </div>

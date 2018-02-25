@@ -15,7 +15,10 @@ class RootFolderComponent extends React.Component {
             folderList = this.props.folderList.map(folderId => <Folder id={folderId} key={folderId}>Папка</Folder>);
         }
         return (
-            <div>
+            <div className="page-content-content-wrap">
+                <div className="content-item">
+                    <input type="text" placeholder="Search" />
+                </div>
                 {folderList}
             </div>
         );
