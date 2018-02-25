@@ -2,28 +2,24 @@ import React from 'react';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import PropTypes from 'prop-types';
-import { Link } from 'react-router-dom';
 
-class FolderComponent extends React.Component {
+class DocComponent extends React.Component {
     render() {
-        const link = `/root/${this.props.id}`;
         return (
-            <Link to={ link }>
-                <div className="content-item page-content-link-item">
-                    {this.props.title}
-                </div>
-            </Link>
+            <div className="content-flex-item">
+                {this.props.title}
+            </div>
         );
     }
 }
 
-FolderComponent.propTypes = {
+DocComponent.propTypes = {
     id: PropTypes.number.isRequired,
 };
 
 
 const mapStoreToProps = (state, props) => ({
-    title: state.folder.folders[props.id].title,
+    title: state.document.docs[props.id].title,
 });
 
 const mapDispatchToProps = dispatch => ({
@@ -35,4 +31,4 @@ const mapDispatchToProps = dispatch => ({
 export default connect(
     mapStoreToProps,
     mapDispatchToProps,
-)(FolderComponent);
+)(DocComponent);

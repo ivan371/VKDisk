@@ -3,7 +3,8 @@ import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
 import { loadFolders } from '../../actions/folder';
 import { urls } from '../../constants';
-import Folder from "./Folder";
+import Folder from './Folder';
+import Docs from '../document/Docs';
 
 class RootFolderComponent extends React.Component {
     componentDidMount() {
@@ -12,14 +13,17 @@ class RootFolderComponent extends React.Component {
     render() {
         let folderList = [];
         if (this.props.isLoading) {
-            folderList = this.props.folderList.map(folderId => <Folder id={folderId} key={folderId}>Папка</Folder>);
+            folderList = this.props.folderList.map(folderId => <Folder id={ folderId } key={ folderId }>Папка</Folder>);
         }
         return (
-            <div className="page-content-content-wrap">
-                <div className="content-item">
-                    <input type="text" placeholder="Search" />
+            <div className="page-content-content">
+                <div className="page-content-content-wrap">
+                    <div className="content-item">
+                        <input type="text" placeholder="Search" />
+                    </div>
+                    {folderList}
                 </div>
-                {folderList}
+                <Docs params={ this.props.match.params } />
             </div>
         );
     }

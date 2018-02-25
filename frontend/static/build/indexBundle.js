@@ -29931,11 +29931,16 @@ var _folder = __webpack_require__(244);
 
 var _folder2 = _interopRequireDefault(_folder);
 
+var _document = __webpack_require__(279);
+
+var _document2 = _interopRequireDefault(_document);
+
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 exports.default = (0, _redux.combineReducers)({
     routerReducer: _reactRouterRedux.routerReducer,
-    folder: _folder2.default
+    folder: _folder2.default,
+    document: _document2.default
 });
 
 /***/ }),
@@ -31620,11 +31625,7 @@ var LayoutComponent = function (_React$Component) {
                         _react2.default.createElement(VkLink, { link: '/root', content: 'All items' }),
                         _react2.default.createElement(VkLink, { link: '/chat', content: 'Dialogs' })
                     ),
-                    _react2.default.createElement(
-                        'div',
-                        { className: 'page-content-content' },
-                        this.props.children
-                    )
+                    this.props.children
                 )
             );
         }
@@ -31666,6 +31667,10 @@ var _Folder = __webpack_require__(269);
 
 var _Folder2 = _interopRequireDefault(_Folder);
 
+var _Docs = __webpack_require__(276);
+
+var _Docs2 = _interopRequireDefault(_Docs);
+
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
@@ -31703,13 +31708,18 @@ var RootFolderComponent = function (_React$Component) {
             }
             return _react2.default.createElement(
                 'div',
-                { className: 'page-content-content-wrap' },
+                { className: 'page-content-content' },
                 _react2.default.createElement(
                     'div',
-                    { className: 'content-item' },
-                    _react2.default.createElement('input', { type: 'text', placeholder: 'Search' })
+                    { className: 'page-content-content-wrap' },
+                    _react2.default.createElement(
+                        'div',
+                        { className: 'content-item' },
+                        _react2.default.createElement('input', { type: 'text', placeholder: 'Search' })
+                    ),
+                    folderList
                 ),
-                folderList
+                _react2.default.createElement(_Docs2.default, { params: this.props.match.params })
             );
         }
     }]);
@@ -31745,6 +31755,9 @@ Object.defineProperty(exports, "__esModule", {
 var urls = exports.urls = {
     folder: {
         foldersUrl: '/api/v1/folders/'
+    },
+    docs: {
+        docsUrl: '/api/v1/documents/'
     }
 };
 
@@ -31775,6 +31788,8 @@ var _propTypes = __webpack_require__(3);
 
 var _propTypes2 = _interopRequireDefault(_propTypes);
 
+var _reactRouterDom = __webpack_require__(128);
+
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
@@ -31795,10 +31810,15 @@ var FolderComponent = function (_React$Component) {
     _createClass(FolderComponent, [{
         key: 'render',
         value: function render() {
+            var link = '/root/' + this.props.id;
             return _react2.default.createElement(
-                'div',
-                { className: 'content-item page-content-link-item' },
-                this.props.title
+                _reactRouterDom.Link,
+                { to: link },
+                _react2.default.createElement(
+                    'div',
+                    { className: 'content-item page-content-link-item' },
+                    this.props.title
+                )
             );
         }
     }]);
@@ -31931,7 +31951,7 @@ exports = module.exports = __webpack_require__(273)(false);
 
 
 // module
-exports.push([module.i, "body {\n  background-color: #EDEEF0;\n  margin: 0;\n  font-family: -apple-system,BlinkMacSystemFont,Roboto,Helvetica Neue,sans-serif;\n}\n\na {\n  text-decoration: none;\n  cursor: pointer;\n}\n\n.page-header {\n  height: 42px;\n  background-color: #4A76A8;\n}\n\n.page-content {\n  margin: 0 auto;\n  width: 960px;\n  display: flex;\n}\n\n.page-header-content {\n  margin: 0 auto;\n  width: 960px;\n}\n\n.page-header-content-logo {\n  width: 139px;\n}\n\n.page-header-content h2 {\n  margin: 0;\n  padding-top: 5px;\n  color: white;\n}\n\n.page-content-navigation {\n  margin-top: 15px;\n  width: 139px;\n}\n\n.page-content-content {\n  padding-top: 15px;\n  padding-bottom: 2px;\n  height: 500px;\n  min-width: 400px;\n}\n\n.page-content-content-wrap {\n  width: 316px;\n  background-color: white;\n  max-height: 100%;\n  border-radius: 2px 2px 0 0;\n  box-shadow: 0 1px 0 0 #d7d8db, 0 0 0 1px #e3e4e8;\n}\n\n.page-content-link {\n  display: block;\n  color: #285473;\n  white-space: nowrap;\n  padding: 10px;\n}\n\n.page-content-link:hover {\n  background-color: #E1E5EB;\n}\n\n.content-item {\n  padding: 10px;\n  box-shadow: 0 1px 0 0 #d7d8db;\n}\n\n.page-content-link-item:hover {\n  background-color: #EDEEF0;\n  cursor: pointer;\n}\n\n.content-item input {\n  border: 0px;\n}\n\ninput[type=\"text\"]:focus {\n  outline: none;\n}\n", ""]);
+exports.push([module.i, "body {\n  background-color: #EDEEF0;\n  margin: 0;\n  font-family: -apple-system,BlinkMacSystemFont,Roboto,Helvetica Neue,sans-serif;\n}\n\na {\n  text-decoration: none;\n  cursor: pointer;\n}\n\n.page-header {\n  height: 42px;\n  background-color: #4A76A8;\n}\n\n.page-content {\n  margin: 0 auto;\n  width: 960px;\n  display: flex;\n}\n\n.page-header-content {\n  margin: 0 auto;\n  width: 960px;\n}\n\n.page-header-content-logo {\n  width: 139px;\n}\n\n.page-header-content h2 {\n  margin: 0;\n  padding-top: 5px;\n  color: white;\n}\n\n.page-content-navigation {\n  margin-top: 15px;\n  width: 139px;\n}\n\n.page-content-content {\n  padding-top: 15px;\n  padding-bottom: 2px;\n  height: 500px;\n  min-width: 400px;\n  display: flex;\n}\n\n.page-content-content-wrap {\n  width: 300px;\n  background-color: white;\n  max-height: 100%;\n  border-radius: 2px 2px 0 0;\n  box-shadow: 0 1px 0 0 #d7d8db, 0 0 0 1px #e3e4e8;\n}\n\n.page-content-content-wrap a {\n  color: #285473;\n}\n\n.page-content-content-content {\n  width: 500px;\n  background-color: white;\n  max-height: 100%;\n  border-radius: 2px 2px 0 0;\n  box-shadow: 0 1px 0 0 #d7d8db, 0 0 0 1px #e3e4e8;\n}\n\n.page-content-link {\n  display: block;\n  white-space: nowrap;\n  padding: 10px;\n  color: #285473;\n}\n\n.page-content-link:hover {\n  background-color: #E1E5EB;\n}\n\n.content-item {\n  padding: 10px;\n  box-shadow: 0 1px 0 0 #d7d8db;\n}\n\n.page-content-link-item:hover {\n  background-color: #EDEEF0;\n  cursor: pointer;\n}\n\n.content-item input {\n  border: 0px;\n}\n\ninput[type=\"text\"]:focus {\n  outline: none;\n}\n\n.content-flex {\n  display: flex;\n}\n\n.content-flex-item {\n  padding: 10px;\n  height: 80px;\n  width: 80px;\n}\n\n.content-flex-item:hover {\n  background-color: #EDEEF0;\n  cursor: pointer;\n}\n", ""]);
 
 // exports
 
@@ -32494,6 +32514,328 @@ module.exports = function (css) {
 	return fixedCss;
 };
 
+
+/***/ }),
+/* 276 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+Object.defineProperty(exports, "__esModule", {
+    value: true
+});
+
+var _extends = Object.assign || function (target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i]; for (var key in source) { if (Object.prototype.hasOwnProperty.call(source, key)) { target[key] = source[key]; } } } return target; };
+
+var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+
+var _react = __webpack_require__(0);
+
+var _react2 = _interopRequireDefault(_react);
+
+var _redux = __webpack_require__(18);
+
+var _reactRedux = __webpack_require__(47);
+
+var _constants = __webpack_require__(268);
+
+var _propTypes = __webpack_require__(3);
+
+var _propTypes2 = _interopRequireDefault(_propTypes);
+
+var _document = __webpack_require__(277);
+
+var _Doc = __webpack_require__(280);
+
+var _Doc2 = _interopRequireDefault(_Doc);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
+
+function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
+
+var DocsComponent = function (_React$Component) {
+    _inherits(DocsComponent, _React$Component);
+
+    function DocsComponent() {
+        _classCallCheck(this, DocsComponent);
+
+        return _possibleConstructorReturn(this, (DocsComponent.__proto__ || Object.getPrototypeOf(DocsComponent)).apply(this, arguments));
+    }
+
+    _createClass(DocsComponent, [{
+        key: 'componentDidMount',
+        value: function componentDidMount() {
+            if (this.props.params.hasOwnProperty('id')) {
+                this.props.loadDocs(_constants.urls.docs.docsUrl + '?folder=' + this.props.params.id);
+            }
+        }
+    }, {
+        key: 'componentWillReceiveProps',
+        value: function componentWillReceiveProps(nextProps, nextState) {
+            if (nextProps.params.hasOwnProperty('id')) {
+                if (this.props.params.id !== nextProps.params.id) {
+                    this.props.loadDocs(_constants.urls.docs.docsUrl + '?folder=' + nextProps.params.id);
+                }
+            }
+        }
+    }, {
+        key: 'componentDidUpdate',
+        value: function componentDidUpdate(prevProps, prevState) {
+            if (!this.props.params.hasOwnProperty('id') && prevProps.params.hasOwnProperty('id')) {
+                this.props.docsUnMount();
+            }
+        }
+    }, {
+        key: 'componentWillUnmount',
+        value: function componentWillUnmount() {
+            this.props.docsUnMount();
+        }
+    }, {
+        key: 'render',
+        value: function render() {
+            var docList = [];
+            if (this.props.isLoading) {
+                docList = this.props.docList.map(function (docId) {
+                    return _react2.default.createElement(
+                        _Doc2.default,
+                        { id: docId, key: docId },
+                        '\u041F\u0430\u043F\u043A\u0430'
+                    );
+                });
+            }
+            return _react2.default.createElement(
+                'div',
+                { className: 'page-content-content-content content-flex' },
+                docList
+            );
+        }
+    }]);
+
+    return DocsComponent;
+}(_react2.default.Component);
+
+var mapStoreToProps = function mapStoreToProps(state, props) {
+    return {
+        isLoading: state.document.isLoading,
+        docList: state.document.docList
+    };
+};
+
+var mapDispatchToProps = function mapDispatchToProps(dispatch) {
+    return _extends({}, (0, _redux.bindActionCreators)({
+        loadDocs: _document.loadDocs,
+        docsUnMount: _document.docsUnMount
+    }, dispatch));
+};
+
+exports.default = (0, _reactRedux.connect)(mapStoreToProps, mapDispatchToProps)(DocsComponent);
+
+/***/ }),
+/* 277 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+Object.defineProperty(exports, "__esModule", {
+    value: true
+});
+exports.DOCS_UNMOUNT = exports.LOAD_DOCS_ERROR = exports.LOAD_DOCS_SUCCESS = exports.LOAD_DOCS = undefined;
+exports.loadDocs = loadDocs;
+exports.docsUnMount = docsUnMount;
+
+var _load = __webpack_require__(246);
+
+var _document = __webpack_require__(278);
+
+var LOAD_DOCS = exports.LOAD_DOCS = 'LOAD_DOCS';
+var LOAD_DOCS_SUCCESS = exports.LOAD_DOCS_SUCCESS = 'LOAD_DOCS_SUCCESS';
+var LOAD_DOCS_ERROR = exports.LOAD_DOCS_ERROR = 'LOAD_DOCS_ERROR';
+var DOCS_UNMOUNT = exports.DOCS_UNMOUNT = 'DOCS_UNMOUNT';
+
+function loadDocs(url) {
+    var types = [LOAD_DOCS, LOAD_DOCS_SUCCESS, LOAD_DOCS_ERROR];
+    return (0, _load.apiLoad)(url, 'GET', types, null, _document.docsNormalize, false);
+}
+
+function docsUnMount() {
+    return {
+        type: DOCS_UNMOUNT
+    };
+}
+
+/***/ }),
+/* 278 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+Object.defineProperty(exports, "__esModule", {
+    value: true
+});
+exports.docsNormalize = docsNormalize;
+
+var _normalizr = __webpack_require__(248);
+
+function docsNormalize(docs) {
+    var doc = new _normalizr.schema.Entity('doc');
+    return (0, _normalizr.normalize)(docs, [doc]);
+}
+
+/***/ }),
+/* 279 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+Object.defineProperty(exports, "__esModule", {
+    value: true
+});
+exports.default = document;
+
+var _reactAddonsUpdate = __webpack_require__(245);
+
+var _reactAddonsUpdate2 = _interopRequireDefault(_reactAddonsUpdate);
+
+var _document = __webpack_require__(277);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+var initalState = {
+    isLoading: false,
+    count: 0,
+    page: 2,
+    docs: {},
+    docList: []
+};
+
+function document() {
+    var store = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : initalState;
+    var action = arguments[1];
+
+    if (action.hasOwnProperty('payload')) {
+        if (action.payload !== undefined) {
+            if (action.payload.hasOwnProperty('entities')) {
+                if (action.payload.entities.hasOwnProperty('doc')) {
+                    store = (0, _reactAddonsUpdate2.default)(store, {
+                        docs: {
+                            $merge: action.payload.entities.doc
+                        }
+                    });
+                }
+            }
+        }
+    }
+    switch (action.type) {
+        case _document.LOAD_DOCS:
+            return (0, _reactAddonsUpdate2.default)(store, {
+                isLoading: {
+                    $set: false
+                }
+            });
+        case _document.LOAD_DOCS_SUCCESS:
+            return (0, _reactAddonsUpdate2.default)(store, {
+                isLoading: {
+                    $set: true
+                },
+                docList: {
+                    $set: action.payload.result
+                }
+            });
+        case _document.DOCS_UNMOUNT:
+            return (0, _reactAddonsUpdate2.default)(store, {
+                isLoading: {
+                    $set: false
+                },
+                docList: {
+                    $set: []
+                }
+            });
+        default:
+            return store;
+    }
+}
+
+/***/ }),
+/* 280 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+Object.defineProperty(exports, "__esModule", {
+    value: true
+});
+
+var _extends = Object.assign || function (target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i]; for (var key in source) { if (Object.prototype.hasOwnProperty.call(source, key)) { target[key] = source[key]; } } } return target; };
+
+var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+
+var _react = __webpack_require__(0);
+
+var _react2 = _interopRequireDefault(_react);
+
+var _reactRedux = __webpack_require__(47);
+
+var _redux = __webpack_require__(18);
+
+var _propTypes = __webpack_require__(3);
+
+var _propTypes2 = _interopRequireDefault(_propTypes);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
+
+function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
+
+var DocComponent = function (_React$Component) {
+    _inherits(DocComponent, _React$Component);
+
+    function DocComponent() {
+        _classCallCheck(this, DocComponent);
+
+        return _possibleConstructorReturn(this, (DocComponent.__proto__ || Object.getPrototypeOf(DocComponent)).apply(this, arguments));
+    }
+
+    _createClass(DocComponent, [{
+        key: 'render',
+        value: function render() {
+            return _react2.default.createElement(
+                'div',
+                { className: 'content-flex-item' },
+                this.props.title
+            );
+        }
+    }]);
+
+    return DocComponent;
+}(_react2.default.Component);
+
+DocComponent.propTypes = {
+    id: _propTypes2.default.number.isRequired
+};
+
+var mapStoreToProps = function mapStoreToProps(state, props) {
+    return {
+        title: state.document.docs[props.id].title
+    };
+};
+
+var mapDispatchToProps = function mapDispatchToProps(dispatch) {
+    return _extends({}, (0, _redux.bindActionCreators)({}, dispatch));
+};
+
+exports.default = (0, _reactRedux.connect)(mapStoreToProps, mapDispatchToProps)(DocComponent);
 
 /***/ })
 /******/ ]);

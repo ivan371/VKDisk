@@ -1,6 +1,7 @@
 $width: 960px;
 $navigation-width: 139px;
 $hover-color: #E1E5EB;
+$link-color: #285473;
 body{
     background-color: #EDEEF0;
     margin: 0;
@@ -40,9 +41,20 @@ a{
     padding-bottom: 2px;
     height: 500px;
     min-width: 400px;
+    display: flex;
 }
 .page-content-content-wrap{
-    width: 316px;
+    width: 300px;
+    background-color: white;
+    max-height: 100%;
+    border-radius: 2px 2px 0 0;
+    box-shadow: 0 1px 0 0 #d7d8db, 0 0 0 1px #e3e4e8;
+}
+.page-content-content-wrap a{
+    color: $link-color;
+}
+.page-content-content-content{
+    width: 500px;
     background-color: white;
     max-height: 100%;
     border-radius: 2px 2px 0 0;
@@ -50,9 +62,9 @@ a{
 }
 .page-content-link{
     display: block;
-    color: #285473;
     white-space: nowrap;
     padding: 10px;
+    color: $link-color;
 }
 .page-content-link:hover{
     background-color: $hover-color;
@@ -70,4 +82,16 @@ a{
 }
 input[type="text"]:focus {
     outline: none;
+}
+.content-flex{
+    display: flex;
+}
+.content-flex-item{
+    padding: 10px;
+    height: 80px;
+    width: 80px;
+}
+.content-flex-item:hover{
+    background-color: #EDEEF0;
+    cursor: pointer;
 }
