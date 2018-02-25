@@ -64,7 +64,6 @@ SOCIAL_AUTH_POSTGRES_JSONFIELD = True
 AUTHENTICATION_BACKENDS = (
     'social_core.backends.vk.VKOAuth2',
     'social_core.backends.open_id.OpenIdAuth',
-    'social_core.backends.facebook.FacebookOAuth2',
     'django.contrib.auth.backends.ModelBackend',
 )
 
@@ -83,7 +82,7 @@ SOCIAL_AUTH_PIPELINE = (
 
 SOCIAL_AUTH_VK_OAUTH2_KEY = config.get('VKoauth', 'KEY')
 SOCIAL_AUTH_VK_OAUTH2_SECRET = config.get('VKoauth', 'SECRET')
-SOCIAL_AUTH_VK_OAUTH2_SCOPE = ['email', 'status']
+SOCIAL_AUTH_VK_OAUTH2_SCOPE = ['email', 'status', 'docs', 'messages']
 SOCIAL_AUTH_VK_APP_USER_MODE = 2
 
 # User settings
