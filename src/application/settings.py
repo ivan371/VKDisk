@@ -131,3 +131,8 @@ STATICFILES_DIRS = (os.path.join(BASE_DIR, 'static/'), )
 
 MEDIA_URL = '/media/'
 MEDIA_ROOT = os.path.join(PROJECT_DIR, 'media/')
+
+
+VK_APP_ID = config.getint("VK", "APP_ID")
+VK_CLIENT_SECRET_KEY = config.get("VK", "SECRET_KEY")
+VK_SERVICE_KEY = config.get("VK", "SERVICE_KEY")
