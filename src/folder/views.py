@@ -1,9 +1,8 @@
 from django.shortcuts import render
-from rest_framework import viewsets, permissions
+from rest_framework import viewsets
 from .models import Folder
 from .serializers import FolderSerializer
-from rest_api.pagination import ResultsSetPagination
 
 class FolderViewSet(viewsets.ModelViewSet):
-    queryset = Folder.objects.all().prefetch_related('user')
+    queryset = Folder.objects.all().prefetch_related('author')
     serializer_class = FolderSerializer
