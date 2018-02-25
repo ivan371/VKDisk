@@ -10,7 +10,9 @@ class DocumentViewSet(viewsets.ModelViewSet):
     serializer_class = DocumentSerializer
 
     def perform_create(self, serializer):
-        serializer.save(folder=self.request.query_params['folder'], author=self.request.user)
+        if 'folder' in self.request.query_params['folder']:
+            serializer.save(folder=self.request.query_params['folder'])
+        serializer.save(author = self.request.user)
 
     def get_queryset(self):
         q = self.queryset
