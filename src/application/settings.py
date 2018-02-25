@@ -44,7 +44,8 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'core.apps.CoreConfig',
     'document.apps.DocumentConfig',
-    'folder.apps.FolderConfig'
+    'folder.apps.FolderConfig',
+    'vk_api_wrapper.apps.VkApiWrapperConfig'
 ]
 
 MIDDLEWARE = [
