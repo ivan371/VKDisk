@@ -16,6 +16,7 @@ class DocumentViewSet(viewsets.ModelViewSet):
 
     def get_queryset(self):
         q = self.queryset
-        if 'folder' in self.request.query_params and self.request.query_params['folder'].isdigit():
-            q = q.filter(folder=self.request.query_params['folder'])
+        if 'folder' in self.request.query_params:
+            if self.request.query_params['folder'].isdigit():
+                q = q.filter(folder=self.request.query_params['folder'])
         return q
