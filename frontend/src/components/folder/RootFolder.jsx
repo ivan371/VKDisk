@@ -4,7 +4,7 @@ class RootFolderComponent extends React.Component {
     render() {
         return (
             <div>
-                hello
+                root
             </div>
         )
     }

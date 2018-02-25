@@ -1,3 +1,33 @@
+$width: 960px;
 body{
     background-color: #EDEEF0;
+    margin: 0;
+}
+a{
+    text-decoration: none;
+    cursor: pointer;
+}
+.page-header{
+    height: 42px;
+    background-color: #4A76A8;
+}
+.page-content{
+    margin: 0 auto;
+    width: $width;
+    display: flex;
+}
+.page-header-content{
+    width: $width;
+}
+.page-content-navigation{
+    width: 139px;
+}
+.page-content-link{
+    display: block;
+    color: #285473;
+    white-space: nowrap;
+    padding: 10px;
+}
+.page-content-link:hover{
+    background-color: #E1E5EB;
 }
