@@ -32,7 +32,6 @@ DEBUG = True
 
 ALLOWED_HOSTS = []
 
-
 # Application definition
 
 INSTALLED_APPS = [
@@ -80,14 +79,12 @@ TEMPLATES = [
 
 WSGI_APPLICATION = 'application.wsgi.application'
 
-
 # Database
 # https://docs.djangoproject.com/en/2.0/ref/settings/#databases
 
 DATABASES = {
     'default': dj_database_url.parse(config.get("main", "DB_URL"))
 }
-
 
 # Password validation
 # https://docs.djangoproject.com/en/2.0/ref/settings/#auth-password-validators
@@ -107,7 +104,6 @@ AUTH_PASSWORD_VALIDATORS = [
     },
 ]
 
-
 # Internationalization
 # https://docs.djangoproject.com/en/2.0/topics/i18n/
 
@@ -121,13 +117,23 @@ USE_L10N = True
 
 USE_TZ = True
 
-
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/2.0/howto/static-files/
 
 STATIC_URL = '/static/'
 STATIC_ROOT = os.path.join(PROJECT_DIR, 'collected_static/')
-STATICFILES_DIRS = (os.path.join(BASE_DIR, 'static/'), )
+STATICFILES_DIRS = (os.path.join(BASE_DIR, 'static/'),)
 
 MEDIA_URL = '/media/'
 MEDIA_ROOT = os.path.join(PROJECT_DIR, 'media/')
+
+# CELERY
+CELERY_RESULT_BACKEND = 'celery.backends.redis.RedisBackend'
+CELERY_BROKER_URL = 'redis://{}:{}/{}'.format(config.get("CELERY", "REDIS_HOST"),
+                                              config.getint("CELERY", "REDIS_PORT"),
+                                              config.getint("CELERY", "REDIS_QUEUE"),
+                                              )
+CELERY_ACCEPT_CONTENT = ['json']
+CELERY_TASK_SERIALIZER = 'json'
+CELERY_RESULT_SERIALIZER = 'json'
+# CELERY_BEAT_SCHEDULER = 'django_celery_beat.schedulers.DatabaseScheduler'
