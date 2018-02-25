@@ -30501,38 +30501,50 @@ var LayoutComponent = function (_React$Component) {
     }
 
     _createClass(LayoutComponent, [{
-        key: "render",
+        key: 'render',
         value: function render() {
             return _react2.default.createElement(
-                "div",
+                'div',
                 null,
                 _react2.default.createElement(
-                    "div",
-                    { className: "page-header" },
-                    _react2.default.createElement("div", { className: "page-header-content" })
+                    'div',
+                    { className: 'page-header' },
+                    _react2.default.createElement(
+                        'div',
+                        { className: 'page-header-content' },
+                        _react2.default.createElement(
+                            'div',
+                            { className: 'page-header-content-logo' },
+                            _react2.default.createElement(
+                                'h2',
+                                null,
+                                'VK DISK'
+                            )
+                        )
+                    )
                 ),
                 _react2.default.createElement(
-                    "div",
-                    { className: "page-content" },
+                    'div',
+                    { className: 'page-content' },
                     _react2.default.createElement(
-                        "div",
-                        { className: "page-content-navigation" },
+                        'div',
+                        { className: 'page-content-navigation' },
                         _react2.default.createElement(
                             _reactRouterDom.Link,
-                            { to: "/root" },
+                            { to: '/root' },
                             _react2.default.createElement(
-                                "span",
-                                { className: "page-content-link" },
-                                "All items"
+                                'span',
+                                { className: 'page-content-link' },
+                                'All items'
                             )
                         ),
                         _react2.default.createElement(
                             _reactRouterDom.Link,
-                            { to: "/chat" },
+                            { to: '/chat' },
                             _react2.default.createElement(
-                                "span",
-                                { className: "page-content-link" },
-                                "Dialogs"
+                                'span',
+                                { className: 'page-content-link' },
+                                'Dialogs'
                             )
                         )
                     ),
@@ -30706,7 +30718,7 @@ exports = module.exports = __webpack_require__(258)(false);
 
 
 // module
-exports.push([module.i, "body {\n  background-color: #EDEEF0;\n  margin: 0;\n}\n\na {\n  text-decoration: none;\n  cursor: pointer;\n}\n\n.page-header {\n  height: 42px;\n  background-color: #4A76A8;\n}\n\n.page-content {\n  margin: 0 auto;\n  width: 960px;\n  display: flex;\n}\n\n.page-header-content {\n  width: 960px;\n}\n\n.page-content-navigation {\n  width: 139px;\n}\n\n.page-content-link {\n  display: block;\n  color: #285473;\n  white-space: nowrap;\n  padding: 10px;\n}\n\n.page-content-link:hover {\n  background-color: #E1E5EB;\n}\n", ""]);
+exports.push([module.i, "body {\n  background-color: #EDEEF0;\n  margin: 0;\n  font-family: -apple-system,BlinkMacSystemFont,Roboto,Helvetica Neue,sans-serif;\n}\n\na {\n  text-decoration: none;\n  cursor: pointer;\n}\n\n.page-header {\n  height: 42px;\n  background-color: #4A76A8;\n}\n\n.page-content {\n  margin: 0 auto;\n  width: 960px;\n  display: flex;\n}\n\n.page-header-content {\n  margin: 0 auto;\n  width: 960px;\n}\n\n.page-header-content-logo {\n  width: 139px;\n}\n\n.page-header-content h2 {\n  margin: 0;\n  padding-top: 5px;\n  color: white;\n}\n\n.page-content-navigation {\n  width: 139px;\n}\n\n.page-content-link {\n  display: block;\n  color: #285473;\n  white-space: nowrap;\n  padding: 10px;\n}\n\n.page-content-link:hover {\n  background-color: #E1E5EB;\n}\n", ""]);
 
 // exports
 

@@ -1,12 +1,16 @@
 import React from 'react';
-import { Link } from "react-router-dom";
+import { Link } from 'react-router-dom';
 
 class LayoutComponent extends React.Component {
     render() {
         return (
             <div>
                 <div className="page-header">
-                    <div className="page-header-content" />
+                    <div className="page-header-content" >
+                        <div className="page-header-content-logo">
+                            <h2>VK DISK</h2>
+                        </div>
+                    </div>
                 </div>
                 <div className="page-content">
                     <div className="page-content-navigation">
