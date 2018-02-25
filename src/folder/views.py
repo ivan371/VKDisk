@@ -5,5 +5,5 @@ from .serializers import FolderSerializer
 from rest_api.pagination import ResultsSetPagination
 
 class FolderViewSet(viewsets.ModelViewSet):
-    queryset = Folder.objects.all()
+    queryset = Folder.objects.all().prefetch_related('user')
     serializer_class = FolderSerializer
