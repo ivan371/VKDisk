@@ -7,6 +7,7 @@ class DocComponent extends React.Component {
     render() {
         return (
             <div className="content-flex-item">
+                <img className="icon" src="/static/img/file.png"/>
                 {this.props.title}
             </div>
         );

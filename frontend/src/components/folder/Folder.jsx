@@ -10,7 +10,8 @@ class FolderComponent extends React.Component {
         return (
             <Link to={ link }>
                 <div className="content-item page-content-link-item">
-                    {this.props.title}
+                    <div><img className="item" src="/static/img/folder.png"/></div>
+                    <div>{this.props.title}</div>
                 </div>
             </Link>
         );
