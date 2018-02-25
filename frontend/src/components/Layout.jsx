@@ -1,6 +1,14 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
 
+const VkLink = ({ link, content }) => (
+    <Link to={ link }>
+        <span className="page-content-link">
+            {content}
+        </span>
+    </Link>
+);
+
 class LayoutComponent extends React.Component {
     render() {
         return (
@@ -14,18 +22,14 @@ class LayoutComponent extends React.Component {
                 </div>
                 <div className="page-content">
                     <div className="page-content-navigation">
-                        <Link to="/root">
-                            <span className="page-content-link">
-                                All items
-                            </span>
-                        </Link>
-                        <Link to="/chat">
-                            <span className="page-content-link">
-                                Dialogs
-                            </span>
-                        </Link>
+                        <VkLink link="/root" content="All items" />
+                        <VkLink link="/chat" content="Dialogs" />
                     </div>
-                    {this.props.children}
+                    <div className="page-content-content">
+                        <div className="page-content-content-wrap">
+                            {this.props.children}
+                        </div>
+                    </div>
                 </div>
             </div>
         );

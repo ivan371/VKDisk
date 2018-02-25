@@ -42,9 +42,11 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'rest_framework',
     'core.apps.CoreConfig',
     'document.apps.DocumentConfig',
-    'folder.apps.FolderConfig'
+    'folder.apps.FolderConfig',
+    'rest_api.apps.RestApiConfig'
 ]
 
 MIDDLEWARE = [
@@ -120,6 +122,12 @@ USE_I18N = True
 USE_L10N = True
 
 USE_TZ = True
+
+REST_FRAMEWORK = {
+    'DEFAULT_PAGINATION_CLASS': 'rest_api.pagination.ResultsSetPagination',
+    # 'PAGE_SIZE': 2
+}
+
 
 
 # Static files (CSS, JavaScript, Images)

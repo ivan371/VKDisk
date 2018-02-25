@@ -22,6 +22,7 @@ export function apiLoad(url, method, types, body, normalizer, isSimple, id) {
                             if (isSimple) {
                                 return normalizer(json);
                             }
+                            console.log(json.results);
                             return Object.assign({}, normalizer(json.results), { count: json.count });
                         });
                     },
