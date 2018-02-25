@@ -5,6 +5,9 @@ import ReactDOM from 'react-dom';
 import { Provider } from 'react-redux';
 import { ConnectedRouter, routerMiddleware } from 'react-router-redux';
 import initStore from './store';
+import App from './components/App';
+
+import '../static/css/base.scss';
 
 const history = createHistory();
 const middleware = routerMiddleware(history);
@@ -13,7 +16,7 @@ const middleware = routerMiddleware(history);
 ReactDOM.render(
     <Provider store={ initStore([middleware]) }>
         <ConnectedRouter history={ history }>
-            <div>Hello, world</div>
+            <App/>
         </ConnectedRouter>
     </Provider>,
     document.getElementById('root'),
