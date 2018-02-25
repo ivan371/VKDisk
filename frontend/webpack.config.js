@@ -25,4 +25,8 @@ module.exports = {
             },
         ],
     },
+    resolve: {
+        modules: ['/static_src', 'node_modules'],
+        extensions: ['.js', '.jsx', '.css'],
+    },
 }
