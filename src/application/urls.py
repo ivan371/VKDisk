@@ -20,6 +20,5 @@ from rest_api.routers import router
 
 urlpatterns = [
     path('admin/', admin.site.urls),
-    url(r'^api-auth/', include('rest_framework.urls')),
     url(r'^api/v1/', include(router.urls)),
 ]
