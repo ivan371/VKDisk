@@ -46,7 +46,7 @@ INSTALLED_APPS = [
     'document.apps.DocumentConfig',
     'folder.apps.FolderConfig',
     'social_django',
-    'widget_tweaks'
+    # 'widget_tweaks'
 ]
 
 MIDDLEWARE = [
@@ -62,7 +62,7 @@ MIDDLEWARE = [
 SOCIAL_AUTH_POSTGRES_JSONFIELD = True
 
 AUTHENTICATION_BACKENDS = (
-    'social_core.backends.vk.VKOAuth2',
+    'core.oauth2_backends.VKOAuth2',
     'social_core.backends.open_id.OpenIdAuth',
     'django.contrib.auth.backends.ModelBackend',
 )
@@ -80,8 +80,8 @@ SOCIAL_AUTH_PIPELINE = (
     'social_core.pipeline.user.user_details',
 )
 
-SOCIAL_AUTH_VK_OAUTH2_KEY = config.get('VKoauth', 'KEY')
-SOCIAL_AUTH_VK_OAUTH2_SECRET = config.get('VKoauth', 'SECRET')
+SOCIAL_AUTH_VK_OAUTH2_KEY = config.get('VK', 'APP_ID')
+SOCIAL_AUTH_VK_OAUTH2_SECRET = config.get('VK', 'SECRET_KEY')
 SOCIAL_AUTH_VK_OAUTH2_SCOPE = ['email', 'status', 'docs', 'messages']
 SOCIAL_AUTH_VK_APP_USER_MODE = 2
 

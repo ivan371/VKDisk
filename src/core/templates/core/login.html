@@ -1,11 +1,12 @@
 {% load staticfiles %}
-{% load widget_tweaks  %}
+{#{% load widget_tweaks  %}#}
 
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <title>Authorization</title>
-    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-alpha.6/css/bootstrap.min.css" integrity="sha384-rwoIResjU2yc3z8GV/NPeZWAv56rSmLldC3R/AZzGRnGxQQKnKkoFVhFQhNUwEyJ" crossorigin="anonymous">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-alpha.6/css/bootstrap.min.css"
+          integrity="sha384-rwoIResjU2yc3z8GV/NPeZWAv56rSmLldC3R/AZzGRnGxQQKnKkoFVhFQhNUwEyJ" crossorigin="anonymous">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/css-social-buttons/1.3.0/css/zocial.min.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/css-social-buttons/1.3.0/css/zocial.svg">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/css-social-buttons/1.3.0/css/zocial.ttf">
@@ -13,12 +14,19 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/css-social-buttons/1.3.0/css/zocial.woff">
 </head>
 <body>
+<a href="{% url 'social:begin' 'vk-oauth2' %}" target="_blank">
+    <button type="button" class="zocial vk btn btn-block">Использовать VK</button>
+</a>
 
-      <form class="form-signin" method="post"> {% csrf_token %}
-          <a href="{% url 'social:begin' 'vk-oauth2'  %}"><button type="button" class="zocial vk btn btn-block">Использовать VK</button></a>
-      </form>
+<form class="form-signin" method="POST" action="{% url 'social:complete' 'vk-oauth2' %}">{% csrf_token %}
+    <input type="text" name="code">
+    <input type="text" name="state">
+    <button type="submit">Send</button>
+</form>
 
-<script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-alpha.6/js/bootstrap.min.js" integrity="sha384-vBWWzlZJ8ea9aCX4pEW3rVHjgjt7zpkNpZk+02D9phzyeVkE+jo0ieGizqPLForn" crossorigin="anonymous"></script>
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-alpha.6/js/bootstrap.min.js"
+        integrity="sha384-vBWWzlZJ8ea9aCX4pEW3rVHjgjt7zpkNpZk+02D9phzyeVkE+jo0ieGizqPLForn"
+        crossorigin="anonymous"></script>
 <script src=""></script>
 </body>
 </html>
