@@ -6,3 +6,8 @@ export const urls = {
         docsUrl: '/api/v1/documents/',
     },
 };
+
+export const makeUrls = {
+    makeFilterDocsFolder: id => `${urls.docs.docsUrl}?folder=${id}`,
+    makeFilterFoldersFolder: id => `${urls.folder.foldersUrl}?folder=${id}`,
+};
