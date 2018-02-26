@@ -30409,10 +30409,12 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
 
 var initalState = {
     isLoading: false,
+    isTileLoading: false,
     count: 0,
     page: 2,
     folders: {},
-    folderList: []
+    folderList: [],
+    folderTileList: []
 };
 
 function folder() {
@@ -30445,6 +30447,21 @@ function folder() {
                     $set: true
                 },
                 folderList: {
+                    $set: action.payload.result
+                }
+            });
+        case _folder.LOAD_FILTER_FOLDERS:
+            return (0, _reactAddonsUpdate2.default)(store, {
+                isTileLoading: {
+                    $set: false
+                }
+            });
+        case _folder.LOAD_FILTER_FOLDERS_SUCCESS:
+            return (0, _reactAddonsUpdate2.default)(store, {
+                isTileLoading: {
+                    $set: true
+                },
+                folderTileList: {
                     $set: action.payload.result
                 }
             });
@@ -32087,14 +32104,21 @@ var DocsComponent = function (_React$Component) {
             var _this2 = this;
 
             var docList = [];
+            var folderList = [];
+            if (this.props.isTileLoading) {
+                folderList = this.props.folderList.map(function (folderId) {
+                    return _react2.default.createElement(_Tile2.default, { url: '/root/' + folderId, title: _this2.props.folders[folderId].title, key: folderId, imgUrl: '/static/img/folder.png' });
+                });
+            }
             if (this.props.isLoading) {
                 docList = this.props.docList.map(function (docId) {
-                    return _react2.default.createElement(_Tile2.default, { title: _this2.props.docs[docId].title, key: docId, imgUrl: '/static/img/file.png' });
+                    return _react2.default.createElement(_Tile2.default, { url: '/file/' + docId, title: _this2.props.docs[docId].title, key: docId, imgUrl: '/static/img/file.png' });
                 });
             }
             return _react2.default.createElement(
                 'div',
                 { className: 'page-content-content-content content-flex' },
+                folderList,
                 docList
             );
         }
@@ -32107,7 +32131,10 @@ var mapStoreToProps = function mapStoreToProps(state, props) {
     return {
         isLoading: state.document.isLoading,
         docList: state.document.docList,
-        docs: state.document.docs
+        docs: state.document.docs,
+        folderList: state.folder.folderTileList,
+        folders: state.folder.folders,
+        isTileLoading: state.folder.folderTileList
     };
 };
 
@@ -32142,6 +32169,8 @@ var _propTypes = __webpack_require__(2);
 
 var _propTypes2 = _interopRequireDefault(_propTypes);
 
+var _reactRouterDom = __webpack_require__(72);
+
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
@@ -32165,8 +32194,12 @@ var TileComponent = function (_React$Component) {
             return _react2.default.createElement(
                 'div',
                 { className: 'content-flex-item' },
-                _react2.default.createElement('img', { className: 'icon', src: this.props.imgUrl }),
-                this.props.title
+                _react2.default.createElement(
+                    _reactRouterDom.Link,
+                    { to: this.props.url },
+                    _react2.default.createElement('img', { className: 'icon', src: this.props.imgUrl }),
+                    this.props.title
+                )
             );
         }
     }]);
@@ -32176,7 +32209,8 @@ var TileComponent = function (_React$Component) {
 
 TileComponent.propTypes = {
     title: _propTypes2.default.string.isRequired,
-    imgUrl: _propTypes2.default.string.isRequired
+    imgUrl: _propTypes2.default.string.isRequired,
+    url: _propTypes2.default.string.isRequired
 };
 
 exports.default = TileComponent;
@@ -32290,7 +32324,7 @@ exports = module.exports = __webpack_require__(278)(false);
 
 
 // module
-exports.push([module.i, "body {\n  background-color: #EDEEF0;\n  margin: 0;\n  font-family: -apple-system,BlinkMacSystemFont,Roboto,Helvetica Neue,sans-serif;\n}\n\na {\n  text-decoration: none;\n  cursor: pointer;\n}\n\n.page-header {\n  height: 42px;\n  background-color: #4A76A8;\n}\n\n.page-content {\n  margin: 0 auto;\n  width: 960px;\n  display: flex;\n}\n\n.page-header-content {\n  margin: 0 auto;\n  width: 960px;\n}\n\n.page-header-content-logo {\n  width: 139px;\n}\n\n.page-header-content h2 {\n  margin: 0;\n  padding-top: 5px;\n  color: white;\n}\n\n.page-content-navigation {\n  margin-top: 15px;\n  width: 139px;\n}\n\n.page-content-content {\n  padding-top: 15px;\n  padding-bottom: 2px;\n  height: 500px;\n  min-width: 400px;\n  display: flex;\n}\n\n.page-content-content-wrap {\n  width: 300px;\n  background-color: white;\n  max-height: 100%;\n  border-radius: 2px 2px 0 0;\n  box-shadow: 0 1px 0 0 #d7d8db, 0 0 0 1px #e3e4e8;\n}\n\n.page-content-content-wrap a {\n  color: #285473;\n}\n\n.page-content-content-content {\n  width: 500px;\n  background-color: white;\n  max-height: 100%;\n  border-radius: 2px 2px 0 0;\n  box-shadow: 0 1px 0 0 #d7d8db, 0 0 0 1px #e3e4e8;\n}\n\n.page-content-link {\n  display: block;\n  white-space: nowrap;\n  padding: 10px;\n  color: #285473;\n}\n\n.page-content-link:hover {\n  background-color: #E1E5EB;\n}\n\n.content-item {\n  padding: 10px;\n  box-shadow: 0 1px 0 0 #d7d8db;\n}\n\n.page-content-link-item {\n  display: flex;\n}\n\n.page-content-link-item:hover {\n  background-color: #EDEEF0;\n  cursor: pointer;\n}\n\n.content-item input {\n  border: 0px;\n}\n\ninput[type=\"text\"]:focus {\n  outline: none;\n}\n\n.content-flex {\n  display: flex;\n}\n\n.content-flex-item {\n  padding: 10px;\n  height: 80px;\n  width: 80px;\n  text-align: center;\n}\n\n.content-flex-item:hover {\n  background-color: #EDEEF0;\n  cursor: pointer;\n}\n\nimg.icon {\n  width: 50px;\n  height: 50px;\n}\n\nimg.item {\n  width: 20px;\n  height: 20px;\n  margin-right: 5px;\n}\n", ""]);
+exports.push([module.i, "body {\n  background-color: #EDEEF0;\n  margin: 0;\n  font-family: -apple-system,BlinkMacSystemFont,Roboto,Helvetica Neue,sans-serif;\n}\n\na {\n  text-decoration: none;\n  cursor: pointer;\n}\n\n.page-header {\n  height: 42px;\n  background-color: #4A76A8;\n}\n\n.page-content {\n  margin: 0 auto;\n  width: 960px;\n  display: flex;\n}\n\n.page-header-content {\n  margin: 0 auto;\n  width: 960px;\n}\n\n.page-header-content-logo {\n  width: 139px;\n}\n\n.page-header-content h2 {\n  margin: 0;\n  padding-top: 5px;\n  color: white;\n}\n\n.page-content-navigation {\n  margin-top: 15px;\n  width: 139px;\n}\n\n.page-content-content {\n  padding-top: 15px;\n  padding-bottom: 2px;\n  height: 500px;\n  min-width: 400px;\n  display: flex;\n}\n\n.page-content-content-wrap {\n  width: 300px;\n  background-color: white;\n  max-height: 100%;\n  border-radius: 2px 2px 0 0;\n  box-shadow: 0 1px 0 0 #d7d8db, 0 0 0 1px #e3e4e8;\n}\n\n.page-content-content-wrap a {\n  color: #285473;\n}\n\n.page-content-content-content {\n  width: 500px;\n  background-color: white;\n  max-height: 100%;\n  border-radius: 2px 2px 0 0;\n  box-shadow: 0 1px 0 0 #d7d8db, 0 0 0 1px #e3e4e8;\n}\n\n.page-content-link {\n  display: block;\n  white-space: nowrap;\n  padding: 10px;\n  color: #285473;\n}\n\n.page-content-link:hover {\n  background-color: #E1E5EB;\n}\n\n.content-item {\n  padding: 10px;\n  box-shadow: 0 1px 0 0 #d7d8db;\n}\n\n.page-content-link-item {\n  display: flex;\n}\n\n.page-content-link-item:hover {\n  background-color: #EDEEF0;\n  cursor: pointer;\n}\n\n.content-item input {\n  border: 0px;\n}\n\ninput[type=\"text\"]:focus {\n  outline: none;\n}\n\n.content-flex {\n  display: flex;\n}\n\n.content-flex-item {\n  padding: 10px;\n  height: 80px;\n  width: 80px;\n  text-align: center;\n}\n\n.content-flex-item a {\n  color: black;\n}\n\n.content-flex-item:hover {\n  background-color: #EDEEF0;\n  cursor: pointer;\n}\n\nimg.icon {\n  width: 50px;\n  height: 50px;\n}\n\nimg.item {\n  width: 20px;\n  height: 20px;\n  margin-right: 5px;\n}\n", ""]);
 
 // exports
 

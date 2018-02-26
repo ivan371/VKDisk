@@ -33,11 +33,16 @@ class DocsComponent extends React.Component {
     }
     render() {
         let docList = [];
+        let folderList = [];
+        if (this.props.isTileLoading) {
+            folderList = this.props.folderList.map(folderId => <Tile url={ `/root/${folderId}` } title={ this.props.folders[folderId].title } key={ folderId } imgUrl="/static/img/folder.png" />);
+        }
         if (this.props.isLoading) {
-            docList = this.props.docList.map(docId => <Tile title={ this.props.docs[docId].title } key={ docId } imgUrl="/static/img/file.png" />);
+            docList = this.props.docList.map(docId => <Tile url={ `/file/${docId}` } title={ this.props.docs[docId].title } key={ docId } imgUrl="/static/img/file.png" />);
         }
         return (
             <div className="page-content-content-content content-flex">
+                {folderList}
                 {docList}
             </div>
         );
@@ -48,6 +53,9 @@ const mapStoreToProps = (state, props) => ({
     isLoading: state.document.isLoading,
     docList: state.document.docList,
     docs: state.document.docs,
+    folderList: state.folder.folderTileList,
+    folders: state.folder.folders,
+    isTileLoading: state.folder.folderTileList,
 });
 
 const mapDispatchToProps = dispatch => ({
