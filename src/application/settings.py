@@ -46,7 +46,8 @@ INSTALLED_APPS = [
     'core.apps.CoreConfig',
     'document.apps.DocumentConfig',
     'folder.apps.FolderConfig',
-    'rest_api.apps.RestApiConfig'
+    'rest_api.apps.RestApiConfig',
+    'vk_api_wrapper.apps.VkApiWrapperConfig'
 ]
 
 MIDDLEWARE = [
@@ -139,3 +140,8 @@ STATICFILES_DIRS = (os.path.join(BASE_DIR, 'static/'), os.path.join(BASE_DIR, '.
 
 MEDIA_URL = '/media/'
 MEDIA_ROOT = os.path.join(PROJECT_DIR, 'media/')
+
+
+VK_APP_ID = config.getint("VK", "APP_ID")
+VK_CLIENT_SECRET_KEY = config.get("VK", "SECRET_KEY")
+VK_SERVICE_KEY = config.get("VK", "SERVICE_KEY")
