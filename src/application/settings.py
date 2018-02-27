@@ -48,6 +48,9 @@ INSTALLED_APPS = [
     'folder.apps.FolderConfig',
     'rest_api.apps.RestApiConfig',
     'vk_api_wrapper.apps.VkApiWrapperConfig'
+    'folder.apps.FolderConfig',
+    'social_django',
+    # 'widget_tweaks'
 ]
 
 MIDDLEWARE = [
@@ -59,6 +62,32 @@ MIDDLEWARE = [
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
 ]
+
+SOCIAL_AUTH_POSTGRES_JSONFIELD = True
+
+AUTHENTICATION_BACKENDS = (
+    'core.oauth2_backends.VKOAuth2',
+    'social_core.backends.open_id.OpenIdAuth',
+    'django.contrib.auth.backends.ModelBackend',
+)
+
+SOCIAL_AUTH_PIPELINE = (
+    'social_core.pipeline.social_auth.social_details',
+    'social_core.pipeline.social_auth.social_uid',
+    'social_core.pipeline.social_auth.auth_allowed',
+    'social_core.pipeline.social_auth.social_user',
+    'social_core.pipeline.user.get_username',
+    'social_core.pipeline.social_auth.associate_by_email',
+    'social_core.pipeline.user.create_user',
+    'social_core.pipeline.social_auth.associate_user',
+    'social_core.pipeline.social_auth.load_extra_data',
+    'social_core.pipeline.user.user_details',
+)
+
+SOCIAL_AUTH_VK_OAUTH2_KEY = config.get('VK', 'APP_ID')
+SOCIAL_AUTH_VK_OAUTH2_SECRET = config.get('VK', 'SECRET_KEY')
+SOCIAL_AUTH_VK_OAUTH2_SCOPE = ['email', 'status', 'docs', 'messages']
+SOCIAL_AUTH_VK_APP_USER_MODE = 2
 
 # User settings
 AUTH_USER_MODEL = 'core.User'
@@ -74,6 +103,8 @@ TEMPLATES = [
             'context_processors': [
                 'django.template.context_processors.debug',
                 'django.template.context_processors.request',
+                'social_django.context_processors.backends',
+                'social_django.context_processors.login_redirect',
                 'django.contrib.auth.context_processors.auth',
                 'django.contrib.messages.context_processors.messages',
             ],
