@@ -176,3 +176,14 @@ MEDIA_ROOT = os.path.join(PROJECT_DIR, 'media/')
 VK_APP_ID = config.getint("VK", "APP_ID")
 VK_CLIENT_SECRET_KEY = config.get("VK", "SECRET_KEY")
 VK_SERVICE_KEY = config.get("VK", "SERVICE_KEY")
+
+# CELERY
+CELERY_RESULT_BACKEND = 'celery.backends.redis.RedisBackend'
+CELERY_BROKER_URL = 'redis://{}:{}/{}'.format(config.get("CELERY", "REDIS_HOST"),
+                                              config.getint("CELERY", "REDIS_PORT"),
+                                              config.getint("CELERY", "REDIS_QUEUE"),
+                                              )
+CELERY_ACCEPT_CONTENT = ['json']
+CELERY_TASK_SERIALIZER = 'json'
+CELERY_RESULT_SERIALIZER = 'json'
+# CELERY_BEAT_SCHEDULER = 'django_celery_beat.schedulers.DatabaseScheduler'
