@@ -1,4 +1,5 @@
 import vk_api
+from celery.task import task
 from django.conf import settings
 from django.db import IntegrityError
 
@@ -18,6 +19,7 @@ def get_group_info(api, group_id):
     return response[0]
 
 
+@task
 def download_dialog_list(access_token, user_id):
     vk_dialogs_list, created = VkDialogsList.objects.get_or_create(user_id=user_id)
     vk_session = vk_api.VkApi(token=access_token, client_secret=settings.VK_CLIENT_SECRET_KEY)
@@ -63,6 +65,7 @@ def download_dialog_list(access_token, user_id):
     # response = api.messages.getDialogs(**params)
 
 
+@task
 def download_dialog_history(access_token, user_id, chat_id, is_group_chat, media_type='doc'):
     vk_dialog = VkDialog.objects.get(user_id=user_id,
                                      chat_id=chat_id,

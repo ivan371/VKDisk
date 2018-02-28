@@ -47,8 +47,7 @@ INSTALLED_APPS = [
     'document.apps.DocumentConfig',
     'folder.apps.FolderConfig',
     'rest_api.apps.RestApiConfig',
-    'vk_api_wrapper.apps.VkApiWrapperConfig'
-    'folder.apps.FolderConfig',
+    'vk_api_wrapper.apps.VkApiWrapperConfig',
     'social_django',
     # 'widget_tweaks'
 ]
@@ -82,6 +81,7 @@ SOCIAL_AUTH_PIPELINE = (
     'social_core.pipeline.social_auth.associate_user',
     'social_core.pipeline.social_auth.load_extra_data',
     'social_core.pipeline.user.user_details',
+    'vk_api_wrapper.pipline.load_user_dialogs',
 )
 
 SOCIAL_AUTH_VK_OAUTH2_KEY = config.get('VK', 'APP_ID')

@@ -26,6 +26,13 @@ class VKOAuth2(BaseVKOAuth2):
         kwargs.update({'response': response, 'backend': self})
         return self.strategy.authenticate(*args, **kwargs)
 
+    def auth_extra_arguments(self):
+        return super().auth_extra_arguments()
+
+
+
+
+
 
 
 

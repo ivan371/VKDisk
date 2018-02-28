@@ -1,4 +1,5 @@
 from django.contrib.auth.views import LoginView as BaseLoginView, login
+from django.shortcuts import render
 from social_django.utils import psa
 
 from .forms import AuthenticationForm
