@@ -100,6 +100,9 @@ input[type="text"]:focus {
 .content-flex-item a{
     color: black;
 }
+.content-flex-item p{
+    margin-top: 0;
+}
 .content-flex-item:hover{
     background-color: #EDEEF0;
     cursor: pointer;

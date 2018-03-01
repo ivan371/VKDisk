@@ -1,12 +1,22 @@
 import React from 'react';
 import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
+import PropTypes from 'prop-types';
 import { makeUrls, urls } from '../../constants';
 import { docsUnMount, loadDocs } from '../../actions/document';
 import { loadFilterFolders } from '../../actions/folder';
 import Tile from '../Tile';
 
 class DocsComponent extends React.Component {
+    static propTypes = {
+        loadDocs: PropTypes.func.isRequired,
+        loadFilterFolders: PropTypes.func.isRequired,
+        docsUnMount: PropTypes.func.isRequired,
+        params: PropTypes.object.isRequired,
+        docList: PropTypes.array.isRequired,
+        folderList: PropTypes.array.isRequired,
+    };
+
     componentDidMount() {
         if (this.props.params.hasOwnProperty('id')) {
             this.props.loadDocs(makeUrls.makeFilterDocsFolder(this.props.params.id));
@@ -34,7 +44,14 @@ class DocsComponent extends React.Component {
         let docList = [];
         let folderList = [];
         if (this.props.isTileLoading) {
-            folderList = this.props.folderList.map(folderId => <Tile url={ `/root/${folderId}` } title={ this.props.folders[folderId].title } key={ folderId } imgUrl="/static/img/folder.png" />);
+            folderList = this.props.folderList.map(folderId => (<Tile
+                url={ `/root/${folderId}` }
+                title={ this.props.folders[folderId].title }
+                key={ folderId }
+                imgUrl="/static/img/folder.png"
+            />));
+            folderList.unshift(<Tile key={ 0 } title="" imgUrl="/static/img/folder_add.png" url="#" />);
+            folderList.unshift(<Tile key={ -1 } title="" imgUrl="/static/img/folder_back.png" url={ `/root/${this.props.params.id}` } />);
         }
         if (this.props.isLoading) {
             docList = this.props.docList.map(docId => <Tile url={ `/file/${docId}` } title={ this.props.docs[docId].title } key={ docId } imgUrl="/static/img/file.png" />);

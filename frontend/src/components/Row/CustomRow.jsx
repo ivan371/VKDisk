@@ -21,12 +21,17 @@ class CustomRowComponent extends React.Component {
             case folderType.root:
                 this.props.loadFolders(urls.folder.foldersUrl);
                 break;
+            default:
         }
     }
     render() {
         let folderList = [];
         if (this.props.isLoading) {
-            folderList = this.props.folderList.map(folderId => <Folder id={ folderId } key={ folderId }>Папка</Folder>);
+            folderList = this.props.folderList.map(folderId => (<Folder
+                id={ folderId }
+                key={ folderId }
+                folder={ this.props.folder }
+            >Папка</Folder>));
         }
         return (
             <div className="page-content-content">
