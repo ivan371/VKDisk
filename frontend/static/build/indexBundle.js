@@ -6861,7 +6861,7 @@ var urls = exports.urls = {
 
 var makeUrls = exports.makeUrls = {
     makeFilterDocsFolder: function makeFilterDocsFolder(id) {
-        return urls.docs.docsUrl + 'folder=' + id;
+        return urls.docs.docsUrl + '?folder=' + id;
     },
     makeFilterFoldersFolder: function makeFilterFoldersFolder(id) {
         return urls.folder.foldersUrl + 'folder=' + id;
@@ -31835,29 +31835,17 @@ Object.defineProperty(exports, "__esModule", {
     value: true
 });
 
-var _extends = Object.assign || function (target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i]; for (var key in source) { if (Object.prototype.hasOwnProperty.call(source, key)) { target[key] = source[key]; } } } return target; };
-
 var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
 
 var _react = __webpack_require__(0);
 
 var _react2 = _interopRequireDefault(_react);
 
-var _redux = __webpack_require__(13);
-
-var _reactRedux = __webpack_require__(30);
-
-var _folder = __webpack_require__(71);
-
 var _constants = __webpack_require__(135);
 
-var _Folder = __webpack_require__(272);
+var _CustomRow = __webpack_require__(281);
 
-var _Folder2 = _interopRequireDefault(_Folder);
-
-var _Docs = __webpack_require__(273);
-
-var _Docs2 = _interopRequireDefault(_Docs);
+var _CustomRow2 = _interopRequireDefault(_CustomRow);
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
@@ -31877,58 +31865,16 @@ var RootFolderComponent = function (_React$Component) {
     }
 
     _createClass(RootFolderComponent, [{
-        key: 'componentDidMount',
-        value: function componentDidMount() {
-            this.props.loadFolders(_constants.urls.folder.foldersUrl);
-        }
-    }, {
         key: 'render',
         value: function render() {
-            var folderList = [];
-            if (this.props.isLoading) {
-                folderList = this.props.folderList.map(function (folderId) {
-                    return _react2.default.createElement(
-                        _Folder2.default,
-                        { id: folderId, key: folderId },
-                        '\u041F\u0430\u043F\u043A\u0430'
-                    );
-                });
-            }
-            return _react2.default.createElement(
-                'div',
-                { className: 'page-content-content' },
-                _react2.default.createElement(
-                    'div',
-                    { className: 'page-content-content-wrap' },
-                    _react2.default.createElement(
-                        'div',
-                        { className: 'content-item' },
-                        _react2.default.createElement('input', { type: 'text', placeholder: 'Search' })
-                    ),
-                    folderList
-                ),
-                _react2.default.createElement(_Docs2.default, { params: this.props.match.params })
-            );
+            return _react2.default.createElement(_CustomRow2.default, { folder: _constants.folderType.root, params: this.props.match.params });
         }
     }]);
 
     return RootFolderComponent;
 }(_react2.default.Component);
 
-var mapStoreToProps = function mapStoreToProps(state, props) {
-    return {
-        isLoading: state.folder.isLoading,
-        folderList: state.folder.folderList
-    };
-};
-
-var mapDispatchToProps = function mapDispatchToProps(dispatch) {
-    return _extends({}, (0, _redux.bindActionCreators)({
-        loadFolders: _folder.loadFolders
-    }, dispatch));
-};
-
-exports.default = (0, _reactRedux.connect)(mapStoreToProps, mapDispatchToProps)(RootFolderComponent);
+exports.default = RootFolderComponent;
 
 /***/ }),
 /* 272 */
@@ -32044,10 +31990,6 @@ var _redux = __webpack_require__(13);
 var _reactRedux = __webpack_require__(30);
 
 var _constants = __webpack_require__(135);
-
-var _propTypes = __webpack_require__(2);
-
-var _propTypes2 = _interopRequireDefault(_propTypes);
 
 var _document = __webpack_require__(132);
 
@@ -33003,7 +32945,8 @@ var CustomRowComponent = function (_React$Component) {
 }(_react2.default.Component);
 
 CustomRowComponent.propTypes = {
-    folder: _propTypes2.default.string.isRequired
+    folder: _propTypes2.default.string.isRequired,
+    isLoading: _propTypes2.default.bool.isRequired
 };
 
 

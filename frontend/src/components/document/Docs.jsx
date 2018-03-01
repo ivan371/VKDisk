@@ -2,7 +2,6 @@ import React from 'react';
 import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
 import { makeUrls, urls } from '../../constants';
-import PropTypes from 'prop-types';
 import { docsUnMount, loadDocs } from '../../actions/document';
 import { loadFilterFolders } from '../../actions/folder';
 import Tile from '../Tile';

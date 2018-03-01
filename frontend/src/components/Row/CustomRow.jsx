@@ -3,13 +3,14 @@ import PropTypes from 'prop-types';
 import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
 import { loadFolders } from '../../actions/folder';
-import {folderType, urls} from '../../constants';
+import { folderType, urls } from '../../constants';
 import Folder from '../folder/Folder';
 import Docs from '../document/Docs';
 
 class CustomRowComponent extends React.Component {
     static propTypes = {
         folder: PropTypes.string.isRequired,
+        isLoading: PropTypes.bool.isRequired,
     };
 
     componentDidMount() {
