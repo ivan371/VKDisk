@@ -88,6 +88,8 @@ input[type="text"]:focus {
 }
 .content-flex{
     display: flex;
+    align-content: start;
+    flex-wrap: wrap;
 }
 .content-flex-item{
     padding: 10px;

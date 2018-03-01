@@ -8,7 +8,7 @@ class TileComponent extends React.Component {
             <div className="content-flex-item">
                 <Link to={ this.props.url }>
                     <img className="icon" src={ this.props.imgUrl } />
-                    {this.props.title}
+                    <p>{this.props.title}</p>
                 </Link>
             </div>
         );

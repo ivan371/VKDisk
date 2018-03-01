@@ -1,16 +1,27 @@
 import React from 'react';
+import PropTypes from 'prop-types';
 import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
 import { loadFolders } from '../../actions/folder';
-import { folderType, urls } from '../../constants';
-import Folder from './Folder';
+import {folderType, urls} from '../../constants';
+import Folder from '../folder/Folder';
 import Docs from '../document/Docs';
 
-class RootFolderComponent extends React.Component {
-    componentDidMount() {
-        this.props.loadFolders(urls.folder.foldersUrl);
-    }
+class CustomRowComponent extends React.Component {
+    static propTypes = {
+        folder: PropTypes.string.isRequired,
+    };
 
+    componentDidMount() {
+        switch (this.props.folder) {
+            case folderType.chat:
+                this.props.loadFolders(urls.folder.chatFolderUrl);
+                break;
+            case folderType.root:
+                this.props.loadFolders(urls.folder.foldersUrl);
+                break;
+        }
+    }
     render() {
         let folderList = [];
         if (this.props.isLoading) {
@@ -24,7 +35,7 @@ class RootFolderComponent extends React.Component {
                     </div>
                     {folderList}
                 </div>
-                <Docs params={ this.props.match.params } />
+                <Docs params={ this.props.params } />
             </div>
         );
     }
@@ -44,4 +55,4 @@ const mapDispatchToProps = dispatch => ({
 export default connect(
     mapStoreToProps,
     mapDispatchToProps,
-)(RootFolderComponent);
+)(CustomRowComponent);

@@ -25,8 +25,8 @@ class FolderViewSet(viewsets.ModelViewSet):
         if 'folder' in self.request.query_params:
             if self.request.query_params['folder'].isdigit():
                 q = q.filter(root_id=int(self.request.query_params['folder']))
-        elif 'chats' in self.request.query_params:
+        if 'chats' in self.request.query_params:
             q = q.filter(type = 'chat')
-        elif 'root' in self.request.query_params:
+        if 'root' in self.request.query_params:
             q = q.filter(root = None).filter(type = 'folder')
         return q
