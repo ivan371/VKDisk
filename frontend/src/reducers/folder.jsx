@@ -1,9 +1,13 @@
 import update from 'react-addons-update';
-import {LOAD_FILTER_FOLDERS, LOAD_FILTER_FOLDERS_SUCCESS, LOAD_FOLDERS, LOAD_FOLDERS_SUCCESS} from "../actions/folder";
+import {
+    LOAD_FILTER_FOLDERS, LOAD_FILTER_FOLDERS_SUCCESS, LOAD_FOLDER, LOAD_FOLDER_SUCCESS, LOAD_FOLDERS,
+    LOAD_FOLDERS_SUCCESS
+} from "../actions/folder";
 
 const initalState = {
     isLoading: false,
     isTileLoading: false,
+    isOwnFolderLoading: false,
     count: 0,
     page: 2,
     folders: {},
@@ -39,6 +43,21 @@ export default function folder(store = initalState, action) {
                 },
                 folderList: {
                     $set: action.payload.result,
+                },
+            });
+        case LOAD_FOLDER:
+            return update(store, {
+                isOwnLoading: {
+                    $set: false,
+                },
+            });
+        case LOAD_FOLDER_SUCCESS:
+            return update(store, {
+                isOwnLoading: {
+                    $set: true,
+                },
+                folderTileList: {
+                    $unshift: [action.payload.result],
                 },
             });
         case LOAD_FILTER_FOLDERS:

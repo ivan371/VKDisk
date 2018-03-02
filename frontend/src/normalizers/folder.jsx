@@ -5,3 +5,9 @@ export function foldersNormalize(folders) {
     const folder = new schema.Entity('folder', { author: user });
     return normalize(folders, [folder]);
 }
+
+export function folderNormalize(folders) {
+    const user = new schema.Entity('user');
+    const folder = new schema.Entity('folder', { author: user });
+    return normalize(folders, folder);
+}

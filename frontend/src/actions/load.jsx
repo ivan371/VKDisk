@@ -1,13 +1,12 @@
 import { CALL_API, getJSON } from 'redux-api-middleware';
+import cookie from 'react-cookies';
 
 export function apiLoad(url, method, types, body, normalizer, isSimple, id) {
     return {
         [CALL_API]: {
             credentials: 'same-origin',
             endpoint: url,
-            headers: {
-                'Content-Type': 'application/json',
-            },
+            headers: { 'Content-Type': 'application/json', 'X-CSRFToken': cookie.load('csrftoken') },
             method,
             body,
             types: [
@@ -22,7 +21,6 @@ export function apiLoad(url, method, types, body, normalizer, isSimple, id) {
                             if (isSimple) {
                                 return normalizer(json);
                             }
-                            console.log(json.results);
                             return Object.assign({}, normalizer(json.results), { count: json.count });
                         });
                     },

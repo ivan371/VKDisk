@@ -18,7 +18,7 @@ class AddFolderComponent extends React.Component {
     render() {
         let modal = null;
         if (this.props.isOpen) {
-            modal = <Modal />;
+            modal = <Modal id={this.props.id} />;
         }
         return (
             <React.Fragment>
