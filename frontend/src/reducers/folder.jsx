@@ -1,8 +1,9 @@
 import update from 'react-addons-update';
 import {
-    LOAD_FILTER_FOLDERS, LOAD_FILTER_FOLDERS_SUCCESS, LOAD_FOLDER, LOAD_FOLDER_SUCCESS, LOAD_FOLDERS,
-    LOAD_FOLDERS_SUCCESS
-} from "../actions/folder";
+    FOLDER_CREATE,
+    LOAD_FILTER_FOLDERS, LOAD_FILTER_FOLDERS_SUCCESS, LOAD_FOLDER, LOAD_FOLDERS,
+    LOAD_FOLDERS_SUCCESS,
+} from '../actions/folder';
 
 const initalState = {
     isLoading: false,
@@ -51,7 +52,7 @@ export default function folder(store = initalState, action) {
                     $set: false,
                 },
             });
-        case LOAD_FOLDER_SUCCESS:
+        case FOLDER_CREATE:
             return update(store, {
                 isOwnLoading: {
                     $set: true,

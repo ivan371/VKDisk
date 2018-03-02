@@ -12,6 +12,7 @@ export const urls = {
 export const makeUrls = {
     makeFilterDocsFolder: id => `${urls.docs.docsUrl}?folder=${id}`,
     makeFilterFoldersFolder: id => `${urls.folder.customFolderUrl}?folder=${id}`,
+    makeCustomFolder: id => `${urls.folder.customFolderUrl + id}/`,
 };
 
 export const folderType = {

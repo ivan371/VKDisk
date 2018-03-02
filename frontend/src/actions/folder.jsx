@@ -10,6 +10,8 @@ export const LOAD_FILTER_FOLDERS_ERROR = 'LOAD_FILTER_FOLDERS_ERROR';
 export const LOAD_FOLDER = 'LOAD_FOLDER';
 export const LOAD_FOLDER_SUCCESS = 'LOAD_FOLDER_SUCCESS';
 export const LOAD_FOLDER_ERROR = 'LOAD_FOLDER_ERROR';
+export const FOLDER_CREATE = 'FOLDER_CREATE';
+export const FOLDER_UPDATE = 'FOLDER_UPDATE';
 
 
 export function loadFolders(url) {
@@ -23,6 +25,11 @@ export function loadFilterFolders(url) {
 }
 
 export function createFolder(url, title) {
-    const types = [LOAD_FOLDER, LOAD_FOLDER_SUCCESS, LOAD_FOLDER_ERROR];
+    const types = [LOAD_FOLDER, FOLDER_CREATE, LOAD_FOLDER_ERROR];
     return apiLoad(url, 'POST', types, JSON.stringify({ title }), folderNormalize, true);
+}
+
+export function updateFolder(url, title) {
+    const types = [LOAD_FOLDER, FOLDER_UPDATE, LOAD_FOLDER_ERROR];
+    return apiLoad(url, 'PUT', types, JSON.stringify({ title }), folderNormalize, true);
 }

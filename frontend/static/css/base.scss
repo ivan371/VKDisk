@@ -101,16 +101,13 @@ input[type="text"]:focus {
 .content-flex-item a{
     color: black;
 }
-.content-flex-item p{
-    margin-top: 0;
-}
 .content-flex-item:hover{
     background-color: #EDEEF0;
-    cursor: pointer;
 }
 img.icon{
     width: 50px;
     height: 50px;
+    cursor: pointer;
 }
 
 img.item{
@@ -196,4 +193,18 @@ img.item{
 }
 .modal-footer{
     margin-top: 80px;
+}
+.content-item__title{
+    cursor: text;
+    text-align: center;
+    max-width: 50px;
+    margin: 0 auto;
+    max-height: 38px;
+}
+.content-item__input{
+    width: 50px;
+    border: 1px solid #c0cad5;
+    cursor: text;
+    outline: 0;
+    line-height: 150%;
 }

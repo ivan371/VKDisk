@@ -50,10 +50,12 @@ class DocsComponent extends React.Component {
                 title={ this.props.folders[folderId].title }
                 key={ folderId }
                 imgUrl="/static/img/folder.png"
+                id={ folderId }
             />));
             if (this.props.params.hasOwnProperty('id')) {
                 folderList.unshift(<AddFolder key={ 0 } imgUrl="/static/img/folder_add.png" id={ parseInt(this.props.params.id) } />);
                 folderList.unshift(<Tile
+                    id={ -1 }
                     key={ -1 }
                     title=""
                     imgUrl="/static/img/folder_back.png"
@@ -62,7 +64,13 @@ class DocsComponent extends React.Component {
             }
         }
         if (this.props.isLoading) {
-            docList = this.props.docList.map(docId => <Tile url={ `/file/${docId}` } title={ this.props.docs[docId].title } key={ docId } imgUrl="/static/img/file.png" />);
+            docList = this.props.docList.map(docId => (<Tile
+                id={ docId }
+                url={ `/file/${docId}` }
+                title={ this.props.docs[docId].title }
+                key={ docId }
+                imgUrl="/static/img/file.png"
+            />));
         }
         return (
             <div className="page-content-content-content content-flex">

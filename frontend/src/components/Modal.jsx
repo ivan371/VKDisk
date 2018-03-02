@@ -9,6 +9,8 @@ import { makeUrls } from '../constants';
 class ModalComponent extends React.Component {
     static propTypes = {
         id: PropTypes.number.isRequired,
+        modalOpen: PropTypes.func.isRequired,
+        createFolder: PropTypes.func.isRequired,
     };
 
     state = {
