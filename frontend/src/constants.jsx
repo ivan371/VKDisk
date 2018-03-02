@@ -13,6 +13,12 @@ export const makeUrls = {
     makeFilterDocsFolder: id => `${urls.docs.docsUrl}?folder=${id}`,
     makeFilterFoldersFolder: id => `${urls.folder.customFolderUrl}?folder=${id}`,
     makeCustomFolder: id => `${urls.folder.customFolderUrl + id}/`,
+    makeCustomFile: id => `${urls.docs.docsUrl + id}/`,
+};
+
+export const tileType = {
+    file: 'file',
+    folder: 'folder',
 };
 
 export const folderType = {

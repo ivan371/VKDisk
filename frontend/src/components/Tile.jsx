@@ -4,7 +4,8 @@ import { Link } from 'react-router-dom';
 import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
 import { updateFolder } from '../actions/folder';
-import { makeUrls } from '../constants';
+import {makeUrls, tileType} from '../constants';
+import {updateDoc} from "../actions/document";
 
 class TileComponent extends React.Component {
     static propTypes = {
@@ -13,6 +14,8 @@ class TileComponent extends React.Component {
         url: PropTypes.string.isRequired,
         id: PropTypes.number.isRequired,
         updateFolder: PropTypes.func.isRequired,
+        updateDoc: PropTypes.func.isRequired,
+        type: PropTypes.string.isRequired,
     };
 
     state = {
@@ -30,7 +33,15 @@ class TileComponent extends React.Component {
 
     onUpdate = (e) => {
         if (e.keyCode === 13) {
-            this.props.updateFolder(makeUrls.makeCustomFolder(this.props.id), this.state.title);
+            switch (this.props.type) {
+                case tileType.folder:
+                    this.props.updateFolder(makeUrls.makeCustomFolder(this.props.id), this.state.title);
+                    break;
+                case tileType.file:
+                    this.props.updateDoc(makeUrls.makeCustomFile(this.props.id), this.state.title);
+                    break;
+                default:
+            }
             this.onHandleChange(e);
         }
     };
@@ -62,6 +73,7 @@ const mapStoreToProps = (state, props) => ({
 const mapDispatchToProps = dispatch => ({
     ...bindActionCreators({
         updateFolder,
+        updateDoc,
     }, dispatch),
 });
 

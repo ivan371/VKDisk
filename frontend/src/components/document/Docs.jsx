@@ -2,11 +2,12 @@ import React from 'react';
 import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
 import PropTypes from 'prop-types';
-import { makeUrls, urls } from '../../constants';
+import { makeUrls, tileType, urls } from '../../constants';
 import { docsUnMount, loadDocs } from '../../actions/document';
 import { loadFilterFolders } from '../../actions/folder';
 import Tile from '../Tile';
 import AddFolder from '../folder/AddFolder';
+import BackFolder from '../folder/BackFolder';
 
 class DocsComponent extends React.Component {
     static propTypes = {
@@ -51,15 +52,17 @@ class DocsComponent extends React.Component {
                 key={ folderId }
                 imgUrl="/static/img/folder.png"
                 id={ folderId }
+                type={ tileType.folder }
             />));
             if (this.props.params.hasOwnProperty('id')) {
-                folderList.unshift(<AddFolder key={ 0 } imgUrl="/static/img/folder_add.png" id={ parseInt(this.props.params.id) } />);
-                folderList.unshift(<Tile
-                    id={ -1 }
+                folderList.unshift(<AddFolder
+                    key={ 0 }
+                    imgUrl="/static/img/folder_add.png"
+                    id={ parseInt(this.props.params.id) }
+                />);
+                folderList.unshift(<BackFolder
                     key={ -1 }
-                    title=""
                     imgUrl="/static/img/folder_back.png"
-                    url={ `/root/${this.props.params.id}` }
                 />);
             }
         }
@@ -70,6 +73,7 @@ class DocsComponent extends React.Component {
                 title={ this.props.docs[docId].title }
                 key={ docId }
                 imgUrl="/static/img/file.png"
+                type={ tileType.file }
             />));
         }
         return (
