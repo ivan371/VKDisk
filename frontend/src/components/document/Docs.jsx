@@ -6,6 +6,7 @@ import { makeUrls, urls } from '../../constants';
 import { docsUnMount, loadDocs } from '../../actions/document';
 import { loadFilterFolders } from '../../actions/folder';
 import Tile from '../Tile';
+import AddFolder from '../folder/AddFolder';
 
 class DocsComponent extends React.Component {
     static propTypes = {
@@ -50,8 +51,15 @@ class DocsComponent extends React.Component {
                 key={ folderId }
                 imgUrl="/static/img/folder.png"
             />));
-            folderList.unshift(<Tile key={ 0 } title="" imgUrl="/static/img/folder_add.png" url="#" />);
-            folderList.unshift(<Tile key={ -1 } title="" imgUrl="/static/img/folder_back.png" url={ `/root/${this.props.params.id}` } />);
+            if (this.props.params.hasOwnProperty('id')) {
+                folderList.unshift(<AddFolder key={ 0 } imgUrl="/static/img/folder_add.png" id={ parseInt(this.props.params.id) } />);
+                folderList.unshift(<Tile
+                    key={ -1 }
+                    title=""
+                    imgUrl="/static/img/folder_back.png"
+                    url={ `/root/${this.props.params.id}` }
+                />);
+            }
         }
         if (this.props.isLoading) {
             docList = this.props.docList.map(docId => <Tile url={ `/file/${docId}` } title={ this.props.docs[docId].title } key={ docId } imgUrl="/static/img/file.png" />);
