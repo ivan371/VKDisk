@@ -4,13 +4,12 @@ import { Link } from 'react-router-dom';
 import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
 import { updateFolder } from '../actions/folder';
-import {makeUrls, tileType} from '../constants';
-import {updateDoc} from "../actions/document";
+import { format, makeUrls, tileType, makeFormat } from '../constants';
+import { updateDoc } from '../actions/document';
 
 class TileComponent extends React.Component {
     static propTypes = {
         title: PropTypes.string.isRequired,
-        imgUrl: PropTypes.string.isRequired,
         url: PropTypes.string.isRequired,
         id: PropTypes.number.isRequired,
         updateFolder: PropTypes.func.isRequired,
@@ -47,10 +46,20 @@ class TileComponent extends React.Component {
     };
 
     render() {
+        let imageUrl = null;
+        switch (this.props.type) {
+            case tileType.folder:
+                imageUrl = format.folder;
+                break;
+            case tileType.file:
+                imageUrl = makeFormat(this.props.title);
+                break;
+            default:
+        }
         return (
             <div className="content-flex-item">
                 <Link to={ this.props.url }>
-                    <img className="icon" src={ this.props.imgUrl } />
+                    <img className="icon" src={ imageUrl } />
                 </Link>
                 {!this.state.isClicked ?
                     <div className="content-item__title" onClick={ this.onHandleChange }>{this.props.title}</div>

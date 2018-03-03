@@ -19,6 +19,7 @@ export const makeUrls = {
 export const tileType = {
     file: 'file',
     folder: 'folder',
+    folderAdd: 'folderAdd',
 };
 
 export const folderType = {
@@ -30,3 +31,26 @@ export const modalType = {
     folderCreate: 'folderCreate',
     folderTransfer: 'folderTransfer',
 };
+
+export const format = {
+    folder: '/static/img/folder.png',
+    folderAdd: '/static/img/folder_add.png',
+    folderBack: '/static/img/folder_back.png',
+    file: '/static/img/file.png',
+    doc: '/static/img/formats/docx.png',
+    docx: '/static/img/formats/docx.png',
+    pdf: '/static/img/formats/pdf.png',
+    pptx: '/static/img/formats/pptx.png',
+    ppt: '/static/img/formats/pptx.png',
+    xls: '/static/img/formats/xls.png',
+    jpg: '/static/img/formats/jpg.png',
+    png: '/static/img/formats/png.png',
+};
+
+export function makeFormat(fileUrl) {
+    let parts;
+    let ext;
+    parts, ext = `${(parts = fileUrl.split('/').pop().split('.')).length > 1 ? parts.pop() : ''}`;
+    if (format[ext] !== undefined) { return format[ext]; }
+    return format.file;
+}

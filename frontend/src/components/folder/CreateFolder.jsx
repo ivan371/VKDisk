@@ -4,7 +4,7 @@ import { bindActionCreators } from 'redux';
 import PropTypes from 'prop-types';
 import { modalOpen } from '../../actions/modal';
 import { createFolder } from '../../actions/folder';
-import { makeUrls } from '../../constants';
+import {format, makeUrls} from '../../constants';
 
 class CreateFolderComponent extends React.Component {
     static propTypes = {
@@ -37,7 +37,7 @@ class CreateFolderComponent extends React.Component {
                 </div>
                 <div className="modal-content">
                     <div className="modal-content__img">
-                        <img src="/static/img/folder.png" />
+                        <img src={ format.folder } />
                     </div>
                     <div className="modal-input">
                         <input name="title" value={ this.state.title } className="vk-input" onChange={ this.onChange } />
