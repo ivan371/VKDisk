@@ -21,6 +21,7 @@ class TileComponent extends React.Component {
     state = {
         isClicked: false,
         title: this.props.title,
+        isChecked: false,
     };
 
     onHandleChange = (e) => {
@@ -62,7 +63,7 @@ class TileComponent extends React.Component {
 
     doClick = (e) => {
         this.clickedOnce = undefined;
-        console.log('single click');
+        this.setState({ isChecked: !this.state.isChecked });
     };
 
     render() {
@@ -77,7 +78,7 @@ class TileComponent extends React.Component {
             default:
         }
         return (
-            <div className="content-flex-item">
+            <div className={ `content-flex-item ${!this.state.isChecked ? '' : 'checked'}` }>
                 <img className="icon" onClick={ this.handleClick } src={ imageUrl } />
                 {!this.state.isClicked ?
                     <div className="content-item__title" onClick={ this.onHandleChange }>{this.props.title}</div>

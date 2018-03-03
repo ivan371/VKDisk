@@ -2,13 +2,14 @@ import React from 'react';
 import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
 import PropTypes from 'prop-types';
-import {makeUrls, modalType, format, tileType, urls} from '../../constants';
-import { docsUnMount, loadDocs } from '../../actions/document';
+import { makeUrls, modalType, format, tileType, urls, items } from '../../constants';
+import { docsUnMount, loadDocs, loadDocsMore } from '../../actions/document';
 import { loadFilterFolders } from '../../actions/folder';
 import Tile from '../Tile';
 import AddFolder from '../folder/AddFolder';
 import BackFolder from '../folder/BackFolder';
-import {modalOpen, setModal} from '../../actions/modal';
+import { modalOpen, setModal } from '../../actions/modal';
+import { withRouter } from 'react-router-dom';
 
 class DocsComponent extends React.Component {
     static propTypes = {
@@ -20,6 +21,9 @@ class DocsComponent extends React.Component {
         folderList: PropTypes.array.isRequired,
         modalOpen: PropTypes.func.isRequired,
         setModal: PropTypes.func.isRequired,
+        loadDocsMore: PropTypes.func.isRequired,
+        count: PropTypes.number.isRequired,
+        page: PropTypes.number.isRequired,
     };
 
     componentDidMount() {
@@ -50,10 +54,18 @@ class DocsComponent extends React.Component {
         this.props.modalOpen();
         this.props.setModal(modalType.folderTransfer);
     };
+
+    goBack = (e) => {
+        this.props.history.goBack(e);
+    };
+
+    onLoadMore = (e) => {
+        this.props.loadDocsMore(makeUrls.makeDocsMore(this.props.params.id, this.props.page));
+    };
     render() {
         let docList = [];
         let folderList = [];
-        let folderName = null;
+        let folderHeader = null;
         if (this.props.isTileLoading) {
             folderList = this.props.folderList.map(folderId => (<Tile
                 history={ this.props.history }
@@ -63,22 +75,16 @@ class DocsComponent extends React.Component {
                 id={ folderId }
                 type={ tileType.folder }
             />));
-            if (this.props.params.hasOwnProperty('id')) {
-                folderList.unshift(<AddFolder
-                    key={ 0 }
-                    imgUrl={ format.folderAdd }
-                    id={ parseInt(this.props.params.id) }
-                />);
-                folderList.unshift(<BackFolder
-                    key={ -1 }
-                    imgUrl={ format.folderBack }
-                />);
-            }
         }
         if (this.props.isLoading) {
             if (this.props.isFolderLoading) {
                 if (this.props.params.hasOwnProperty('id')) {
-                    folderName = this.props.folders[this.props.params.id].title;
+                    folderHeader = (<React.Fragment>
+                        <img src={ items.back } className="item-left" onClick={ this.goBack } />
+                        <div className="item-name">{this.props.folders[this.props.params.id].title}</div>
+                        <AddFolder id={ parseInt(this.props.params.id) } />
+                        <button className="vk-button" onClick={ this.onOpen }>Переместить</button>
+                    </React.Fragment>);
                 }
             }
             docList = this.props.docList.map(docId => (<Tile
@@ -93,14 +99,14 @@ class DocsComponent extends React.Component {
         return (
             <div className="page-content-content-content">
                 <div className="content-item">
-                    <span>
-                        {folderName}
-                    </span>
-                    <button className="vk-button" onClick={ this.onOpen }>Переместить</button>
+                    {folderHeader}
                 </div>
                 <div className="content-flex">
                     {folderList}
                     {docList}
+                    { this.props.isLoading && this.props.count > (10 * (this.props.page - 1)) ? <div>
+                        <button onClick={ this.onLoadMore }>Показать еще</button>
+                    </div> : null }
                 </div>
             </div>
         );
@@ -115,11 +121,14 @@ const mapStoreToProps = (state, props) => ({
     folderList: state.folder.folderTileList,
     folders: state.folder.folders,
     isTileLoading: state.folder.folderTileList,
+    count: state.document.count,
+    page: state.document.page,
 });
 
 const mapDispatchToProps = dispatch => ({
     ...bindActionCreators({
         loadDocs,
+        loadDocsMore,
         docsUnMount,
         loadFilterFolders,
         modalOpen,
@@ -127,7 +136,7 @@ const mapDispatchToProps = dispatch => ({
     }, dispatch),
 });
 
-export default connect(
+export default withRouter(connect(
     mapStoreToProps,
     mapDispatchToProps,
-)(DocsComponent);
+)(DocsComponent));

@@ -14,6 +14,7 @@ export const makeUrls = {
     makeFilterFoldersFolder: id => `${urls.folder.customFolderUrl}?folder=${id}`,
     makeCustomFolder: id => `${urls.folder.customFolderUrl + id}/`,
     makeCustomFile: id => `${urls.docs.docsUrl + id}/`,
+    makeDocsMore: (id, page) => `${urls.docs.docsUrl}?folder=${id}&&page=${page}`,
 };
 
 export const tileType = {
@@ -45,6 +46,15 @@ export const format = {
     xls: '/static/img/formats/xls.png',
     jpg: '/static/img/formats/jpg.png',
     png: '/static/img/formats/png.png',
+    txt: '/static/img/formats/txt.png',
+    tex: '/static/img/formats/tex.png',
+    py: '/static/img/formats/py.png',
+    gif: '/static/img/formats/gif.png',
+};
+
+export const items = {
+    add: '/static/img/add.png',
+    back: '/static/img/back.png',
 };
 
 export function makeFormat(fileUrl) {

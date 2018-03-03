@@ -4,6 +4,7 @@ import {
     LOAD_FILTER_FOLDERS, LOAD_FILTER_FOLDERS_SUCCESS, LOAD_FOLDER, LOAD_FOLDERS,
     LOAD_FOLDERS_SUCCESS,
 } from '../actions/folder';
+import {DOCS_UNMOUNT} from "../actions/document";
 
 const initalState = {
     isLoading: false,
@@ -74,6 +75,15 @@ export default function folder(store = initalState, action) {
                 },
                 folderTileList: {
                     $set: action.payload.result,
+                },
+            });
+        case DOCS_UNMOUNT:
+            return update(store, {
+                isTileLoading: {
+                    $set: false,
+                },
+                folderTileList: {
+                    $set: [],
                 },
             });
         default:

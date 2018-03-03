@@ -4,12 +4,11 @@ import { bindActionCreators } from 'redux';
 import PropTypes from 'prop-types';
 import { modalOpen, setModal } from '../../actions/modal';
 import Modal from '../Modal';
-import { modalType } from '../../constants';
+import {items, modalType} from '../../constants';
 
 class AddFolderComponent extends React.Component {
     static propTypes = {
         id: PropTypes.number.isRequired,
-        imgUrl: PropTypes.string.isRequired,
         modalOpen: PropTypes.func.isRequired,
         setModal: PropTypes.func.isRequired,
         isOpen: PropTypes.bool.isRequired,
@@ -27,10 +26,8 @@ class AddFolderComponent extends React.Component {
         }
         return (
             <React.Fragment>
-                <div className="content-flex-item">
-                    {modal}
-                    <img className="icon" onClick={ this.onOpen } src={ this.props.imgUrl } />
-                </div>
+                {modal}
+                <img className="item-right" onClick={ this.onOpen } src={ items.add } />
             </React.Fragment>
         );
     }

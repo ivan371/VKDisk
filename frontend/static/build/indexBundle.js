@@ -634,6 +634,9 @@ var makeUrls = exports.makeUrls = {
     },
     makeCustomFile: function makeCustomFile(id) {
         return urls.docs.docsUrl + id + '/';
+    },
+    makeDocsMore: function makeDocsMore(id, page) {
+        return urls.docs.docsUrl + '?folder=' + id + '&&page=' + page;
     }
 };
 
@@ -665,7 +668,16 @@ var format = exports.format = {
     ppt: '/static/img/formats/pptx.png',
     xls: '/static/img/formats/xls.png',
     jpg: '/static/img/formats/jpg.png',
-    png: '/static/img/formats/png.png'
+    png: '/static/img/formats/png.png',
+    txt: '/static/img/formats/txt.png',
+    tex: '/static/img/formats/tex.png',
+    py: '/static/img/formats/py.png',
+    gif: '/static/img/formats/gif.png'
+};
+
+var items = exports.items = {
+    add: '/static/img/add.png',
+    back: '/static/img/back.png'
 };
 
 function makeFormat(fileUrl) {
@@ -3214,8 +3226,9 @@ exports.default = PolymorphicSchema;
 Object.defineProperty(exports, "__esModule", {
     value: true
 });
-exports.UPDATE_DOC = exports.LOAD_DOC_ERROR = exports.LOAD_DOC = exports.DOCS_UNMOUNT = exports.LOAD_DOCS_ERROR = exports.LOAD_DOCS_SUCCESS = exports.LOAD_DOCS = undefined;
+exports.UPDATE_DOC = exports.LOAD_DOC_ERROR = exports.LOAD_DOC = exports.DOCS_UNMOUNT = exports.LOAD_DOCS_ERROR = exports.LOAD_DOCS_MORE = exports.LOAD_DOCS_SUCCESS = exports.LOAD_DOCS = undefined;
 exports.loadDocs = loadDocs;
+exports.loadDocsMore = loadDocsMore;
 exports.updateDoc = updateDoc;
 exports.docsUnMount = docsUnMount;
 
@@ -3225,6 +3238,7 @@ var _document = __webpack_require__(261);
 
 var LOAD_DOCS = exports.LOAD_DOCS = 'LOAD_DOCS';
 var LOAD_DOCS_SUCCESS = exports.LOAD_DOCS_SUCCESS = 'LOAD_DOCS_SUCCESS';
+var LOAD_DOCS_MORE = exports.LOAD_DOCS_MORE = 'LOAD_DOCS_MORE';
 var LOAD_DOCS_ERROR = exports.LOAD_DOCS_ERROR = 'LOAD_DOCS_ERROR';
 var DOCS_UNMOUNT = exports.DOCS_UNMOUNT = 'DOCS_UNMOUNT';
 var LOAD_DOC = exports.LOAD_DOC = 'LOAD_DOC';
@@ -3233,6 +3247,11 @@ var UPDATE_DOC = exports.UPDATE_DOC = 'UPDATE_DOC';
 
 function loadDocs(url) {
     var types = [LOAD_DOCS, LOAD_DOCS_SUCCESS, LOAD_DOCS_ERROR];
+    return (0, _load.apiLoad)(url, 'GET', types, null, _document.docsNormalize, false);
+}
+
+function loadDocsMore(url) {
+    var types = [LOAD_DOCS, LOAD_DOCS_MORE, LOAD_DOCS_ERROR];
     return (0, _load.apiLoad)(url, 'GET', types, null, _document.docsNormalize, false);
 }
 
@@ -30647,6 +30666,8 @@ var _reactAddonsUpdate2 = _interopRequireDefault(_reactAddonsUpdate);
 
 var _folder = __webpack_require__(25);
 
+var _document = __webpack_require__(77);
+
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 var initalState = {
@@ -30721,6 +30742,15 @@ function folder() {
                 },
                 folderTileList: {
                     $set: action.payload.result
+                }
+            });
+        case _document.DOCS_UNMOUNT:
+            return (0, _reactAddonsUpdate2.default)(store, {
+                isTileLoading: {
+                    $set: false
+                },
+                folderTileList: {
+                    $set: []
                 }
             });
         default:
@@ -31641,6 +31671,27 @@ function document() {
                 },
                 docList: {
                     $set: action.payload.result
+                },
+                count: {
+                    $set: action.payload.count
+                },
+                page: {
+                    $set: 2
+                }
+            });
+        case _document.LOAD_DOCS_MORE:
+            return (0, _reactAddonsUpdate2.default)(store, {
+                isLoading: {
+                    $set: true
+                },
+                docList: {
+                    $push: action.payload.result
+                },
+                count: {
+                    $set: action.payload.count
+                },
+                page: {
+                    $set: store.page + 1
                 }
             });
         case _document.DOCS_UNMOUNT:
@@ -32745,6 +32796,8 @@ var _BackFolder2 = _interopRequireDefault(_BackFolder);
 
 var _modal = __webpack_require__(26);
 
+var _reactRouterDom = __webpack_require__(47);
+
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
@@ -32770,6 +32823,10 @@ var DocsComponent = function (_React$Component) {
         return _ret = (_temp = (_this = _possibleConstructorReturn(this, (_ref = DocsComponent.__proto__ || Object.getPrototypeOf(DocsComponent)).call.apply(_ref, [this].concat(args))), _this), _this.onOpen = function () {
             _this.props.modalOpen();
             _this.props.setModal(_constants.modalType.folderTransfer);
+        }, _this.goBack = function (e) {
+            _this.props.history.goBack(e);
+        }, _this.onLoadMore = function (e) {
+            _this.props.loadDocsMore(_constants.makeUrls.makeDocsMore(_this.props.params.id, _this.props.page));
         }, _temp), _possibleConstructorReturn(_this, _ret);
     }
 
@@ -32810,7 +32867,7 @@ var DocsComponent = function (_React$Component) {
 
             var docList = [];
             var folderList = [];
-            var folderName = null;
+            var folderHeader = null;
             if (this.props.isTileLoading) {
                 folderList = this.props.folderList.map(function (folderId) {
                     return _react2.default.createElement(_Tile2.default, {
@@ -32822,22 +32879,26 @@ var DocsComponent = function (_React$Component) {
                         type: _constants.tileType.folder
                     });
                 });
-                if (this.props.params.hasOwnProperty('id')) {
-                    folderList.unshift(_react2.default.createElement(_AddFolder2.default, {
-                        key: 0,
-                        imgUrl: _constants.format.folderAdd,
-                        id: parseInt(this.props.params.id)
-                    }));
-                    folderList.unshift(_react2.default.createElement(_BackFolder2.default, {
-                        key: -1,
-                        imgUrl: _constants.format.folderBack
-                    }));
-                }
             }
             if (this.props.isLoading) {
                 if (this.props.isFolderLoading) {
                     if (this.props.params.hasOwnProperty('id')) {
-                        folderName = this.props.folders[this.props.params.id].title;
+                        folderHeader = _react2.default.createElement(
+                            _react2.default.Fragment,
+                            null,
+                            _react2.default.createElement('img', { src: _constants.items.back, className: 'item-left', onClick: this.goBack }),
+                            _react2.default.createElement(
+                                'div',
+                                { className: 'item-name' },
+                                this.props.folders[this.props.params.id].title
+                            ),
+                            _react2.default.createElement(_AddFolder2.default, { id: parseInt(this.props.params.id) }),
+                            _react2.default.createElement(
+                                'button',
+                                { className: 'vk-button', onClick: this.onOpen },
+                                '\u041F\u0435\u0440\u0435\u043C\u0435\u0441\u0442\u0438\u0442\u044C'
+                            )
+                        );
                     }
                 }
                 docList = this.props.docList.map(function (docId) {
@@ -32857,22 +32918,22 @@ var DocsComponent = function (_React$Component) {
                 _react2.default.createElement(
                     'div',
                     { className: 'content-item' },
-                    _react2.default.createElement(
-                        'span',
-                        null,
-                        folderName
-                    ),
-                    _react2.default.createElement(
-                        'button',
-                        { className: 'vk-button', onClick: this.onOpen },
-                        '\u041F\u0435\u0440\u0435\u043C\u0435\u0441\u0442\u0438\u0442\u044C'
-                    )
+                    folderHeader
                 ),
                 _react2.default.createElement(
                     'div',
                     { className: 'content-flex' },
                     folderList,
-                    docList
+                    docList,
+                    this.props.isLoading && this.props.count > 10 * (this.props.page - 1) ? _react2.default.createElement(
+                        'div',
+                        null,
+                        _react2.default.createElement(
+                            'button',
+                            { onClick: this.onLoadMore },
+                            '\u041F\u043E\u043A\u0430\u0437\u0430\u0442\u044C \u0435\u0449\u0435'
+                        )
+                    ) : null
                 )
             );
         }
@@ -32889,7 +32950,10 @@ DocsComponent.propTypes = {
     docList: _propTypes2.default.array.isRequired,
     folderList: _propTypes2.default.array.isRequired,
     modalOpen: _propTypes2.default.func.isRequired,
-    setModal: _propTypes2.default.func.isRequired
+    setModal: _propTypes2.default.func.isRequired,
+    loadDocsMore: _propTypes2.default.func.isRequired,
+    count: _propTypes2.default.number.isRequired,
+    page: _propTypes2.default.number.isRequired
 };
 
 
@@ -32901,13 +32965,16 @@ var mapStoreToProps = function mapStoreToProps(state, props) {
         docs: state.document.docs,
         folderList: state.folder.folderTileList,
         folders: state.folder.folders,
-        isTileLoading: state.folder.folderTileList
+        isTileLoading: state.folder.folderTileList,
+        count: state.document.count,
+        page: state.document.page
     };
 };
 
 var mapDispatchToProps = function mapDispatchToProps(dispatch) {
     return _extends({}, (0, _redux.bindActionCreators)({
         loadDocs: _document.loadDocs,
+        loadDocsMore: _document.loadDocsMore,
         docsUnMount: _document.docsUnMount,
         loadFilterFolders: _folder.loadFilterFolders,
         modalOpen: _modal.modalOpen,
@@ -32915,7 +32982,7 @@ var mapDispatchToProps = function mapDispatchToProps(dispatch) {
     }, dispatch));
 };
 
-exports.default = (0, _reactRedux.connect)(mapStoreToProps, mapDispatchToProps)(DocsComponent);
+exports.default = (0, _reactRouterDom.withRouter)((0, _reactRedux.connect)(mapStoreToProps, mapDispatchToProps)(DocsComponent));
 
 /***/ }),
 /* 279 */
@@ -32982,7 +33049,8 @@ var TileComponent = function (_React$Component) {
 
         return _ret = (_temp = (_this = _possibleConstructorReturn(this, (_ref = TileComponent.__proto__ || Object.getPrototypeOf(TileComponent)).call.apply(_ref, [this].concat(args))), _this), _this.state = {
             isClicked: false,
-            title: _this.props.title
+            title: _this.props.title,
+            isChecked: false
         }, _this.onHandleChange = function (e) {
             _this.setState({ isClicked: !_this.state.isClicked });
         }, _this.onChange = function (e) {
@@ -33014,7 +33082,7 @@ var TileComponent = function (_React$Component) {
             }
         }, _this.doClick = function (e) {
             _this.clickedOnce = undefined;
-            console.log('single click');
+            _this.setState({ isChecked: !_this.state.isChecked });
         }, _temp), _possibleConstructorReturn(_this, _ret);
     }
 
@@ -33033,7 +33101,7 @@ var TileComponent = function (_React$Component) {
             }
             return _react2.default.createElement(
                 'div',
-                { className: 'content-flex-item' },
+                { className: 'content-flex-item ' + (!this.state.isChecked ? '' : 'checked') },
                 _react2.default.createElement('img', { className: 'icon', onClick: this.handleClick, src: imageUrl }),
                 !this.state.isClicked ? _react2.default.createElement(
                     'div',
@@ -50282,12 +50350,8 @@ var AddFolderComponent = function (_React$Component) {
             return _react2.default.createElement(
                 _react2.default.Fragment,
                 null,
-                _react2.default.createElement(
-                    'div',
-                    { className: 'content-flex-item' },
-                    modal,
-                    _react2.default.createElement('img', { className: 'icon', onClick: this.onOpen, src: this.props.imgUrl })
-                )
+                modal,
+                _react2.default.createElement('img', { className: 'item-right', onClick: this.onOpen, src: _constants.items.add })
             );
         }
     }]);
@@ -50297,7 +50361,6 @@ var AddFolderComponent = function (_React$Component) {
 
 AddFolderComponent.propTypes = {
     id: _propTypes2.default.number.isRequired,
-    imgUrl: _propTypes2.default.string.isRequired,
     modalOpen: _propTypes2.default.func.isRequired,
     setModal: _propTypes2.default.func.isRequired,
     isOpen: _propTypes2.default.bool.isRequired
@@ -50860,7 +50923,7 @@ exports = module.exports = __webpack_require__(290)(false);
 
 
 // module
-exports.push([module.i, "body {\n  background-color: #EDEEF0;\n  margin: 0;\n  font-family: -apple-system,BlinkMacSystemFont,Roboto,Helvetica Neue,sans-serif;\n}\n\na {\n  text-decoration: none;\n  cursor: pointer;\n}\n\n.page-header {\n  height: 42px;\n  background-color: #4A76A8;\n}\n\n.page-content {\n  margin: 0 auto;\n  width: 960px;\n  display: flex;\n}\n\n.page-header-content {\n  margin: 0 auto;\n  width: 960px;\n}\n\n.page-header-content-logo {\n  width: 139px;\n}\n\n.page-header-content h2 {\n  margin: 0;\n  padding-top: 5px;\n  color: white;\n}\n\n.page-content-navigation {\n  margin-top: 15px;\n  width: 139px;\n}\n\n.page-content-content {\n  padding-top: 15px;\n  padding-bottom: 2px;\n  height: 540px;\n  min-width: 400px;\n  display: flex;\n}\n\n.page-content-content-wrap {\n  width: 300px;\n  background-color: white;\n  max-height: 100%;\n  border-radius: 2px 2px 0 0;\n  box-shadow: 0 1px 0 0 #d7d8db, 0 0 0 1px #e3e4e8;\n}\n\n.page-content-content-wrap a {\n  color: #285473;\n}\n\n.page-content-content-content {\n  width: 500px;\n  background-color: white;\n  max-height: 100%;\n  border-radius: 2px 2px 0 0;\n  box-shadow: 0 1px 0 0 #d7d8db, 0 0 0 1px #e3e4e8;\n}\n\n.page-content-link {\n  display: block;\n  white-space: nowrap;\n  padding: 10px;\n  color: #285473;\n}\n\n.page-content-link:hover {\n  background-color: #E1E5EB;\n}\n\n.content-item {\n  padding: 10px;\n  height: 30px;\n  box-shadow: 0 1px 0 0 #d7d8db;\n}\n\n.page-content-link-item {\n  display: flex;\n}\n\n.page-content-link-item:hover {\n  background-color: #EDEEF0;\n  cursor: pointer;\n}\n\n.content-item input {\n  border: 0px;\n}\n\ninput[type=\"text\"]:focus {\n  outline: none;\n}\n\n.content-flex {\n  display: flex;\n  align-content: start;\n  flex-wrap: wrap;\n}\n\n.content-flex-item {\n  padding: 10px;\n  height: 80px;\n  width: 80px;\n  text-align: center;\n}\n\n.content-flex-item a {\n  color: black;\n}\n\n.content-flex-item:hover {\n  background-color: #EDEEF0;\n}\n\nimg.icon {\n  width: 50px;\n  height: 50px;\n  cursor: pointer;\n}\n\nimg.item {\n  width: 20px;\n  height: 20px;\n  margin-right: 5px;\n}\n\n.modal-container {\n  position: fixed;\n  left: 0;\n  top: 0;\n  background-color: rgba(0, 0, 0, 0.7);\n  width: 100%;\n  height: 100%;\n  z-index: 10;\n}\n\n.modal {\n  cursor: auto;\n  z-index: 100;\n  height: 336px;\n  width: 500px;\n  background-color: white;\n  margin: 116px auto;\n  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.35);\n  outline: none;\n  border-radius: 5px;\n}\n\n.modal-header {\n  border-radius: 5px 5px 0 0;\n  width: 100%;\n  height: 54px;\n  background-color: #4A76A8;\n}\n\n.modal-header-title {\n  padding: 1px;\n}\n\n.modal-header-title p {\n  color: white;\n}\n\n.modal-content {\n  padding: 20px;\n  height: 240px;\n  background-color: #F7F7F7;\n}\n\n.modal-content__img img {\n  width: 100px;\n}\n\n.vk-button {\n  background-color: #5b88bd;\n  text-decoration: none;\n  float: right;\n  padding: 7px 16px 8px;\n  margin: 0;\n  font-size: 12.5px;\n  display: inline-block;\n  zoom: 1;\n  cursor: pointer;\n  white-space: nowrap;\n  outline: none;\n  font-family: -apple-system,BlinkMacSystemFont,Roboto,Helvetica Neue,sans-serif;\n  vertical-align: top;\n  line-height: 15px;\n  text-align: center;\n  color: #fff;\n  border: 0;\n  border-radius: 4px;\n  box-sizing: border-box;\n}\n\n.vk-input {\n  background: #fff;\n  color: #000;\n  border: 1px solid #c0cad5;\n  padding: 5px;\n  vertical-align: top;\n  margin: 0;\n  overflow: auto;\n  outline: 0;\n  line-height: 150%;\n  word-wrap: break-word;\n  width: 200px;\n  cursor: text;\n}\n\n.modal-footer {\n  margin-top: 80px;\n}\n\n.content-item__title {\n  cursor: text;\n  text-align: center;\n  max-width: 50px;\n  margin: 0 auto;\n  max-height: 38px;\n}\n\n.content-item__input {\n  width: 50px;\n  border: 1px solid #c0cad5;\n  cursor: text;\n  outline: 0;\n  line-height: 150%;\n}\n\n.page-content-item__input {\n  width: 100px;\n  border: 1px solid #c0cad5;\n  cursor: text;\n  outline: 0;\n  line-height: 150%;\n}\n\n.item-right {\n  width: 20px;\n  height: 20px;\n  float: right;\n  vertical-align: top;\n}\n", ""]);
+exports.push([module.i, "body {\n  background-color: #EDEEF0;\n  margin: 0;\n  font-family: -apple-system,BlinkMacSystemFont,Roboto,Helvetica Neue,sans-serif;\n}\n\na {\n  text-decoration: none;\n  cursor: pointer;\n}\n\n.page-header {\n  height: 42px;\n  background-color: #4A76A8;\n}\n\n.page-content {\n  margin: 0 auto;\n  width: 960px;\n  display: flex;\n}\n\n.page-header-content {\n  margin: 0 auto;\n  width: 960px;\n}\n\n.page-header-content-logo {\n  width: 139px;\n}\n\n.page-header-content h2 {\n  margin: 0;\n  padding-top: 5px;\n  color: white;\n}\n\n.page-content-navigation {\n  margin-top: 15px;\n  width: 139px;\n}\n\n.page-content-content {\n  padding-top: 15px;\n  padding-bottom: 2px;\n  height: 540px;\n  min-width: 400px;\n  display: flex;\n}\n\n.page-content-content-wrap {\n  width: 300px;\n  background-color: white;\n  max-height: 100%;\n  border-radius: 2px 2px 0 0;\n  box-shadow: 0 1px 0 0 #d7d8db, 0 0 0 1px #e3e4e8;\n}\n\n.page-content-content-wrap a {\n  color: #285473;\n}\n\n.page-content-content-content {\n  width: 520px;\n  background-color: white;\n  max-height: 100%;\n  border-radius: 2px 2px 0 0;\n  box-shadow: 0 1px 0 0 #d7d8db, 0 0 0 1px #e3e4e8;\n}\n\n.page-content-link {\n  display: block;\n  white-space: nowrap;\n  padding: 10px;\n  color: #285473;\n}\n\n.page-content-link:hover {\n  background-color: #E1E5EB;\n}\n\n.content-item {\n  padding: 10px;\n  height: 30px;\n  box-shadow: 0 1px 0 0 #d7d8db;\n}\n\n.page-content-link-item {\n  display: flex;\n}\n\n.page-content-link-item:hover {\n  background-color: #EDEEF0;\n  cursor: pointer;\n}\n\n.content-item input {\n  border: 0px;\n}\n\ninput[type=\"text\"]:focus {\n  outline: none;\n}\n\n.content-flex {\n  display: flex;\n  align-content: start;\n  flex-wrap: wrap;\n  overflow-y: auto;\n  height: 480px;\n}\n\n.content-flex-item {\n  padding: 10px;\n  height: 80px;\n  width: 80px;\n  text-align: center;\n}\n\n.content-flex-item a {\n  color: black;\n}\n\n.content-flex-item:hover {\n  background-color: #EDEEF0;\n}\n\nimg.icon {\n  width: 50px;\n  height: 50px;\n  cursor: pointer;\n}\n\nimg.item {\n  width: 20px;\n  height: 20px;\n  margin-right: 5px;\n}\n\n.modal-container {\n  position: fixed;\n  left: 0;\n  top: 0;\n  text-align: center;\n  background-color: rgba(0, 0, 0, 0.7);\n  width: 100%;\n  height: 100%;\n  z-index: 10;\n}\n\n.modal {\n  cursor: auto;\n  z-index: 100;\n  height: 336px;\n  width: 500px;\n  background-color: white;\n  margin: 116px auto;\n  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.35);\n  outline: none;\n  border-radius: 5px;\n}\n\n.modal-header {\n  border-radius: 5px 5px 0 0;\n  width: 100%;\n  height: 54px;\n  background-color: #4A76A8;\n}\n\n.modal-header-title {\n  padding: 1px;\n}\n\n.modal-header-title p {\n  color: white;\n}\n\n.modal-content {\n  padding: 20px;\n  height: 240px;\n  background-color: #F7F7F7;\n}\n\n.modal-content__img img {\n  width: 100px;\n}\n\n.vk-button {\n  background-color: #5b88bd;\n  text-decoration: none;\n  float: right;\n  padding: 7px 16px 8px;\n  margin: 0;\n  font-size: 12.5px;\n  display: inline-block;\n  zoom: 1;\n  cursor: pointer;\n  white-space: nowrap;\n  outline: none;\n  font-family: -apple-system,BlinkMacSystemFont,Roboto,Helvetica Neue,sans-serif;\n  vertical-align: top;\n  line-height: 15px;\n  text-align: center;\n  color: #fff;\n  border: 0;\n  border-radius: 4px;\n  box-sizing: border-box;\n}\n\n.vk-input {\n  background: #fff;\n  color: #000;\n  border: 1px solid #c0cad5;\n  padding: 5px;\n  vertical-align: top;\n  margin: 0;\n  overflow: auto;\n  outline: 0;\n  line-height: 150%;\n  word-wrap: break-word;\n  width: 200px;\n  cursor: text;\n}\n\n.modal-footer {\n  margin-top: 80px;\n}\n\n.content-item__title {\n  cursor: text;\n  text-align: center;\n  max-width: 50px;\n  margin: 0 auto;\n  max-height: 38px;\n  text-overflow: ellipsis;\n  white-space: pre-wrap;\n  overflow: hidden;\n}\n\n.content-item__title:hover {\n  white-space: normal;\n  overflow: visible;\n}\n\n.content-item__input {\n  width: 50px;\n  border: 1px solid #c0cad5;\n  cursor: text;\n  outline: 0;\n  line-height: 150%;\n}\n\n.page-content-item__input {\n  width: 100px;\n  border: 1px solid #c0cad5;\n  cursor: text;\n  outline: 0;\n  line-height: 150%;\n}\n\n.item-right {\n  cursor: pointer;\n  padding: 5px;\n  width: 20px;\n  height: 20px;\n  float: right;\n  vertical-align: top;\n}\n\n.item-left {\n  cursor: pointer;\n  padding: 5px;\n  width: 20px;\n  height: 20px;\n  float: left;\n  vertical-align: top;\n}\n\n.item-name {\n  float: left;\n  padding: 5px;\n  height: 20px;\n}\n\n.checked {\n  background-color: #E1E5EB;\n}\n", ""]);
 
 // exports
 
