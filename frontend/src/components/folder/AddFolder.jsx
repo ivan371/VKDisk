@@ -2,23 +2,28 @@ import React from 'react';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import PropTypes from 'prop-types';
-import { modalOpen } from '../../actions/modal';
+import { modalOpen, setModal } from '../../actions/modal';
 import Modal from '../Modal';
+import { modalType } from '../../constants';
 
 class AddFolderComponent extends React.Component {
     static propTypes = {
         id: PropTypes.number.isRequired,
         imgUrl: PropTypes.string.isRequired,
+        modalOpen: PropTypes.func.isRequired,
+        setModal: PropTypes.func.isRequired,
+        isOpen: PropTypes.bool.isRequired,
     };
 
     onOpen = () => {
         this.props.modalOpen();
+        this.props.setModal(modalType.folderCreate);
     };
 
     render() {
         let modal = null;
         if (this.props.isOpen) {
-            modal = <Modal id={this.props.id} />;
+            modal = <Modal id={ this.props.id } />;
         }
         return (
             <React.Fragment>
@@ -39,6 +44,7 @@ const mapStoreToProps = (state, props) => ({
 const mapDispatchToProps = dispatch => ({
     ...bindActionCreators({
         modalOpen,
+        setModal,
     }, dispatch),
 });
 

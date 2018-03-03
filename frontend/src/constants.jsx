@@ -25,3 +25,8 @@ export const folderType = {
     root: 'root',
     chat: 'chat',
 };
+
+export const modalType = {
+    folderCreate: 'folderCreate',
+    folderTransfer: 'folderTransfer',
+};

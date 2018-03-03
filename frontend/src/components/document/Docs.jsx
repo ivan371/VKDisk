@@ -2,12 +2,13 @@ import React from 'react';
 import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
 import PropTypes from 'prop-types';
-import { makeUrls, tileType, urls } from '../../constants';
+import {makeUrls, modalType, tileType, urls} from '../../constants';
 import { docsUnMount, loadDocs } from '../../actions/document';
 import { loadFilterFolders } from '../../actions/folder';
 import Tile from '../Tile';
 import AddFolder from '../folder/AddFolder';
 import BackFolder from '../folder/BackFolder';
+import {modalOpen, setModal} from '../../actions/modal';
 
 class DocsComponent extends React.Component {
     static propTypes = {
@@ -17,6 +18,8 @@ class DocsComponent extends React.Component {
         params: PropTypes.object.isRequired,
         docList: PropTypes.array.isRequired,
         folderList: PropTypes.array.isRequired,
+        modalOpen: PropTypes.func.isRequired,
+        setModal: PropTypes.func.isRequired,
     };
 
     componentDidMount() {
@@ -42,9 +45,15 @@ class DocsComponent extends React.Component {
     componentWillUnmount() {
         this.props.docsUnMount();
     }
+
+    onOpen = () => {
+        this.props.modalOpen();
+        this.props.setModal(modalType.folderTransfer);
+    };
     render() {
         let docList = [];
         let folderList = [];
+        let folderName = null;
         if (this.props.isTileLoading) {
             folderList = this.props.folderList.map(folderId => (<Tile
                 url={ `/root/${folderId}` }
@@ -67,6 +76,11 @@ class DocsComponent extends React.Component {
             }
         }
         if (this.props.isLoading) {
+            if (this.props.isFolderLoading) {
+                if (this.props.params.hasOwnProperty('id')) {
+                    folderName = this.props.folders[this.props.params.id].title;
+                }
+            }
             docList = this.props.docList.map(docId => (<Tile
                 id={ docId }
                 url={ `/file/${docId}` }
@@ -77,9 +91,17 @@ class DocsComponent extends React.Component {
             />));
         }
         return (
-            <div className="page-content-content-content content-flex">
-                {folderList}
-                {docList}
+            <div className="page-content-content-content">
+                <div className="content-item">
+                    <span>
+                        {folderName}
+                    </span>
+                    <button className="vk-button" onClick={ this.onOpen }>Переместить</button>
+                </div>
+                <div className="content-flex">
+                    {folderList}
+                    {docList}
+                </div>
             </div>
         );
     }
@@ -87,6 +109,7 @@ class DocsComponent extends React.Component {
 
 const mapStoreToProps = (state, props) => ({
     isLoading: state.document.isLoading,
+    isFolderLoading: state.folder.isLoading,
     docList: state.document.docList,
     docs: state.document.docs,
     folderList: state.folder.folderTileList,
@@ -99,6 +122,8 @@ const mapDispatchToProps = dispatch => ({
         loadDocs,
         docsUnMount,
         loadFilterFolders,
+        modalOpen,
+        setModal,
     }, dispatch),
 });
 

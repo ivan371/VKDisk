@@ -40,7 +40,7 @@ a{
 .page-content-content{
     padding-top: 15px;
     padding-bottom: 2px;
-    height: 500px;
+    height: 540px;
     min-width: 400px;
     display: flex;
 }
@@ -72,6 +72,7 @@ a{
 }
 .content-item{
     padding: 10px;
+    height: 30px;
     box-shadow: 0 1px 0 0 #d7d8db;
 }
 .page-content-link-item {
@@ -143,7 +144,7 @@ img.item{
     background-color: $vk-color;
 }
 .modal-header-title{
-    padding: 20px;
+    padding: 1px;
 }
 .modal-header-title p{
     color: white;
@@ -207,4 +208,19 @@ img.item{
     cursor: text;
     outline: 0;
     line-height: 150%;
+}
+
+.page-content-item__input{
+    width: 100px;
+    border: 1px solid #c0cad5;
+    cursor: text;
+    outline: 0;
+    line-height: 150%;
+}
+
+.item-right{
+    width: 20px;
+    height: 20px;
+    float: right;
+    vertical-align: top;
 }

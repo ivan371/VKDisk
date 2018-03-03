@@ -5,6 +5,8 @@ import PropTypes from 'prop-types';
 import { modalOpen } from '../actions/modal';
 import { createFolder } from '../actions/folder';
 import CreateFolder from './folder/CreateFolder';
+import { modalType } from '../constants';
+import TransferFolder from './folder/TransferFolder';
 
 class ModalComponent extends React.Component {
     static propTypes = {
@@ -21,10 +23,20 @@ class ModalComponent extends React.Component {
     };
 
     render() {
+        let modal = null;
+        switch (this.props.modal) {
+            case modalType.folderCreate:
+                modal = <CreateFolder id={ this.props.id } />;
+                break;
+            case modalType.folderTransfer:
+                modal = <TransferFolder id={ this.props.id } />;
+                break;
+            default:
+        }
         return (
             <div className="modal-container" onClick={ this.onOpen }>
                 <div className="modal" onClick={ this.onCancelOpen }>
-                    <CreateFolder id={ this.props.id } />
+                    {modal}
                 </div>
             </div>
         );
@@ -33,6 +45,7 @@ class ModalComponent extends React.Component {
 
 
 const mapStoreToProps = (state, props) => ({
+    modal: state.modal.modal,
 });
 
 const mapDispatchToProps = dispatch => ({
