@@ -1,6 +1,7 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import { Link } from 'react-router-dom';
+import { withRouter } from 'react-router-dom';
+import _ from 'lodash';
 import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
 import { updateFolder } from '../actions/folder';
@@ -45,6 +46,25 @@ class TileComponent extends React.Component {
         }
     };
 
+    handleClick = (e) => {
+        if (!this._delayedClick) {
+            this._delayedClick = _.debounce(this.doClick, 500);
+        }
+        if (this.clickedOnce) {
+            this._delayedClick.cancel();
+            this.clickedOnce = false;
+            this.props.history.push(this.props.url);
+        } else {
+            this._delayedClick(e);
+            this.clickedOnce = true;
+        }
+    };
+
+    doClick = (e) => {
+        this.clickedOnce = undefined;
+        console.log('single click');
+    };
+
     render() {
         let imageUrl = null;
         switch (this.props.type) {
@@ -58,9 +78,7 @@ class TileComponent extends React.Component {
         }
         return (
             <div className="content-flex-item">
-                <Link to={ this.props.url }>
-                    <img className="icon" src={ imageUrl } />
-                </Link>
+                <img className="icon" onClick={ this.handleClick } src={ imageUrl } />
                 {!this.state.isClicked ?
                     <div className="content-item__title" onClick={ this.onHandleChange }>{this.props.title}</div>
                     : <input
@@ -87,7 +105,7 @@ const mapDispatchToProps = dispatch => ({
 });
 
 
-export default connect(
+export default withRouter(connect(
     mapStoreToProps,
     mapDispatchToProps,
-)(TileComponent);
+)(TileComponent));

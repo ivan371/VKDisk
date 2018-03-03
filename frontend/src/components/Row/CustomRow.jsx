@@ -41,7 +41,7 @@ class CustomRowComponent extends React.Component {
                     </div>
                     {folderList}
                 </div>
-                <Docs params={ this.props.params } />
+                <Docs params={ this.props.params } history={ this.props.history } />
             </div>
         );
     }

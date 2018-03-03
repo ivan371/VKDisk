@@ -56,6 +56,7 @@ class DocsComponent extends React.Component {
         let folderName = null;
         if (this.props.isTileLoading) {
             folderList = this.props.folderList.map(folderId => (<Tile
+                history={ this.props.history }
                 url={ `/root/${folderId}` }
                 title={ this.props.folders[folderId].title }
                 key={ folderId }
@@ -81,6 +82,7 @@ class DocsComponent extends React.Component {
                 }
             }
             docList = this.props.docList.map(docId => (<Tile
+                history={ this.props.history }
                 id={ docId }
                 url={ `/file/${docId}` }
                 title={ this.props.docs[docId].title }
