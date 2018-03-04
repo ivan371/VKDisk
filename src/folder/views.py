@@ -1,16 +1,23 @@
 from django.shortcuts import render
 from rest_framework import viewsets, status
 from rest_framework.response import Response
+from rest_framework.pagination import PageNumberPagination
 
 from .models import Folder
 from .serializers import FolderSerializer, FolderBulkSerializer
 from django.db.models import Q
 from django.http import Http404
 
+class LargeResultsSetPagination(PageNumberPagination):
+    page_size = 100
+    page_size_query_param = 'page_size'
+    max_page_size = 1000
+
 
 class FolderViewSet(viewsets.ModelViewSet):
     queryset = Folder.objects.all().prefetch_related('author')
     serializer_class = FolderSerializer
+    pagination_class = LargeResultsSetPagination
 
     def add_folders(self, folders):
         folder_list = [Folder(

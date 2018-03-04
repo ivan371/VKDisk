@@ -9,7 +9,7 @@ class FolderFilteredPrimaryKeyRelatedField(serializers.PrimaryKeyRelatedField):
         queryset = super(FolderFilteredPrimaryKeyRelatedField, self).get_queryset()
         if not request or not queryset:
             return None
-        return queryset.filter(author=request.user)
+        return queryset.filter(author=request.user, type='folder')
 
 
 class FolderSerializer(serializers.HyperlinkedModelSerializer):
