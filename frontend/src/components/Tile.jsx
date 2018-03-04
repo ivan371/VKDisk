@@ -1,24 +1,112 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import { Link } from 'react-router-dom';
+import { withRouter } from 'react-router-dom';
+import _ from 'lodash';
+import { bindActionCreators } from 'redux';
+import { connect } from 'react-redux';
+import { updateFolder } from '../actions/folder';
+import { format, makeUrls, tileType, makeFormat } from '../constants';
+import { updateDoc } from '../actions/document';
 
 class TileComponent extends React.Component {
+    static propTypes = {
+        title: PropTypes.string.isRequired,
+        url: PropTypes.string.isRequired,
+        id: PropTypes.number.isRequired,
+        updateFolder: PropTypes.func.isRequired,
+        updateDoc: PropTypes.func.isRequired,
+        type: PropTypes.string.isRequired,
+    };
+
+    state = {
+        isClicked: false,
+        title: this.props.title,
+        isChecked: false,
+    };
+
+    onHandleChange = (e) => {
+        this.setState({ isClicked: !this.state.isClicked });
+    };
+
+    onChange = (e) => {
+        this.setState({ [e.target.name]: e.target.value });
+    };
+
+    onUpdate = (e) => {
+        if (e.keyCode === 13) {
+            switch (this.props.type) {
+                case tileType.folder:
+                    this.props.updateFolder(makeUrls.makeCustomFolder(this.props.id), this.state.title);
+                    break;
+                case tileType.file:
+                    this.props.updateDoc(makeUrls.makeCustomFile(this.props.id), this.state.title);
+                    break;
+                default:
+            }
+            this.onHandleChange(e);
+        }
+    };
+
+    handleClick = (e) => {
+        if (!this._delayedClick) {
+            this._delayedClick = _.debounce(this.doClick, 500);
+        }
+        if (this.clickedOnce) {
+            this._delayedClick.cancel();
+            this.clickedOnce = false;
+            this.props.history.push(this.props.url);
+        } else {
+            this._delayedClick(e);
+            this.clickedOnce = true;
+        }
+    };
+
+    doClick = (e) => {
+        this.clickedOnce = undefined;
+        this.setState({ isChecked: !this.state.isChecked });
+    };
+
     render() {
+        let imageUrl = null;
+        switch (this.props.type) {
+            case tileType.folder:
+                imageUrl = format.folder;
+                break;
+            case tileType.file:
+                imageUrl = makeFormat(this.props.title);
+                break;
+            default:
+        }
         return (
-            <div className="content-flex-item">
-                <Link to={ this.props.url }>
-                    <img className="icon" src={ this.props.imgUrl } />
-                    <p>{this.props.title}</p>
-                </Link>
+            <div className={ `content-flex-item ${!this.state.isChecked ? '' : 'checked'}` }>
+                <img className="icon" onClick={ this.handleClick } src={ imageUrl } />
+                {!this.state.isClicked ?
+                    <div className="content-item__title" onClick={ this.onHandleChange }>{this.props.title}</div>
+                    : <input
+                        className="content-item__input"
+                        value={ this.state.title }
+                        onChange={ this.onChange }
+                        onKeyDown={ this.onUpdate }
+                        name="title"
+                    />
+                }
             </div>
         );
     }
 }
 
-TileComponent.propTypes = {
-    title: PropTypes.string.isRequired,
-    imgUrl: PropTypes.string.isRequired,
-    url: PropTypes.string.isRequired,
-};
+const mapStoreToProps = (state, props) => ({
+});
 
-export default TileComponent;
+const mapDispatchToProps = dispatch => ({
+    ...bindActionCreators({
+        updateFolder,
+        updateDoc,
+    }, dispatch),
+});
+
+
+export default withRouter(connect(
+    mapStoreToProps,
+    mapDispatchToProps,
+)(TileComponent));

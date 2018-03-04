@@ -1,9 +1,15 @@
 import update from 'react-addons-update';
-import {LOAD_FILTER_FOLDERS, LOAD_FILTER_FOLDERS_SUCCESS, LOAD_FOLDERS, LOAD_FOLDERS_SUCCESS} from "../actions/folder";
+import {
+    FOLDER_CREATE,
+    LOAD_FILTER_FOLDERS, LOAD_FILTER_FOLDERS_SUCCESS, LOAD_FOLDER, LOAD_FOLDERS,
+    LOAD_FOLDERS_SUCCESS,
+} from '../actions/folder';
+import {DOCS_UNMOUNT} from "../actions/document";
 
 const initalState = {
     isLoading: false,
     isTileLoading: false,
+    isOwnFolderLoading: false,
     count: 0,
     page: 2,
     folders: {},
@@ -41,6 +47,21 @@ export default function folder(store = initalState, action) {
                     $set: action.payload.result,
                 },
             });
+        case LOAD_FOLDER:
+            return update(store, {
+                isOwnLoading: {
+                    $set: false,
+                },
+            });
+        case FOLDER_CREATE:
+            return update(store, {
+                isOwnLoading: {
+                    $set: true,
+                },
+                folderTileList: {
+                    $unshift: [action.payload.result],
+                },
+            });
         case LOAD_FILTER_FOLDERS:
             return update(store, {
                 isTileLoading: {
@@ -54,6 +75,15 @@ export default function folder(store = initalState, action) {
                 },
                 folderTileList: {
                     $set: action.payload.result,
+                },
+            });
+        case DOCS_UNMOUNT:
+            return update(store, {
+                isTileLoading: {
+                    $set: false,
+                },
+                folderTileList: {
+                    $set: [],
                 },
             });
         default:
