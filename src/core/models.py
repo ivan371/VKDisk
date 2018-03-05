@@ -8,6 +8,7 @@ from django.utils.translation import ugettext_lazy as _
 
 class User(AbstractUser):
     avatar = models.ImageField(u'фото', blank=True, upload_to=u'avatars', default='avatars/default-avatar.png')
+    vk_id = models.IntegerField(verbose_name=(u'vk_id'), null=True)
 
     class Meta:
         verbose_name = _(u'user')

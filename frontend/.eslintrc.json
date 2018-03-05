@@ -6,6 +6,7 @@
     "import"
   ],
   "rules": {
+    "linebreak-style": ["error", "windows"],
   "indent": ["error", 4, {
     "SwitchCase": 1,
     "FunctionDeclaration": {

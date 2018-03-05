@@ -1,0 +1,115 @@
+$width: 960px;
+$navigation-width: 139px;
+$hover-color: #E1E5EB;
+$link-color: #285473;
+body{
+    background-color: #EDEEF0;
+    margin: 0;
+    font-family: -apple-system,BlinkMacSystemFont,Roboto,Helvetica Neue,sans-serif;
+}
+a{
+    text-decoration: none;
+    cursor: pointer;
+}
+.page-header{
+    height: 42px;
+    background-color: #4A76A8;
+}
+.page-content{
+    margin: 0 auto;
+    width: $width;
+    display: flex;
+}
+.page-header-content{
+    margin: 0 auto;
+    width: $width;
+}
+.page-header-content-logo{
+    width: $navigation-width;
+}
+.page-header-content h2{
+    margin: 0;
+    padding-top: 5px;
+    color: white;
+}
+.page-content-navigation{
+    margin-top: 15px;
+    width: $navigation-width;
+}
+.page-content-content{
+    padding-top: 15px;
+    padding-bottom: 2px;
+    height: 500px;
+    min-width: 400px;
+    display: flex;
+}
+.page-content-content-wrap{
+    width: 300px;
+    background-color: white;
+    max-height: 100%;
+    border-radius: 2px 2px 0 0;
+    box-shadow: 0 1px 0 0 #d7d8db, 0 0 0 1px #e3e4e8;
+}
+.page-content-content-wrap a{
+    color: $link-color;
+}
+.page-content-content-content{
+    width: 500px;
+    background-color: white;
+    max-height: 100%;
+    border-radius: 2px 2px 0 0;
+    box-shadow: 0 1px 0 0 #d7d8db, 0 0 0 1px #e3e4e8;
+}
+.page-content-link{
+    display: block;
+    white-space: nowrap;
+    padding: 10px;
+    color: $link-color;
+}
+.page-content-link:hover{
+    background-color: $hover-color;
+}
+.content-item{
+    padding: 10px;
+    box-shadow: 0 1px 0 0 #d7d8db;
+}
+.page-content-link-item {
+    display: flex;
+}
+.page-content-link-item:hover{
+    background-color: #EDEEF0;
+    cursor: pointer;
+}
+.content-item input{
+    border: 0px;
+}
+input[type="text"]:focus {
+    outline: none;
+}
+.content-flex{
+    display: flex;
+}
+.content-flex-item{
+    padding: 10px;
+    height: 80px;
+    width: 80px;
+    text-align: center;
+}
+.content-flex-item a{
+    color: black;
+}
+.content-flex-item:hover{
+    background-color: #EDEEF0;
+    cursor: pointer;
+}
+img.icon{
+    width: 50px;
+    height: 50px;
+}
+
+img.item{
+    width: 20px;
+    height: 20px;
+    margin-right: 5px;
+    //padding-bottom: 5px;
+}

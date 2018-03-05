@@ -42,9 +42,14 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'rest_framework',
     'core.apps.CoreConfig',
     'document.apps.DocumentConfig',
-    'folder.apps.FolderConfig'
+    'folder.apps.FolderConfig',
+    'rest_api.apps.RestApiConfig',
+    'vk_api_wrapper.apps.VkApiWrapperConfig',
+    'social_django',
+    # 'widget_tweaks'
 ]
 
 MIDDLEWARE = [
@@ -56,6 +61,33 @@ MIDDLEWARE = [
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
 ]
+
+SOCIAL_AUTH_POSTGRES_JSONFIELD = True
+
+AUTHENTICATION_BACKENDS = (
+    'core.oauth2_backends.VKOAuth2',
+    'social_core.backends.open_id.OpenIdAuth',
+    'django.contrib.auth.backends.ModelBackend',
+)
+
+SOCIAL_AUTH_PIPELINE = (
+    'social_core.pipeline.social_auth.social_details',
+    'social_core.pipeline.social_auth.social_uid',
+    'social_core.pipeline.social_auth.auth_allowed',
+    'social_core.pipeline.social_auth.social_user',
+    'social_core.pipeline.user.get_username',
+    'social_core.pipeline.social_auth.associate_by_email',
+    'social_core.pipeline.user.create_user',
+    'social_core.pipeline.social_auth.associate_user',
+    'social_core.pipeline.social_auth.load_extra_data',
+    'social_core.pipeline.user.user_details',
+    'vk_api_wrapper.pipline.load_user_dialogs',
+)
+
+SOCIAL_AUTH_VK_OAUTH2_KEY = config.get('VK', 'APP_ID')
+SOCIAL_AUTH_VK_OAUTH2_SECRET = config.get('VK', 'SECRET_KEY')
+SOCIAL_AUTH_VK_OAUTH2_SCOPE = ['email', 'status', 'docs', 'messages']
+SOCIAL_AUTH_VK_APP_USER_MODE = 2
 
 # User settings
 AUTH_USER_MODEL = 'core.User'
@@ -71,6 +103,8 @@ TEMPLATES = [
             'context_processors': [
                 'django.template.context_processors.debug',
                 'django.template.context_processors.request',
+                'social_django.context_processors.backends',
+                'social_django.context_processors.login_redirect',
                 'django.contrib.auth.context_processors.auth',
                 'django.contrib.messages.context_processors.messages',
             ],
@@ -121,13 +155,35 @@ USE_L10N = True
 
 USE_TZ = True
 
+REST_FRAMEWORK = {
+    'DEFAULT_PAGINATION_CLASS': 'rest_api.pagination.ResultsSetPagination',
+    # 'PAGE_SIZE': 2
+}
+
+
 
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/2.0/howto/static-files/
 
 STATIC_URL = '/static/'
 STATIC_ROOT = os.path.join(PROJECT_DIR, 'collected_static/')
-STATICFILES_DIRS = (os.path.join(BASE_DIR, 'static/'), )
+STATICFILES_DIRS = (os.path.join(BASE_DIR, 'static/'), os.path.join(BASE_DIR, '../frontend/static/'))
 
 MEDIA_URL = '/media/'
 MEDIA_ROOT = os.path.join(PROJECT_DIR, 'media/')
+
+
+VK_APP_ID = config.getint("VK", "APP_ID")
+VK_CLIENT_SECRET_KEY = config.get("VK", "SECRET_KEY")
+VK_SERVICE_KEY = config.get("VK", "SERVICE_KEY")
+
+# CELERY
+CELERY_RESULT_BACKEND = 'celery.backends.redis.RedisBackend'
+CELERY_BROKER_URL = 'redis://{}:{}/{}'.format(config.get("CELERY", "REDIS_HOST"),
+                                              config.getint("CELERY", "REDIS_PORT"),
+                                              config.getint("CELERY", "REDIS_QUEUE"),
+                                              )
+CELERY_ACCEPT_CONTENT = ['json']
+CELERY_TASK_SERIALIZER = 'json'
+CELERY_RESULT_SERIALIZER = 'json'
+# CELERY_BEAT_SCHEDULER = 'django_celery_beat.schedulers.DatabaseScheduler'
