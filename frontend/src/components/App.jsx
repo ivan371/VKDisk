@@ -13,6 +13,7 @@ class AppComponent extends React.Component {
                         <Route exact path="/root" component={ RootFolder } />
                         <Route exact path="/root/:id" component={ RootFolder } />
                         <Route exact path="/chat" component={ ChatFolder } />
+                        <Route exact path="/chat/:id" component={ ChatFolder } />
                     </Switch>
                 </Layout>
             </div>

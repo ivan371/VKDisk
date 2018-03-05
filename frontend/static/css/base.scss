@@ -2,6 +2,7 @@ $width: 960px;
 $navigation-width: 139px;
 $hover-color: #E1E5EB;
 $link-color: #285473;
+$vk-color: #4A76A8;
 body{
     background-color: #EDEEF0;
     margin: 0;
@@ -13,12 +14,14 @@ a{
 }
 .page-header{
     height: 42px;
-    background-color: #4A76A8;
+    background-color: $vk-color;
 }
 .page-content{
     margin: 0 auto;
     width: $width;
     display: flex;
+    height: 100%;
+    position: sticky;
 }
 .page-header-content{
     margin: 0 auto;
@@ -39,7 +42,7 @@ a{
 .page-content-content{
     padding-top: 15px;
     padding-bottom: 2px;
-    height: 500px;
+    height: 540px;
     min-width: 400px;
     display: flex;
 }
@@ -54,7 +57,7 @@ a{
     color: $link-color;
 }
 .page-content-content-content{
-    width: 500px;
+    width: 520px;
     background-color: white;
     max-height: 100%;
     border-radius: 2px 2px 0 0;
@@ -71,6 +74,7 @@ a{
 }
 .content-item{
     padding: 10px;
+    height: 30px;
     box-shadow: 0 1px 0 0 #d7d8db;
 }
 .page-content-link-item {
@@ -88,6 +92,17 @@ input[type="text"]:focus {
 }
 .content-flex{
     display: flex;
+    align-content: start;
+    flex-wrap: wrap;
+    overflow-y: auto;
+    height: 480px;
+}
+.content-flex-modal{
+    display: flex;
+    align-content: start;
+    flex-wrap: wrap;
+    overflow-y: auto;
+    height: 220px;
 }
 .content-flex-item{
     padding: 10px;
@@ -100,11 +115,11 @@ input[type="text"]:focus {
 }
 .content-flex-item:hover{
     background-color: #EDEEF0;
-    cursor: pointer;
 }
 img.icon{
     width: 50px;
     height: 50px;
+    cursor: pointer;
 }
 
 img.item{
@@ -112,4 +127,137 @@ img.item{
     height: 20px;
     margin-right: 5px;
     //padding-bottom: 5px;
+}
+.modal-container{
+    position: fixed;
+    left: 0;
+    top: 0;
+    text-align: center;
+    background-color: rgba(0, 0, 0, 0.7);
+    width: 100%;
+    height: 100%;
+    z-index: 10;
+}
+.modal{
+    cursor: auto;
+    z-index: 100;
+    height: 336px;
+    width: 500px;
+    background-color: white;
+    margin: 116px auto;
+    box-shadow: 0 2px 10px rgba(0,0,0,.35);
+    outline: none;
+    border-radius: 5px;
+}
+.modal-header{
+    border-radius: 5px 5px 0 0;
+    width: 100%;
+    height: 54px;
+    background-color: $vk-color;
+}
+.modal-header-title{
+    padding: 1px;
+}
+.modal-header-title p{
+    color: white;
+}
+.modal-content{
+    padding: 20px;
+    height: 240px;
+    background-color: #F7F7F7;
+}
+.modal-content__img img{
+    width: 100px;
+}
+.vk-button{
+    background-color: #5b88bd;
+    text-decoration: none;
+    float: right;
+    padding: 7px 16px 8px;
+    margin: 0;
+    font-size: 12.5px;
+    display: inline-block;
+    zoom: 1;
+    cursor: pointer;
+    white-space: nowrap;
+    outline: none;
+    font-family: -apple-system,BlinkMacSystemFont,Roboto,Helvetica Neue,sans-serif;
+    vertical-align: top;
+    line-height: 15px;
+    text-align: center;
+    color: #fff;
+    border: 0;
+    border-radius: 4px;
+    box-sizing: border-box;
+}
+.vk-input{
+    background: #fff;
+    color: #000;
+    border: 1px solid #c0cad5;
+    padding: 5px;
+    vertical-align: top;
+    margin: 0;
+    overflow: auto;
+    outline: 0;
+    line-height: 150%;
+    word-wrap: break-word;
+    width: 200px;
+    cursor: text;
+}
+.modal-footer{
+    margin-top: 80px;
+}
+.content-item__title{
+    cursor: text;
+    text-align: center;
+    max-width: 50px;
+    margin: 0 auto;
+    max-height: 38px;
+    text-overflow: ellipsis;
+    white-space: pre-wrap;
+    overflow: hidden;
+}
+.content-item__title:hover{
+    white-space: normal;
+    overflow: visible;
+}
+.content-item__input{
+    width: 50px;
+    border: 1px solid #c0cad5;
+    cursor: text;
+    outline: 0;
+    line-height: 150%;
+}
+
+.page-content-item__input{
+    width: 100px;
+    border: 1px solid #c0cad5;
+    cursor: text;
+    outline: 0;
+    line-height: 150%;
+}
+
+.item-right{
+    cursor: pointer;
+    padding: 5px;
+    width: 20px;
+    height: 20px;
+    float: right;
+    vertical-align: top;
+}
+.item-left{
+    cursor: pointer;
+    padding: 5px;
+    width: 20px;
+    height: 20px;
+    float: left;
+    vertical-align: top;
+}
+.item-name{
+    float: left;
+    padding: 5px;
+    height: 20px;
+}
+.checked{
+    background-color: $hover-color;
 }

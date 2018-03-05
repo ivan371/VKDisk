@@ -16,7 +16,7 @@ const middleware = routerMiddleware(history);
 ReactDOM.render(
     <Provider store={ initStore([middleware]) }>
         <ConnectedRouter history={ history }>
-            <App/>
+            <App />
         </ConnectedRouter>
     </Provider>,
     document.getElementById('root'),
