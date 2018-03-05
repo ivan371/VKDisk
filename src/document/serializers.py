@@ -8,7 +8,7 @@ class DocumentFilteredPrimaryKeyRelatedField(serializers.PrimaryKeyRelatedField)
         queryset = super(DocumentFilteredPrimaryKeyRelatedField, self).get_queryset()
         if not request or not queryset:
             return None
-        return queryset.filter(author=request.user, type='folder')
+        return queryset.filter(author=request.user)
 
 
 class DocumentSerializer(serializers.HyperlinkedModelSerializer):

@@ -1,15 +1,15 @@
 import React from 'react';
 import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
+import { withRouter } from 'react-router-dom';
 import PropTypes from 'prop-types';
-import { makeUrls, modalType, format, tileType, urls, items } from '../../constants';
+import { makeUrls, modalType, items } from '../../constants';
 import { docsUnMount, loadDocs, loadDocsMore } from '../../actions/document';
 import { loadFilterFolders } from '../../actions/folder';
-import Tile from '../Tile';
 import AddFolder from '../folder/AddFolder';
-import BackFolder from '../folder/BackFolder';
 import { modalOpen, setModal } from '../../actions/modal';
-import { withRouter } from 'react-router-dom';
+import FoldersTile from '../tile/FoldersTile';
+import DocsTile from '../tile/DocsTile';
 
 class DocsComponent extends React.Component {
     static propTypes = {
@@ -17,8 +17,6 @@ class DocsComponent extends React.Component {
         loadFilterFolders: PropTypes.func.isRequired,
         docsUnMount: PropTypes.func.isRequired,
         params: PropTypes.object.isRequired,
-        docList: PropTypes.array.isRequired,
-        folderList: PropTypes.array.isRequired,
         modalOpen: PropTypes.func.isRequired,
         setModal: PropTypes.func.isRequired,
         loadDocsMore: PropTypes.func.isRequired,
@@ -63,19 +61,7 @@ class DocsComponent extends React.Component {
         this.props.loadDocsMore(makeUrls.makeDocsMore(this.props.params.id, this.props.page));
     };
     render() {
-        let docList = [];
-        let folderList = [];
         let folderHeader = null;
-        if (this.props.isTileLoading) {
-            folderList = this.props.folderList.map(folderId => (<Tile
-                history={ this.props.history }
-                url={ `/root/${folderId}` }
-                title={ this.props.folders[folderId].title }
-                key={ folderId }
-                id={ folderId }
-                type={ tileType.folder }
-            />));
-        }
         if (this.props.isLoading) {
             if (this.props.isFolderLoading) {
                 if (this.props.params.hasOwnProperty('id')) {
@@ -87,14 +73,6 @@ class DocsComponent extends React.Component {
                     </React.Fragment>);
                 }
             }
-            docList = this.props.docList.map(docId => (<Tile
-                history={ this.props.history }
-                id={ docId }
-                url={ `/file/${docId}` }
-                title={ this.props.docs[docId].title }
-                key={ docId }
-                type={ tileType.file }
-            />));
         }
         return (
             <div className="page-content-content-content">
@@ -102,8 +80,8 @@ class DocsComponent extends React.Component {
                     {folderHeader}
                 </div>
                 <div className="content-flex">
-                    {folderList}
-                    {docList}
+                    <FoldersTile isModal={ false }/>
+                    <DocsTile />
                     { this.props.isLoading && this.props.count > (10 * (this.props.page - 1)) ? <div>
                         <button onClick={ this.onLoadMore }>Показать еще</button>
                     </div> : null }
@@ -116,11 +94,7 @@ class DocsComponent extends React.Component {
 const mapStoreToProps = (state, props) => ({
     isLoading: state.document.isLoading,
     isFolderLoading: state.folder.isLoading,
-    docList: state.document.docList,
-    docs: state.document.docs,
-    folderList: state.folder.folderTileList,
     folders: state.folder.folders,
-    isTileLoading: state.folder.folderTileList,
     count: state.document.count,
     page: state.document.page,
 });

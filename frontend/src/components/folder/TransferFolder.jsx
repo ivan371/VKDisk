@@ -2,11 +2,30 @@ import React from 'react';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import PropTypes from 'prop-types';
+import FoldersTile from '../tile/FoldersTile';
+import { loadTransferFolders } from '../../actions/folder';
+import { makeUrls, urls } from '../../constants';
+import { bulkCreateDocs } from '../../actions/document';
+import { modalOpen } from '../../actions/modal';
+
 class CreateFolderComponent extends React.Component {
     static propTypes = {
         id: PropTypes.number.isRequired,
+        loadTransferFolders: PropTypes.func.isRequired,
+        bulkCreateDocs: PropTypes.func.isRequired,
+        checkedFolder: PropTypes.number.isRequired,
+        modalOpen: PropTypes.func.isRequired,
+        checkList: PropTypes.array.isRequired,
     };
 
+    componentDidMount() {
+        this.props.loadTransferFolders(urls.folder.customFolderUrl);
+    }
+
+    onBulkCreate = (e) => {
+        this.props.bulkCreateDocs(makeUrls.makeCopyDocs(this.props.checkedFolder), this.props.checkList);
+        this.props.modalOpen();
+    };
 
     render() {
         return (
@@ -17,12 +36,10 @@ class CreateFolderComponent extends React.Component {
                     </div>
                 </div>
                 <div className="modal-content">
-                    <div className="modal-content__img">
+                    <div className="content-flex-modal">
+                        <FoldersTile isModal />
                     </div>
-                    <div className="modal-input">
-                    </div>
-                    <div className="modal-footer">
-                    </div>
+                    <button className="vk-button" onClick={ this.onBulkCreate }>Переместить</button>
                 </div>
             </React.Fragment>
         );
@@ -31,10 +48,15 @@ class CreateFolderComponent extends React.Component {
 
 
 const mapStoreToProps = (state, props) => ({
+    checkedFolder: state.folder.checkedFolder,
+    checkList: state.document.checkList,
 });
 
 const mapDispatchToProps = dispatch => ({
     ...bindActionCreators({
+        loadTransferFolders,
+        bulkCreateDocs,
+        modalOpen,
     }, dispatch),
 });
 

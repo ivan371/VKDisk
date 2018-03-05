@@ -4,9 +4,9 @@ import { withRouter } from 'react-router-dom';
 import _ from 'lodash';
 import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
-import { updateFolder } from '../actions/folder';
-import { format, makeUrls, tileType, makeFormat } from '../constants';
-import { updateDoc } from '../actions/document';
+import {switchFolder, updateFolder} from '../../actions/folder';
+import { format, makeUrls, tileType, makeFormat } from '../../constants';
+import { checkFile, updateDoc } from '../../actions/document';
 
 class TileComponent extends React.Component {
     static propTypes = {
@@ -16,6 +16,9 @@ class TileComponent extends React.Component {
         updateFolder: PropTypes.func.isRequired,
         updateDoc: PropTypes.func.isRequired,
         type: PropTypes.string.isRequired,
+        checkFile: PropTypes.func.isRequired,
+        isModal: PropTypes.bool.isRequired,
+        switchFolder: PropTypes.func.isRequired,
     };
 
     state = {
@@ -63,7 +66,12 @@ class TileComponent extends React.Component {
 
     doClick = (e) => {
         this.clickedOnce = undefined;
-        this.setState({ isChecked: !this.state.isChecked });
+        if (!this.props.isModal) {
+            this.setState({isChecked: !this.state.isChecked});
+            this.props.checkFile(this.props.id);
+        } else {
+            this.props.switchFolder(this.props.id);
+        }
     };
 
     render() {
@@ -102,6 +110,8 @@ const mapDispatchToProps = dispatch => ({
     ...bindActionCreators({
         updateFolder,
         updateDoc,
+        checkFile,
+        switchFolder,
     }, dispatch),
 });
 
