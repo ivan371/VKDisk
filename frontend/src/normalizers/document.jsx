@@ -4,3 +4,8 @@ export function docsNormalize(docs) {
     const doc = new schema.Entity('doc');
     return normalize(docs, [doc]);
 }
+
+export function docNormalize(docs) {
+    const doc = new schema.Entity('doc');
+    return normalize(docs, doc);
+}
