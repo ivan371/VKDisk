@@ -544,6 +544,9 @@ var makeUrls = exports.makeUrls = {
     },
     makeCopyDocs: function makeCopyDocs(id) {
         return urls.docs.docsUrl + '?folder=' + id + '&&bulk_create';
+    },
+    makeReplaceDocs: function makeReplaceDocs(id) {
+        return urls.docs.docsUrl + '?folder=' + id + '&&bulk_update';
     }
 };
 
@@ -560,7 +563,8 @@ var folderType = exports.folderType = {
 
 var modalType = exports.modalType = {
     folderCreate: 'folderCreate',
-    folderTransfer: 'folderTransfer'
+    folderTransfer: 'folderTransfer',
+    folderReplace: 'folderReplace'
 };
 
 var format = exports.format = {
@@ -1318,11 +1322,12 @@ __webpack_require__(112)(String, 'String', function (iterated) {
 Object.defineProperty(exports, "__esModule", {
     value: true
 });
-exports.DOCS_BULK_CREATE_SUCCESS = exports.DOCS_BULK_CREATE = exports.CHECK_FILE = exports.UPDATE_DOC = exports.LOAD_DOC_ERROR = exports.LOAD_DOC = exports.DOCS_UNMOUNT = exports.LOAD_DOCS_ERROR = exports.LOAD_DOCS_MORE = exports.LOAD_DOCS_SUCCESS = exports.LOAD_DOCS = undefined;
+exports.DOCS_BULK_UPDATE_SUCCESS = exports.DOCS_BULK_UPDATE = exports.DOCS_BULK_CREATE_SUCCESS = exports.DOCS_BULK_CREATE = exports.CHECK_FILE = exports.UPDATE_DOC = exports.LOAD_DOC_ERROR = exports.LOAD_DOC = exports.DOCS_UNMOUNT = exports.LOAD_DOCS_ERROR = exports.LOAD_DOCS_MORE = exports.LOAD_DOCS_SUCCESS = exports.LOAD_DOCS = undefined;
 exports.loadDocs = loadDocs;
 exports.loadDocsMore = loadDocsMore;
 exports.updateDoc = updateDoc;
 exports.bulkCreateDocs = bulkCreateDocs;
+exports.bulkUpdateDocs = bulkUpdateDocs;
 exports.docsUnMount = docsUnMount;
 exports.checkFile = checkFile;
 
@@ -1341,6 +1346,8 @@ var UPDATE_DOC = exports.UPDATE_DOC = 'UPDATE_DOC';
 var CHECK_FILE = exports.CHECK_FILE = 'CHECK_FILE';
 var DOCS_BULK_CREATE = exports.DOCS_BULK_CREATE = 'DOCS_BULK_CREATE';
 var DOCS_BULK_CREATE_SUCCESS = exports.DOCS_BULK_CREATE_SUCCESS = 'DOCS_BULK_CREATE_SUCCESS';
+var DOCS_BULK_UPDATE = exports.DOCS_BULK_UPDATE = 'DOCS_BULK_UPDATE';
+var DOCS_BULK_UPDATE_SUCCESS = exports.DOCS_BULK_UPDATE_SUCCESS = 'DOCS_BULK_UPDATE_SUCCESS';
 
 function loadDocs(url) {
     var types = [LOAD_DOCS, LOAD_DOCS_SUCCESS, LOAD_DOCS_ERROR];
@@ -1359,6 +1366,11 @@ function updateDoc(url, title) {
 
 function bulkCreateDocs(url, docs) {
     var types = [DOCS_BULK_CREATE, DOCS_BULK_CREATE_SUCCESS, LOAD_DOC_ERROR];
+    return (0, _load.apiLoad)(url, 'POST', types, JSON.stringify({ docs: docs }), function () {}, true);
+}
+
+function bulkUpdateDocs(url, docs) {
+    var types = [DOCS_BULK_UPDATE, DOCS_BULK_UPDATE_SUCCESS, LOAD_DOC_ERROR];
     return (0, _load.apiLoad)(url, 'POST', types, JSON.stringify({ docs: docs }), function () {}, true);
 }
 
@@ -31989,12 +32001,14 @@ exports.docNormalize = docNormalize;
 var _normalizr = __webpack_require__(134);
 
 function docsNormalize(docs) {
-    var doc = new _normalizr.schema.Entity('doc');
+    var folder = new _normalizr.schema.Entity('folder');
+    var doc = new _normalizr.schema.Entity('doc', { folder: folder });
     return (0, _normalizr.normalize)(docs, [doc]);
 }
 
 function docNormalize(docs) {
-    var doc = new _normalizr.schema.Entity('doc');
+    var folder = new _normalizr.schema.Entity('folder');
+    var doc = new _normalizr.schema.Entity('doc', { folder: folder });
     return (0, _normalizr.normalize)(docs, doc);
 }
 
@@ -32045,6 +32059,7 @@ function document() {
         }
     }
     var index = null;
+    var deleteList = [];
     switch (action.type) {
         case _document.LOAD_DOCS:
             return (0, _reactAddonsUpdate2.default)(store, {
@@ -32106,7 +32121,26 @@ function document() {
                     $splice: [[index, 1]]
                 }
             });
-
+        case _document.DOCS_BULK_UPDATE_SUCCESS:
+            for (var i in store.checkList) {
+                if (store.docList.indexOf(store.checkList[i]) !== -1) {
+                    deleteList.push(i);
+                }
+            }
+            return (0, _reactAddonsUpdate2.default)(store, {
+                docList: {
+                    $splice: [[deleteList, deleteList.length]]
+                },
+                checkList: {
+                    $set: []
+                }
+            });
+        case _document.DOCS_BULK_CREATE_SUCCESS:
+            return (0, _reactAddonsUpdate2.default)(store, {
+                checkList: {
+                    $set: []
+                }
+            });
         default:
             return store;
     }
@@ -33200,7 +33234,7 @@ var DocsComponent = function (_React$Component) {
             args[_key] = arguments[_key];
         }
 
-        return _ret = (_temp = (_this = _possibleConstructorReturn(this, (_ref = DocsComponent.__proto__ || Object.getPrototypeOf(DocsComponent)).call.apply(_ref, [this].concat(args))), _this), _this.onLoadMore = function (e) {
+        return _ret = (_temp = (_this = _possibleConstructorReturn(this, (_ref = DocsComponent.__proto__ || Object.getPrototypeOf(DocsComponent)).call.apply(_ref, [this].concat(args))), _this), _this.handleLoadMore = function (e) {
             _this.props.loadDocsMore(_constants.makeUrls.makeDocsMore(_this.props.params.id, _this.props.page));
         }, _temp), _possibleConstructorReturn(_this, _ret);
     }
@@ -33252,7 +33286,7 @@ var DocsComponent = function (_React$Component) {
                         null,
                         _react2.default.createElement(
                             'button',
-                            { onClick: this.onLoadMore },
+                            { onClick: this.handleLoadMore },
                             '\u041F\u043E\u043A\u0430\u0437\u0430\u0442\u044C \u0435\u0449\u0435'
                         )
                     ) : null
@@ -33271,7 +33305,8 @@ DocsComponent.propTypes = {
     params: _propTypes2.default.object.isRequired,
     loadDocsMore: _propTypes2.default.func.isRequired,
     count: _propTypes2.default.number.isRequired,
-    page: _propTypes2.default.number.isRequired
+    page: _propTypes2.default.number.isRequired,
+    isLoading: _propTypes2.default.bool.isRequired
 };
 
 
@@ -33464,9 +33499,9 @@ var ModalComponent = function (_React$Component) {
             args[_key] = arguments[_key];
         }
 
-        return _ret = (_temp = (_this = _possibleConstructorReturn(this, (_ref = ModalComponent.__proto__ || Object.getPrototypeOf(ModalComponent)).call.apply(_ref, [this].concat(args))), _this), _this.onOpen = function () {
+        return _ret = (_temp = (_this = _possibleConstructorReturn(this, (_ref = ModalComponent.__proto__ || Object.getPrototypeOf(ModalComponent)).call.apply(_ref, [this].concat(args))), _this), _this.handleOpen = function () {
             _this.props.modalOpen();
-        }, _this.onCancelOpen = function (e) {
+        }, _this.handleCancelOpen = function (e) {
             e.stopPropagation();
         }, _temp), _possibleConstructorReturn(_this, _ret);
     }
@@ -33477,19 +33512,22 @@ var ModalComponent = function (_React$Component) {
             var modal = null;
             switch (this.props.modal) {
                 case _constants.modalType.folderCreate:
-                    modal = _react2.default.createElement(_CreateFolder2.default, { id: this.props.id });
+                    modal = _react2.default.createElement(_CreateFolder2.default, null);
                     break;
                 case _constants.modalType.folderTransfer:
-                    modal = _react2.default.createElement(_TransferFolder2.default, { id: this.props.id });
+                    modal = _react2.default.createElement(_TransferFolder2.default, null);
+                    break;
+                case _constants.modalType.folderReplace:
+                    modal = _react2.default.createElement(_TransferFolder2.default, null);
                     break;
                 default:
             }
             return _react2.default.createElement(
                 'div',
-                { className: 'modal-container', onClick: this.onOpen },
+                { className: 'modal-container', onClick: this.handleOpen },
                 _react2.default.createElement(
                     'div',
-                    { className: 'modal', onClick: this.onCancelOpen },
+                    { className: 'modal', onClick: this.handleCancelOpen },
                     modal
                 )
             );
@@ -33501,7 +33539,8 @@ var ModalComponent = function (_React$Component) {
 
 ModalComponent.propTypes = {
     id: _propTypes2.default.number.isRequired,
-    modalOpen: _propTypes2.default.func.isRequired
+    modalOpen: _propTypes2.default.func.isRequired,
+    modal: _propTypes2.default.string.isRequired
 };
 
 
@@ -33717,8 +33756,11 @@ var CreateFolderComponent = function (_React$Component) {
             args[_key] = arguments[_key];
         }
 
-        return _ret = (_temp = (_this = _possibleConstructorReturn(this, (_ref = CreateFolderComponent.__proto__ || Object.getPrototypeOf(CreateFolderComponent)).call.apply(_ref, [this].concat(args))), _this), _this.onBulkCreate = function (e) {
+        return _ret = (_temp = (_this = _possibleConstructorReturn(this, (_ref = CreateFolderComponent.__proto__ || Object.getPrototypeOf(CreateFolderComponent)).call.apply(_ref, [this].concat(args))), _this), _this.handleBulkCreate = function () {
             _this.props.bulkCreateDocs(_constants.makeUrls.makeCopyDocs(_this.props.checkedFolder), _this.props.checkList);
+            _this.props.modalOpen();
+        }, _this.handleBulkUpdate = function () {
+            _this.props.bulkUpdateDocs(_constants.makeUrls.makeReplaceDocs(_this.props.checkedFolder), _this.props.checkList);
             _this.props.modalOpen();
         }, _temp), _possibleConstructorReturn(_this, _ret);
     }
@@ -33740,10 +33782,14 @@ var CreateFolderComponent = function (_React$Component) {
                     _react2.default.createElement(
                         'div',
                         { className: 'modal-header-title' },
-                        _react2.default.createElement(
+                        this.props.modal !== _constants.modalType.folderTransfer ? _react2.default.createElement(
                             'p',
                             null,
-                            '\u041F\u0435\u0440\u0435\u043C\u0435\u0441\u0442\u0438\u0442\u044C \u0444\u0430\u0439\u043B'
+                            '\u041F\u0435\u0440\u0435\u043C\u0435\u0441\u0442\u0438\u0442\u044C \u0444\u0430\u0439\u043B\u044B'
+                        ) : _react2.default.createElement(
+                            'p',
+                            null,
+                            '\u041A\u043E\u043F\u0438\u0440\u043E\u0432\u0430\u0442\u044C \u0444\u0430\u0439\u043B\u044B'
                         )
                     )
                 ),
@@ -33755,10 +33801,14 @@ var CreateFolderComponent = function (_React$Component) {
                         { className: 'content-flex-modal' },
                         _react2.default.createElement(_FoldersTile2.default, { isModal: true })
                     ),
-                    _react2.default.createElement(
+                    this.props.modal !== _constants.modalType.folderTransfer ? _react2.default.createElement(
                         'button',
-                        { className: 'vk-button', onClick: this.onBulkCreate },
+                        { className: 'vk-button', onClick: this.handleBulkUpdate },
                         '\u041F\u0435\u0440\u0435\u043C\u0435\u0441\u0442\u0438\u0442\u044C'
+                    ) : _react2.default.createElement(
+                        'button',
+                        { className: 'vk-button', onClick: this.handleBulkCreate },
+                        '\u041A\u043E\u043F\u0438\u0440\u043E\u0432\u0430\u0442\u044C'
                     )
                 )
             );
@@ -33769,19 +33819,21 @@ var CreateFolderComponent = function (_React$Component) {
 }(_react2.default.Component);
 
 CreateFolderComponent.propTypes = {
-    id: _propTypes2.default.number.isRequired,
     loadTransferFolders: _propTypes2.default.func.isRequired,
     bulkCreateDocs: _propTypes2.default.func.isRequired,
-    checkedFolder: _propTypes2.default.number.isRequired,
+    bulkUpdateDocs: _propTypes2.default.func.isRequired,
+    checkedFolder: _propTypes2.default.number,
     modalOpen: _propTypes2.default.func.isRequired,
-    checkList: _propTypes2.default.array.isRequired
+    checkList: _propTypes2.default.array.isRequired,
+    modal: _propTypes2.default.string.isRequired
 };
 
 
-var mapStoreToProps = function mapStoreToProps(state, props) {
+var mapStoreToProps = function mapStoreToProps(state) {
     return {
         checkedFolder: state.folder.checkedFolder,
-        checkList: state.document.checkList
+        checkList: state.document.checkList,
+        modal: state.modal.modal
     };
 };
 
@@ -33789,6 +33841,7 @@ var mapDispatchToProps = function mapDispatchToProps(dispatch) {
     return _extends({}, (0, _redux.bindActionCreators)({
         loadTransferFolders: _folder.loadTransferFolders,
         bulkCreateDocs: _document.bulkCreateDocs,
+        bulkUpdateDocs: _document.bulkUpdateDocs,
         modalOpen: _modal.modalOpen
     }, dispatch));
 };
@@ -51734,10 +51787,6 @@ var _propTypes2 = _interopRequireDefault(_propTypes);
 
 var _constants = __webpack_require__(9);
 
-var _document = __webpack_require__(32);
-
-var _folder = __webpack_require__(20);
-
 var _AddFolder = __webpack_require__(281);
 
 var _AddFolder2 = _interopRequireDefault(_AddFolder);
@@ -51766,9 +51815,12 @@ var DocsHeaderComponent = function (_React$Component) {
             args[_key] = arguments[_key];
         }
 
-        return _ret = (_temp = (_this = _possibleConstructorReturn(this, (_ref = DocsHeaderComponent.__proto__ || Object.getPrototypeOf(DocsHeaderComponent)).call.apply(_ref, [this].concat(args))), _this), _this.handleOpen = function () {
+        return _ret = (_temp = (_this = _possibleConstructorReturn(this, (_ref = DocsHeaderComponent.__proto__ || Object.getPrototypeOf(DocsHeaderComponent)).call.apply(_ref, [this].concat(args))), _this), _this.handleOpenCopy = function () {
             _this.props.modalOpen();
             _this.props.setModal(_constants.modalType.folderTransfer);
+        }, _this.handleOpenReplace = function () {
+            _this.props.modalOpen();
+            _this.props.setModal(_constants.modalType.folderReplace);
         }, _this.handleGoBack = function (e) {
             _this.props.history.goBack(e);
         }, _temp), _possibleConstructorReturn(_this, _ret);
@@ -51779,31 +51831,34 @@ var DocsHeaderComponent = function (_React$Component) {
         value: function render() {
             var folderHeader = null;
             var type = null;
-            if (this.props.isLoading && this.props.isFolderLoading && this.props.params.hasOwnProperty('id')) {
+            if (this.props.isLoading && this.props.isFoldersLoading && this.props.params.hasOwnProperty('id')) {
                 type = this.props.folders[parseInt(this.props.params.id)].type;
-                if (this.props.params.hasOwnProperty('id')) {
-                    folderHeader = _react2.default.createElement(
-                        _react2.default.Fragment,
-                        null,
-                        _react2.default.createElement('img', { src: _constants.items.back, className: 'item-left', onClick: this.handleGoBack }),
-                        _react2.default.createElement(
-                            'div',
-                            { className: 'item-name' },
-                            this.props.folders[this.props.params.id].title
-                        ),
-                        type === 'sorted' ? _react2.default.createElement(_AddFolder2.default, { id: parseInt(this.props.params.id) }) : null,
-                        _react2.default.createElement(
-                            'button',
-                            { className: 'vk-button', onClick: this.handleOpen },
-                            '\u041A\u043E\u043F\u0438\u0440\u043E\u0432\u0430\u0442\u044C'
-                        ),
-                        type === 'sorted' ? _react2.default.createElement(
-                            'button',
-                            { className: 'vk-button', onClick: this.handleOpen },
-                            '\u041F\u0435\u0440\u0435\u043C\u0435\u0441\u0442\u0438\u0442\u044C'
-                        ) : null
-                    );
-                }
+                folderHeader = _react2.default.createElement(
+                    _react2.default.Fragment,
+                    null,
+                    _react2.default.createElement('img', { src: _constants.items.back, className: 'item-left', onClick: this.handleGoBack }),
+                    _react2.default.createElement(
+                        'div',
+                        { className: 'item-name' },
+                        this.props.folders[this.props.params.id].title
+                    ),
+                    type === 'sorted' || type === 'folder' ? _react2.default.createElement(_AddFolder2.default, { id: parseInt(this.props.params.id) }) : null,
+                    _react2.default.createElement(
+                        'button',
+                        { className: 'vk-button', onClick: this.handleOpenCopy },
+                        '\u041A\u043E\u043F\u0438\u0440\u043E\u0432\u0430\u0442\u044C'
+                    ),
+                    type === 'sorted' || type === 'folder' ? _react2.default.createElement(
+                        'button',
+                        { className: 'vk-button', onClick: this.handleOpenReplace },
+                        '\u041F\u0435\u0440\u0435\u043C\u0435\u0441\u0442\u0438\u0442\u044C'
+                    ) : null,
+                    type === 'sorted' || type === 'folder' ? _react2.default.createElement(
+                        'button',
+                        { className: 'vk-button' },
+                        '\u0423\u0434\u0430\u043B\u0438\u0442\u044C'
+                    ) : null
+                );
             }
             return _react2.default.createElement(
                 'div',
@@ -51821,13 +51876,13 @@ DocsHeaderComponent.propTypes = {
     modalOpen: _propTypes2.default.func.isRequired,
     setModal: _propTypes2.default.func.isRequired,
     isLoading: _propTypes2.default.bool.isRequired,
-    isFolderLoading: _propTypes2.default.bool.isRequired
+    isFoldersLoading: _propTypes2.default.bool.isRequired
 };
 
 
 var mapStoreToProps = function mapStoreToProps(state) {
     return {
-        isFolderLoading: state.folder.isLoading,
+        isFoldersLoading: state.folder.isLoading,
         isLoading: state.document.isLoading,
         folders: state.folder.folders,
         count: state.document.count,

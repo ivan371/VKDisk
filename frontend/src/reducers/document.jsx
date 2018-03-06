@@ -1,5 +1,9 @@
 import update from 'react-addons-update';
-import { CHECK_FILE, DOCS_UNMOUNT, LOAD_DOCS, LOAD_DOCS_MORE, LOAD_DOCS_SUCCESS } from '../actions/document';
+import {
+    CHECK_FILE, DOCS_BULK_CREATE_SUCCESS, DOCS_BULK_UPDATE, DOCS_BULK_UPDATE_SUCCESS, DOCS_UNMOUNT, LOAD_DOCS,
+    LOAD_DOCS_MORE,
+    LOAD_DOCS_SUCCESS,
+} from '../actions/document';
 
 const initalState = {
     isLoading: false,
@@ -25,6 +29,7 @@ export default function document(store = initalState, action) {
         }
     }
     let index = null;
+    let deleteList = [];
     switch (action.type) {
         case LOAD_DOCS:
             return update(store, {
@@ -86,7 +91,26 @@ export default function document(store = initalState, action) {
                     $splice: [[index, 1]],
                 },
             });
-
+        case DOCS_BULK_UPDATE_SUCCESS:
+            for (let i in store.checkList) {
+                if (store.docList.indexOf(store.checkList[i]) !== -1) {
+                    deleteList.push(i);
+                }
+            }
+            return update(store, {
+                docList: {
+                    $splice: [[deleteList, deleteList.length]],
+                },
+                checkList: {
+                    $set: [],
+                },
+            });
+        case DOCS_BULK_CREATE_SUCCESS:
+            return update(store, {
+                checkList: {
+                    $set: [],
+                },
+            });
         default:
             return store;
     }

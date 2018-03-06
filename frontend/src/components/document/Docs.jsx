@@ -20,6 +20,7 @@ class DocsComponent extends React.Component {
         loadDocsMore: PropTypes.func.isRequired,
         count: PropTypes.number.isRequired,
         page: PropTypes.number.isRequired,
+        isLoading: PropTypes.bool.isRequired,
     };
 
     componentDidMount() {
@@ -46,7 +47,7 @@ class DocsComponent extends React.Component {
         this.props.docsUnMount();
     }
 
-    onLoadMore = (e) => {
+    handleLoadMore = (e) => {
         this.props.loadDocsMore(makeUrls.makeDocsMore(this.props.params.id, this.props.page));
     };
     render() {
@@ -57,7 +58,7 @@ class DocsComponent extends React.Component {
                     <FoldersTile isModal={ false } />
                     <DocsTile />
                     { this.props.isLoading && this.props.count > (10 * (this.props.page - 1)) ? <div>
-                        <button onClick={ this.onLoadMore }>Показать еще</button>
+                        <button onClick={ this.handleLoadMore }>Показать еще</button>
                     </div> : null }
                 </div>
             </div>

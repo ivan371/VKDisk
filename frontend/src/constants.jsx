@@ -17,6 +17,7 @@ export const makeUrls = {
     makeCustomFile: id => `${urls.docs.docsUrl + id}/`,
     makeDocsMore: (id, page) => `${urls.docs.docsUrl}?folder=${id}&&page=${page}`,
     makeCopyDocs: id => `${urls.docs.docsUrl}?folder=${id}&&bulk_create`,
+    makeReplaceDocs: id => `${urls.docs.docsUrl}?folder=${id}&&bulk_update`,
 };
 
 export const tileType = {
@@ -33,6 +34,7 @@ export const folderType = {
 export const modalType = {
     folderCreate: 'folderCreate',
     folderTransfer: 'folderTransfer',
+    folderReplace: 'folderReplace',
 };
 
 export const format = {
