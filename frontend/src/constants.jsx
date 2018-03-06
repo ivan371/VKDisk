@@ -15,6 +15,7 @@ export const makeUrls = {
     makeCustomFolder: id => `${urls.folder.customFolderUrl + id}/`,
     makeCustomFile: id => `${urls.docs.docsUrl + id}/`,
     makeDocsMore: (id, page) => `${urls.docs.docsUrl}?folder=${id}&&page=${page}`,
+    makeCopyDocs: id => `${urls.docs.docsUrl}?folder=${id}&&bulk_create`,
 };
 
 export const tileType = {

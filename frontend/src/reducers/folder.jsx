@@ -2,19 +2,22 @@ import update from 'react-addons-update';
 import {
     FOLDER_CREATE,
     LOAD_FILTER_FOLDERS, LOAD_FILTER_FOLDERS_SUCCESS, LOAD_FOLDER, LOAD_FOLDERS,
-    LOAD_FOLDERS_SUCCESS,
+    LOAD_FOLDERS_SUCCESS, LOAD_FOLDERS_TRANSFER, LOAD_FOLDERS_TRANSFER_SUCCESS, SWITCH_FOLDER,
 } from '../actions/folder';
-import {DOCS_UNMOUNT} from "../actions/document";
+import { DOCS_UNMOUNT } from '../actions/document';
 
 const initalState = {
     isLoading: false,
     isTileLoading: false,
+    isTransferLoading: false,
     isOwnFolderLoading: false,
     count: 0,
     page: 2,
     folders: {},
     folderList: [],
     folderTileList: [],
+    folderTransferList: [],
+    checkedFolder: null,
 };
 
 export default function folder(store = initalState, action) {
@@ -44,6 +47,21 @@ export default function folder(store = initalState, action) {
                     $set: true,
                 },
                 folderList: {
+                    $set: action.payload.result,
+                },
+            });
+        case LOAD_FOLDERS_TRANSFER:
+            return update(store, {
+                isTransferLoading: {
+                    $set: false,
+                },
+            });
+        case LOAD_FOLDERS_TRANSFER_SUCCESS:
+            return update(store, {
+                isTransferLoading: {
+                    $set: true,
+                },
+                folderTransferList: {
                     $set: action.payload.result,
                 },
             });
@@ -84,6 +102,12 @@ export default function folder(store = initalState, action) {
                 },
                 folderTileList: {
                     $set: [],
+                },
+            });
+        case SWITCH_FOLDER:
+            return update(store, {
+                checkedFolder: {
+                    $set: action.id,
                 },
             });
         default:

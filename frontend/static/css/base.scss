@@ -20,6 +20,8 @@ a{
     margin: 0 auto;
     width: $width;
     display: flex;
+    height: 100%;
+    position: sticky;
 }
 .page-header-content{
     margin: 0 auto;
@@ -94,6 +96,13 @@ input[type="text"]:focus {
     flex-wrap: wrap;
     overflow-y: auto;
     height: 480px;
+}
+.content-flex-modal{
+    display: flex;
+    align-content: start;
+    flex-wrap: wrap;
+    overflow-y: auto;
+    height: 220px;
 }
 .content-flex-item{
     padding: 10px;
