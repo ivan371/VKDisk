@@ -19,7 +19,7 @@ class CreateFolderComponent extends React.Component {
     };
 
     componentDidMount() {
-        this.props.loadTransferFolders(urls.folder.customFolderUrl);
+        this.props.loadTransferFolders(urls.folder.sortFolderUrl);
     }
 
     onBulkCreate = (e) => {

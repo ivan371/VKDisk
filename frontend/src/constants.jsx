@@ -3,6 +3,7 @@ export const urls = {
         foldersUrl: '/api/v1/folders/?root&&',
         chatFolderUrl: '/api/v1/folders/?chats&&',
         customFolderUrl: '/api/v1/folders/',
+        sortFolderUrl: '/api/v1/folders/?sorted&&',
     },
     docs: {
         docsUrl: '/api/v1/documents/',

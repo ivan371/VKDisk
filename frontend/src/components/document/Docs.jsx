@@ -3,13 +3,13 @@ import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
 import { withRouter } from 'react-router-dom';
 import PropTypes from 'prop-types';
-import { makeUrls, modalType, items } from '../../constants';
+import { makeUrls } from '../../constants';
 import { docsUnMount, loadDocs, loadDocsMore } from '../../actions/document';
 import { loadFilterFolders } from '../../actions/folder';
-import AddFolder from '../folder/AddFolder';
 import { modalOpen, setModal } from '../../actions/modal';
 import FoldersTile from '../tile/FoldersTile';
 import DocsTile from '../tile/DocsTile';
+import DocsHeader from './DocsHeader';
 
 class DocsComponent extends React.Component {
     static propTypes = {
@@ -17,8 +17,6 @@ class DocsComponent extends React.Component {
         loadFilterFolders: PropTypes.func.isRequired,
         docsUnMount: PropTypes.func.isRequired,
         params: PropTypes.object.isRequired,
-        modalOpen: PropTypes.func.isRequired,
-        setModal: PropTypes.func.isRequired,
         loadDocsMore: PropTypes.func.isRequired,
         count: PropTypes.number.isRequired,
         page: PropTypes.number.isRequired,
@@ -30,7 +28,7 @@ class DocsComponent extends React.Component {
             this.props.loadFilterFolders(makeUrls.makeFilterFoldersFolder(this.props.params.id));
         }
     }
-    componentWillReceiveProps(nextProps, nextState) {
+    componentWillReceiveProps(nextProps) {
         if (nextProps.params.hasOwnProperty('id')) {
             if (this.props.params.id !== nextProps.params.id) {
                 this.props.loadDocs(makeUrls.makeFilterDocsFolder(nextProps.params.id));
@@ -38,7 +36,7 @@ class DocsComponent extends React.Component {
             }
         }
     }
-    componentDidUpdate(prevProps, prevState) {
+    componentDidUpdate(prevProps) {
         if (!this.props.params.hasOwnProperty('id') && prevProps.params.hasOwnProperty('id')) {
             this.props.docsUnMount();
         }
@@ -48,39 +46,15 @@ class DocsComponent extends React.Component {
         this.props.docsUnMount();
     }
 
-    onOpen = () => {
-        this.props.modalOpen();
-        this.props.setModal(modalType.folderTransfer);
-    };
-
-    goBack = (e) => {
-        this.props.history.goBack(e);
-    };
-
     onLoadMore = (e) => {
         this.props.loadDocsMore(makeUrls.makeDocsMore(this.props.params.id, this.props.page));
     };
     render() {
-        let folderHeader = null;
-        if (this.props.isLoading) {
-            if (this.props.isFolderLoading) {
-                if (this.props.params.hasOwnProperty('id')) {
-                    folderHeader = (<React.Fragment>
-                        <img src={ items.back } className="item-left" onClick={ this.goBack } />
-                        <div className="item-name">{this.props.folders[this.props.params.id].title}</div>
-                        <AddFolder id={ parseInt(this.props.params.id) } />
-                        <button className="vk-button" onClick={ this.onOpen }>Переместить</button>
-                    </React.Fragment>);
-                }
-            }
-        }
         return (
             <div className="page-content-content-content">
-                <div className="content-item">
-                    {folderHeader}
-                </div>
+                <DocsHeader params={ this.props.params } />
                 <div className="content-flex">
-                    <FoldersTile isModal={ false }/>
+                    <FoldersTile isModal={ false } />
                     <DocsTile />
                     { this.props.isLoading && this.props.count > (10 * (this.props.page - 1)) ? <div>
                         <button onClick={ this.onLoadMore }>Показать еще</button>
@@ -91,10 +65,8 @@ class DocsComponent extends React.Component {
     }
 }
 
-const mapStoreToProps = (state, props) => ({
+const mapStoreToProps = state => ({
     isLoading: state.document.isLoading,
-    isFolderLoading: state.folder.isLoading,
-    folders: state.folder.folders,
     count: state.document.count,
     page: state.document.page,
 });

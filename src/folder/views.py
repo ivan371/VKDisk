@@ -8,6 +8,7 @@ from .serializers import FolderSerializer, FolderBulkSerializer
 from django.db.models import Q
 from django.http import Http404
 
+
 class LargeResultsSetPagination(PageNumberPagination):
     page_size = 100
     page_size_query_param = 'page_size'
@@ -63,5 +64,7 @@ class FolderViewSet(viewsets.ModelViewSet):
         if 'chats' in self.request.query_params:
             q = q.filter(type='chat')
         if 'root' in self.request.query_params:
-            q = q.filter(root=None).filter(type='folder')
+            q = q.filter(root=None).exclude(type='chat')
+        if 'sorted' in self.request.query_params:
+            q = q.filter(type='folder')
         return q

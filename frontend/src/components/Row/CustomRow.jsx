@@ -11,6 +11,7 @@ class CustomRowComponent extends React.Component {
     static propTypes = {
         folder: PropTypes.string.isRequired,
         isLoading: PropTypes.bool.isRequired,
+        loadFolders: PropTypes.func.isRequired,
     };
 
     componentDidMount() {
@@ -31,7 +32,8 @@ class CustomRowComponent extends React.Component {
                 id={ folderId }
                 key={ folderId }
                 folder={ this.props.folder }
-            >Папка</Folder>));
+            >Папка
+            </Folder>));
         }
         return (
             <div className="page-content-content">
@@ -47,7 +49,7 @@ class CustomRowComponent extends React.Component {
     }
 }
 
-const mapStoreToProps = (state, props) => ({
+const mapStoreToProps = state => ({
     isLoading: state.folder.isLoading,
     folderList: state.folder.folderList,
 });

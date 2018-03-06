@@ -15,6 +15,7 @@ export const LOAD_FOLDER_ERROR = 'LOAD_FOLDER_ERROR';
 export const FOLDER_CREATE = 'FOLDER_CREATE';
 export const FOLDER_UPDATE = 'FOLDER_UPDATE';
 export const SWITCH_FOLDER = 'SWITCH_FOLDER';
+export const FOLDER_UNMOUNT = 'FOLDER_UNMOUNT';
 
 
 export function loadFolders(url) {
@@ -46,5 +47,11 @@ export function switchFolder(id) {
     return {
         type: SWITCH_FOLDER,
         id,
+    };
+}
+
+export function folderUnMount() {
+    return {
+        type: FOLDER_UNMOUNT,
     };
 }

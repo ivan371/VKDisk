@@ -3,7 +3,7 @@ import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import PropTypes from 'prop-types';
 import { Link } from 'react-router-dom';
-import {folderType} from "../../constants";
+import { folderType } from '../../constants';
 
 class FolderComponent extends React.Component {
     static propTypes = {
@@ -50,7 +50,7 @@ class FolderComponent extends React.Component {
                             name="title"
                         />
                     }
-                    <img className="item-right" src="/static/img/edit.png"/>
+                    <img className="item-right" src="/static/img/edit.png" />
                 </div>
             </Link>
         );
@@ -60,6 +60,7 @@ class FolderComponent extends React.Component {
 
 const mapStoreToProps = (state, props) => ({
     title: state.folder.folders[props.id].title,
+    type: state.folder.folders[props.id].type,
 });
 
 const mapDispatchToProps = dispatch => ({
