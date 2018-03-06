@@ -16,7 +16,7 @@ class DocsTileComponent extends React.Component {
             docList = this.props.docList.map(docId => (<Tile
                 history={ this.props.history }
                 id={ docId }
-                url={ `/file/${docId}` }
+                url={ this.props.docs[docId].vk_url }
                 title={ this.props.docs[docId].title }
                 key={ docId }
                 type={ tileType.file }

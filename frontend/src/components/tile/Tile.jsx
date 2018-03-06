@@ -57,7 +57,13 @@ class TileComponent extends React.Component {
         if (this.clickedOnce) {
             this._delayedClick.cancel();
             this.clickedOnce = false;
-            this.props.history.push(this.props.url);
+            switch (this.props.type) {
+              case tileType.file:
+                window.open(this.props.url);
+                break;
+              case tileType.folder:
+                this.props.history.push(this.props.url);
+            }
         } else {
             this._delayedClick(e);
             this.clickedOnce = true;

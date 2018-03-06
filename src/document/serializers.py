@@ -18,7 +18,7 @@ class DocumentSerializer(serializers.HyperlinkedModelSerializer):
 
     class Meta:
         model = Document
-        fields = ('id', 'title', 'author', 'folder', 'url')
+        fields = ('id', 'title', 'author', 'folder', 'vk_url')
         read_only_fields = ('id_owner', 'id_source', 'type')
 
     def get_url(self, obj):
