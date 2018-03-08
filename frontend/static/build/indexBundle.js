@@ -490,6 +490,9 @@ var makeUrls = exports.makeUrls = {
     },
     makeReplaceDocs: function makeReplaceDocs(id) {
         return urls.docs.docsUrl + '?folder=' + id + '&&bulk_update';
+    },
+    makeFilterDocs: function makeFilterDocs(id, filter, value) {
+        return urls.docs.docsUrl + '?folder=' + id + '&&filter&&' + filter + '=' + value;
     }
 };
 
@@ -531,7 +534,9 @@ var format = exports.format = {
 
 var items = exports.items = {
     add: '/static/img/add.png',
-    back: '/static/img/back.png'
+    back: '/static/img/back.png',
+    sort: '/static/img/sort.png',
+    filter: '/static/img/search.png'
 };
 
 function makeFormat(fileUrl) {
@@ -7148,7 +7153,7 @@ var CustomRowComponent = function (_React$Component) {
                     _react2.default.createElement(
                         'div',
                         { className: 'content-item' },
-                        _react2.default.createElement('input', { type: 'text', placeholder: 'Search' })
+                        _react2.default.createElement('input', { className: 'content-item__input', type: 'text', placeholder: 'Search' })
                     ),
                     folderList
                 ),
@@ -50577,7 +50582,11 @@ var _AddFolder2 = _interopRequireDefault(_AddFolder);
 
 var _modal = __webpack_require__(21);
 
+var _document = __webpack_require__(33);
+
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+function _defineProperty(obj, key, value) { if (key in obj) { Object.defineProperty(obj, key, { value: value, enumerable: true, configurable: true, writable: true }); } else { obj[key] = value; } return obj; }
 
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 
@@ -50599,7 +50608,22 @@ var DocsHeaderComponent = function (_React$Component) {
             args[_key] = arguments[_key];
         }
 
-        return _ret = (_temp = (_this = _possibleConstructorReturn(this, (_ref = DocsHeaderComponent.__proto__ || Object.getPrototypeOf(DocsHeaderComponent)).call.apply(_ref, [this].concat(args))), _this), _this.handleOpenCopy = function () {
+        return _ret = (_temp = (_this = _possibleConstructorReturn(this, (_ref = DocsHeaderComponent.__proto__ || Object.getPrototypeOf(DocsHeaderComponent)).call.apply(_ref, [this].concat(args))), _this), _this.state = {
+            isSort: false,
+            isFilter: false,
+            filter: '',
+            filterSelect: 'name'
+        }, _this.handleFilterStart = function (e) {
+            _this.props.loadDocs(_constants.makeUrls.makeFilterDocs(_this.props.params.id, _this.state.filterSelect, _this.state.filter));
+        }, _this.handleSelectFilter = function (e) {
+            _this.setState({ filterSelect: e.target.value });
+        }, _this.handleChange = function (e) {
+            _this.setState(_defineProperty({}, e.target.name, e.target.value));
+        }, _this.handleSort = function () {
+            _this.setState({ isSort: !_this.state.isSort });
+        }, _this.handleFilter = function () {
+            _this.setState({ isFilter: !_this.state.isFilter });
+        }, _this.handleOpenCopy = function () {
             _this.props.modalOpen();
             _this.props.setModal(_constants.modalType.folderTransfer);
         }, _this.handleOpenReplace = function () {
@@ -50613,8 +50637,75 @@ var DocsHeaderComponent = function (_React$Component) {
     _createClass(DocsHeaderComponent, [{
         key: 'renderMenu',
         value: function renderMenu() {
+            var type = this.props.folders[parseInt(this.props.params.id)].type;
+            if (this.state.isSort) {
+                return _react2.default.createElement(
+                    _react2.default.Fragment,
+                    null,
+                    _react2.default.createElement(
+                        'button',
+                        { className: 'vk-button', onClick: this.handleSort },
+                        'Cancel'
+                    ),
+                    _react2.default.createElement(
+                        'button',
+                        { className: 'vk-button' },
+                        'Sort'
+                    ),
+                    _react2.default.createElement(
+                        'select',
+                        { className: 'vk-button' },
+                        _react2.default.createElement(
+                            'option',
+                            null,
+                            'Name'
+                        ),
+                        _react2.default.createElement(
+                            'option',
+                            null,
+                            'Date'
+                        )
+                    )
+                );
+            }
+            if (this.state.isFilter) {
+                return _react2.default.createElement(
+                    _react2.default.Fragment,
+                    null,
+                    _react2.default.createElement('img', { className: 'item-left', onClick: this.handleFilter, src: _constants.items.filter }),
+                    _react2.default.createElement(
+                        'button',
+                        { className: 'vk-button', onClick: this.handleFilter },
+                        'Cancel'
+                    ),
+                    _react2.default.createElement(
+                        'button',
+                        { className: 'vk-button', onClick: this.handleFilterStart },
+                        'Search'
+                    ),
+                    _react2.default.createElement(
+                        'select',
+                        { className: 'vk-button', onChange: this.handleSelectFilter },
+                        _react2.default.createElement(
+                            'option',
+                            { value: 'name' },
+                            'Name'
+                        ),
+                        _react2.default.createElement(
+                            'option',
+                            { value: 'date' },
+                            'Date'
+                        ),
+                        _react2.default.createElement(
+                            'option',
+                            { value: 'extension' },
+                            'Extension'
+                        )
+                    ),
+                    _react2.default.createElement('input', { className: 'content-item__input', type: 'text', placeholder: 'Search', onChange: this.handleChange, name: 'filter' })
+                );
+            }
             if (this.props.checkList.length) {
-                var type = this.props.folders[parseInt(this.props.params.id)].type;
                 if (type === 'sorted' || type === 'foldet') {
                     return _react2.default.createElement(
                         _react2.default.Fragment,
@@ -50642,25 +50733,29 @@ var DocsHeaderComponent = function (_React$Component) {
                     '\u041A\u043E\u043F\u0438\u0440\u043E\u0432\u0430\u0442\u044C'
                 );
             }
-            return null;
+
+            return _react2.default.createElement(
+                _react2.default.Fragment,
+                null,
+                _react2.default.createElement('img', { src: _constants.items.back, className: 'item-left', onClick: this.handleGoBack }),
+                _react2.default.createElement(
+                    'div',
+                    { className: 'item-name' },
+                    this.props.folders[this.props.params.id].title
+                ),
+                type === 'sorted' || type === 'folder' ? _react2.default.createElement(_AddFolder2.default, { id: parseInt(this.props.params.id) }) : null,
+                _react2.default.createElement('img', { className: 'item-right', onClick: this.handleSort, src: _constants.items.sort }),
+                _react2.default.createElement('img', { className: 'item-right', onClick: this.handleFilter, src: _constants.items.filter })
+            );
         }
     }, {
         key: 'render',
         value: function render() {
             var folderHeader = null;
-            var type = null;
             if (this.props.isLoading && this.props.isFoldersLoading && this.props.params.hasOwnProperty('id')) {
-                type = this.props.folders[parseInt(this.props.params.id)].type;
                 folderHeader = _react2.default.createElement(
                     _react2.default.Fragment,
                     null,
-                    _react2.default.createElement('img', { src: _constants.items.back, className: 'item-left', onClick: this.handleGoBack }),
-                    _react2.default.createElement(
-                        'div',
-                        { className: 'item-name' },
-                        this.props.folders[this.props.params.id].title
-                    ),
-                    type === 'sorted' || type === 'folder' ? _react2.default.createElement(_AddFolder2.default, { id: parseInt(this.props.params.id) }) : null,
                     this.renderMenu()
                 );
             }
@@ -50680,7 +50775,8 @@ DocsHeaderComponent.propTypes = {
     modalOpen: _propTypes2.default.func.isRequired,
     setModal: _propTypes2.default.func.isRequired,
     isLoading: _propTypes2.default.bool.isRequired,
-    isFoldersLoading: _propTypes2.default.bool.isRequired
+    isFoldersLoading: _propTypes2.default.bool.isRequired,
+    loadDocs: _propTypes2.default.func.isRequired
 };
 
 
@@ -50698,7 +50794,8 @@ var mapStoreToProps = function mapStoreToProps(state) {
 var mapDispatchToProps = function mapDispatchToProps(dispatch) {
     return _extends({}, (0, _redux.bindActionCreators)({
         modalOpen: _modal.modalOpen,
-        setModal: _modal.setModal
+        setModal: _modal.setModal,
+        loadDocs: _document.loadDocs
     }, dispatch));
 };
 
@@ -51332,7 +51429,7 @@ exports = module.exports = __webpack_require__(292)(false);
 
 
 // module
-exports.push([module.i, "body {\n  background-color: #EDEEF0;\n  margin: 0;\n  font-family: -apple-system,BlinkMacSystemFont,Roboto,Helvetica Neue,sans-serif;\n}\n\na {\n  text-decoration: none;\n  cursor: pointer;\n}\n\n.page-header {\n  height: 42px;\n  background-color: #4A76A8;\n}\n\n.page-content {\n  margin: 0 auto;\n  width: 960px;\n  display: flex;\n  height: 100%;\n  position: sticky;\n}\n\n.page-header-content {\n  margin: 0 auto;\n  width: 960px;\n}\n\n.page-header-content-logo {\n  width: 139px;\n}\n\n.page-header-content h2 {\n  margin: 0;\n  padding-top: 5px;\n  color: white;\n}\n\n.page-content-navigation {\n  margin-top: 15px;\n  width: 139px;\n}\n\n.page-content-content {\n  padding-top: 15px;\n  padding-bottom: 2px;\n  height: 540px;\n  min-width: 400px;\n  display: flex;\n}\n\n.page-content-content-wrap {\n  width: 300px;\n  background-color: white;\n  max-height: 100%;\n  border-radius: 2px 2px 0 0;\n  box-shadow: 0 1px 0 0 #d7d8db, 0 0 0 1px #e3e4e8;\n}\n\n.page-content-content-wrap a {\n  color: #285473;\n}\n\n.page-content-content-content {\n  width: 520px;\n  background-color: white;\n  max-height: 100%;\n  border-radius: 2px 2px 0 0;\n  box-shadow: 0 1px 0 0 #d7d8db, 0 0 0 1px #e3e4e8;\n}\n\n.page-content-link {\n  display: block;\n  white-space: nowrap;\n  padding: 10px;\n  color: #285473;\n}\n\n.page-content-link:hover {\n  background-color: #E1E5EB;\n}\n\n.content-item {\n  padding: 10px;\n  height: 30px;\n  box-shadow: 0 1px 0 0 #d7d8db;\n}\n\n.page-content-link-item {\n  display: flex;\n}\n\n.page-content-link-item:hover {\n  background-color: #EDEEF0;\n  cursor: pointer;\n}\n\n.content-item input {\n  border: 0px;\n}\n\ninput[type=\"text\"]:focus {\n  outline: none;\n}\n\n.content-flex {\n  display: flex;\n  align-content: start;\n  flex-wrap: wrap;\n  overflow-y: auto;\n  height: 480px;\n}\n\n.content-flex-modal {\n  display: flex;\n  align-content: start;\n  flex-wrap: wrap;\n  overflow-y: auto;\n  height: 220px;\n}\n\n.content-flex-item {\n  padding: 10px;\n  height: 80px;\n  width: 80px;\n  text-align: center;\n}\n\n.content-flex-item a {\n  color: black;\n}\n\n.content-flex-item:hover {\n  background-color: #EDEEF0;\n}\n\nimg.icon {\n  width: 50px;\n  height: 50px;\n  cursor: pointer;\n}\n\nimg.item {\n  width: 20px;\n  height: 20px;\n  margin-right: 5px;\n}\n\n.modal-container {\n  position: fixed;\n  left: 0;\n  top: 0;\n  text-align: center;\n  background-color: rgba(0, 0, 0, 0.7);\n  width: 100%;\n  height: 100%;\n  z-index: 10;\n}\n\n.modal {\n  cursor: auto;\n  z-index: 100;\n  height: 336px;\n  width: 500px;\n  background-color: white;\n  margin: 116px auto;\n  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.35);\n  outline: none;\n  border-radius: 5px;\n}\n\n.modal-header {\n  border-radius: 5px 5px 0 0;\n  width: 100%;\n  height: 54px;\n  background-color: #4A76A8;\n}\n\n.modal-header-title {\n  padding: 1px;\n}\n\n.modal-header-title p {\n  color: white;\n}\n\n.modal-content {\n  padding: 20px;\n  height: 240px;\n  background-color: #F7F7F7;\n}\n\n.modal-content__img img {\n  width: 100px;\n}\n\n.vk-button {\n  background-color: #5b88bd;\n  text-decoration: none;\n  float: right;\n  padding: 7px 16px 8px;\n  margin-left: 10px;\n  font-size: 12.5px;\n  display: inline-block;\n  zoom: 1;\n  cursor: pointer;\n  white-space: nowrap;\n  outline: none;\n  font-family: -apple-system,BlinkMacSystemFont,Roboto,Helvetica Neue,sans-serif;\n  vertical-align: top;\n  line-height: 15px;\n  text-align: center;\n  color: #fff;\n  border: 0;\n  border-radius: 4px;\n  box-sizing: border-box;\n}\n\n.vk-input {\n  background: #fff;\n  color: #000;\n  border: 1px solid #c0cad5;\n  padding: 5px;\n  vertical-align: top;\n  margin: 0;\n  overflow: auto;\n  outline: 0;\n  line-height: 150%;\n  word-wrap: break-word;\n  width: 200px;\n  cursor: text;\n}\n\n.modal-footer {\n  margin-top: 80px;\n}\n\n.content-item__title {\n  cursor: text;\n  text-align: center;\n  max-width: 50px;\n  margin: 0 auto;\n  max-height: 38px;\n  text-overflow: ellipsis;\n  white-space: pre-wrap;\n  overflow: hidden;\n}\n\n.content-item__title:hover {\n  white-space: normal;\n  overflow: visible;\n}\n\n.content-item__input {\n  width: 50px;\n  border: 1px solid #c0cad5;\n  cursor: text;\n  outline: 0;\n  line-height: 150%;\n}\n\n.page-content-item__input {\n  width: 100px;\n  border: 1px solid #c0cad5;\n  cursor: text;\n  outline: 0;\n  line-height: 150%;\n}\n\n.item-right {\n  cursor: pointer;\n  padding: 5px;\n  width: 20px;\n  height: 20px;\n  float: right;\n  vertical-align: top;\n}\n\n.item-left {\n  cursor: pointer;\n  padding: 5px;\n  width: 20px;\n  height: 20px;\n  float: left;\n  vertical-align: top;\n}\n\n.item-name {\n  float: left;\n  padding: 5px;\n  height: 20px;\n}\n\n.checked {\n  background-color: #E1E5EB;\n}\n", ""]);
+exports.push([module.i, "body {\n  background-color: #EDEEF0;\n  margin: 0;\n  font-family: -apple-system,BlinkMacSystemFont,Roboto,Helvetica Neue,sans-serif;\n}\n\na {\n  text-decoration: none;\n  cursor: pointer;\n}\n\n.page-header {\n  height: 42px;\n  background-color: #4A76A8;\n}\n\n.page-content {\n  margin: 0 auto;\n  width: 960px;\n  display: flex;\n  height: 100%;\n  position: sticky;\n}\n\n.page-header-content {\n  margin: 0 auto;\n  width: 960px;\n}\n\n.page-header-content-logo {\n  width: 139px;\n}\n\n.page-header-content h2 {\n  margin: 0;\n  padding-top: 5px;\n  color: white;\n}\n\n.page-content-navigation {\n  margin-top: 15px;\n  width: 139px;\n}\n\n.page-content-content {\n  padding-top: 15px;\n  padding-bottom: 2px;\n  height: 540px;\n  min-width: 400px;\n  display: flex;\n}\n\n.page-content-content-wrap {\n  width: 300px;\n  background-color: white;\n  max-height: 100%;\n  border-radius: 2px 2px 0 0;\n  box-shadow: 0 1px 0 0 #d7d8db, 0 0 0 1px #e3e4e8;\n}\n\n.page-content-content-wrap a {\n  color: #285473;\n}\n\n.page-content-content-content {\n  width: 520px;\n  background-color: white;\n  max-height: 100%;\n  border-radius: 2px 2px 0 0;\n  box-shadow: 0 1px 0 0 #d7d8db, 0 0 0 1px #e3e4e8;\n}\n\n.page-content-link {\n  display: block;\n  white-space: nowrap;\n  padding: 10px;\n  color: #285473;\n}\n\n.page-content-link:hover {\n  background-color: #E1E5EB;\n}\n\n.content-item {\n  padding: 10px;\n  height: 30px;\n  box-shadow: 0 1px 0 0 #d7d8db;\n}\n\n.page-content-link-item {\n  display: flex;\n}\n\n.page-content-link-item:hover {\n  background-color: #EDEEF0;\n  cursor: pointer;\n}\n\n.content-item input {\n  border: 0px;\n}\n\ninput[type=\"text\"]:focus {\n  outline: none;\n}\n\n.content-flex {\n  display: flex;\n  align-content: start;\n  flex-wrap: wrap;\n  overflow-y: auto;\n  height: 480px;\n}\n\n.content-flex-modal {\n  display: flex;\n  align-content: start;\n  flex-wrap: wrap;\n  overflow-y: auto;\n  height: 220px;\n}\n\n.content-flex-item {\n  padding: 10px;\n  height: 80px;\n  width: 80px;\n  text-align: center;\n}\n\n.content-flex-item a {\n  color: black;\n}\n\n.content-flex-item:hover {\n  background-color: #EDEEF0;\n}\n\nimg.icon {\n  width: 50px;\n  height: 50px;\n  cursor: pointer;\n}\n\nimg.item {\n  width: 20px;\n  height: 20px;\n  margin-right: 5px;\n}\n\n.modal-container {\n  position: fixed;\n  left: 0;\n  top: 0;\n  text-align: center;\n  background-color: rgba(0, 0, 0, 0.7);\n  width: 100%;\n  height: 100%;\n  z-index: 10;\n}\n\n.modal {\n  cursor: auto;\n  z-index: 100;\n  height: 336px;\n  width: 500px;\n  background-color: white;\n  margin: 116px auto;\n  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.35);\n  outline: none;\n  border-radius: 5px;\n}\n\n.modal-header {\n  border-radius: 5px 5px 0 0;\n  width: 100%;\n  height: 54px;\n  background-color: #4A76A8;\n}\n\n.modal-header-title {\n  padding: 1px;\n}\n\n.modal-header-title p {\n  color: white;\n}\n\n.modal-content {\n  padding: 20px;\n  height: 240px;\n  background-color: #F7F7F7;\n}\n\n.modal-content__img img {\n  width: 100px;\n}\n\n.vk-button {\n  background-color: #5b88bd;\n  text-decoration: none;\n  float: right;\n  padding: 7px 16px 8px;\n  margin-left: 10px;\n  font-size: 12.5px;\n  display: inline-block;\n  zoom: 1;\n  cursor: pointer;\n  white-space: nowrap;\n  outline: none;\n  font-family: -apple-system,BlinkMacSystemFont,Roboto,Helvetica Neue,sans-serif;\n  vertical-align: top;\n  line-height: 15px;\n  text-align: center;\n  color: #fff;\n  border: 0;\n  border-radius: 4px;\n  box-sizing: border-box;\n}\n\n.vk-input {\n  background: #fff;\n  color: #000;\n  border: 1px solid #c0cad5;\n  padding: 5px;\n  vertical-align: top;\n  margin: 0;\n  overflow: auto;\n  outline: 0;\n  line-height: 150%;\n  word-wrap: break-word;\n  width: 200px;\n  cursor: text;\n}\n\n.modal-footer {\n  margin-top: 80px;\n}\n\n.content-item__title {\n  cursor: text;\n  text-align: center;\n  max-width: 50px;\n  margin: 0 auto;\n  max-height: 38px;\n  text-overflow: ellipsis;\n  white-space: pre-wrap;\n  overflow: hidden;\n}\n\n.content-item__title:hover {\n  white-space: normal;\n  overflow: visible;\n}\n\n.content-item__input {\n  border: 1px solid #c0cad5;\n  cursor: text;\n  margin-top: 4px;\n  outline: 0;\n  line-height: 150%;\n}\n\n.page-content-item__input {\n  width: 100px;\n  border: 1px solid #c0cad5;\n  cursor: text;\n  outline: 0;\n  line-height: 150%;\n}\n\n.item-right {\n  cursor: pointer;\n  padding: 5px;\n  width: 20px;\n  height: 20px;\n  float: right;\n  vertical-align: top;\n}\n\n.item-left {\n  cursor: pointer;\n  padding: 5px;\n  width: 20px;\n  height: 20px;\n  float: left;\n  vertical-align: top;\n}\n\n.item-name {\n  float: left;\n  padding: 5px;\n  height: 20px;\n}\n\n.checked {\n  background-color: #E1E5EB;\n}\n", ""]);
 
 // exports
 

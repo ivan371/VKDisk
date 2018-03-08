@@ -39,7 +39,7 @@ class CustomRowComponent extends React.Component {
             <div className="page-content-content">
                 <div className="page-content-content-wrap">
                     <div className="content-item">
-                        <input type="text" placeholder="Search" />
+                        <input className="content-item__input" type="text" placeholder="Search" />
                     </div>
                     {folderList}
                 </div>

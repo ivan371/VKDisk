@@ -18,6 +18,7 @@ export const makeUrls = {
     makeDocsMore: (id, page) => `${urls.docs.docsUrl}?folder=${id}&&page=${page}`,
     makeCopyDocs: id => `${urls.docs.docsUrl}?folder=${id}&&bulk_create`,
     makeReplaceDocs: id => `${urls.docs.docsUrl}?folder=${id}&&bulk_update`,
+    makeFilterDocs: (id, filter, value) => `${urls.docs.docsUrl}?folder=${id}&&filter&&${filter}=${value}`,
 };
 
 export const tileType = {
@@ -59,6 +60,8 @@ export const format = {
 export const items = {
     add: '/static/img/add.png',
     back: '/static/img/back.png',
+    sort: '/static/img/sort.png',
+    filter: '/static/img/search.png',
 };
 
 export function makeFormat(fileUrl) {
