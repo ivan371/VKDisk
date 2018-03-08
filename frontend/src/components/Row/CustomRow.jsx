@@ -20,7 +20,7 @@ class CustomRowComponent extends React.Component {
                 this.props.loadFolders(urls.folder.chatFolderUrl);
                 break;
             case folderType.root:
-                this.props.loadFolders(urls.folder.foldersUrl);
+                this.props.loadFolders(urls.folder.sortFolderUrl);
                 break;
             default:
         }

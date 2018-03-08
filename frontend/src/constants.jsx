@@ -1,7 +1,7 @@
 export const urls = {
     folder: {
-        foldersUrl: '/api/v1/folders/?root&&',
-        chatFolderUrl: '/api/v1/folders/?chats&&',
+        foldersUrl: '/api/v1/folders/?type=root&&',
+        chatFolderUrl: '/api/v1/folders/?type=chat&&',
         customFolderUrl: '/api/v1/folders/',
         sortFolderUrl: '/api/v1/folders/?sorted&&',
     },

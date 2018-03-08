@@ -459,8 +459,8 @@ Object.defineProperty(exports, "__esModule", {
 exports.makeFormat = makeFormat;
 var urls = exports.urls = {
     folder: {
-        foldersUrl: '/api/v1/folders/?root&&',
-        chatFolderUrl: '/api/v1/folders/?chats&&',
+        foldersUrl: '/api/v1/folders/?type=root&&',
+        chatFolderUrl: '/api/v1/folders/?type=chat&&',
         customFolderUrl: '/api/v1/folders/',
         sortFolderUrl: '/api/v1/folders/?sorted&&'
     },
@@ -7115,7 +7115,7 @@ var CustomRowComponent = function (_React$Component) {
                     this.props.loadFolders(_constants.urls.folder.chatFolderUrl);
                     break;
                 case _constants.folderType.root:
-                    this.props.loadFolders(_constants.urls.folder.foldersUrl);
+                    this.props.loadFolders(_constants.urls.folder.sortFolderUrl);
                     break;
                 default:
             }
