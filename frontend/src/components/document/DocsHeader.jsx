@@ -30,6 +30,21 @@ class DocsHeaderComponent extends React.Component {
         this.props.history.goBack(e);
     };
 
+    renderMenu() {
+        if (this.props.checkList.length) {
+            const type = this.props.folders[parseInt(this.props.params.id)].type;
+            if (type === 'sorted' || type === 'foldet') {
+                return (<React.Fragment>
+                    <button className="vk-button" onClick={ this.handleOpenCopy }>Копировать</button>
+                    <button className="vk-button" onClick={ this.handleOpenReplace }>Переместить</button>
+                    <button className="vk-button">Удалить</button>
+                </React.Fragment>);
+            }
+            return <button className="vk-button" onClick={ this.handleOpenCopy }>Копировать</button>;
+        }
+        return null;
+    }
+
     render() {
         let folderHeader = null;
         let type = null;
@@ -39,9 +54,7 @@ class DocsHeaderComponent extends React.Component {
                 <img src={ items.back } className="item-left" onClick={ this.handleGoBack } />
                 <div className="item-name">{this.props.folders[this.props.params.id].title}</div>
                 {type === 'sorted' || type === 'folder' ? <AddFolder id={ parseInt(this.props.params.id) } /> : null}
-                <button className="vk-button" onClick={ this.handleOpenCopy }>Копировать</button>
-                {type === 'sorted' || type === 'folder' ? <button className="vk-button" onClick={ this.handleOpenReplace }>Переместить</button> : null}
-                {type === 'sorted' || type === 'folder' ? <button className="vk-button">Удалить</button> : null}
+                {this.renderMenu()}
             </React.Fragment>);
         }
         return (<div className="content-item">
@@ -54,6 +67,7 @@ const mapStoreToProps = state => ({
     isFoldersLoading: state.folder.isLoading,
     isLoading: state.document.isLoading,
     folders: state.folder.folders,
+    checkList: state.document.checkList,
     count: state.document.count,
     page: state.document.page,
 });
