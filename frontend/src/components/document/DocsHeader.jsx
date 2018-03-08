@@ -3,10 +3,11 @@ import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
 import { withRouter } from 'react-router-dom';
 import PropTypes from 'prop-types';
-import {modalType, items, makeUrls} from '../../constants';
+import { modalType, items, makeUrls } from '../../constants';
 import AddFolder from '../folder/AddFolder';
 import { modalOpen, setModal } from '../../actions/modal';
-import {loadDocs} from "../../actions/document";
+import { loadDocs } from '../../actions/document';
+import {setFilter, setSort} from "../../actions/page";
 
 class DocsHeaderComponent extends React.Component {
     static propTypes = {
@@ -16,6 +17,8 @@ class DocsHeaderComponent extends React.Component {
         isLoading: PropTypes.bool.isRequired,
         isFoldersLoading: PropTypes.bool.isRequired,
         loadDocs: PropTypes.func.isRequired,
+        setFilter: PropTypes.func.isRequired,
+        setSort: PropTypes.func.isRequired,
     };
 
     state = {
@@ -26,7 +29,8 @@ class DocsHeaderComponent extends React.Component {
     };
 
     handleFilterStart = (e) => {
-        this.props.loadDocs(makeUrls.makeFilterDocs(this.props.params.id, this.state.filterSelect, this.state.filter));
+        // this.props.loadDocs(makeUrls.makeFilterDocs(this.props.params.id, this.state.filterSelect, this.state.filter));
+        this.props.setFilter(this.state.filterSelect, this.state.filter);
     };
 
     handleSelectFilter = (e) => {
@@ -63,7 +67,7 @@ class DocsHeaderComponent extends React.Component {
         const type = this.props.folders[parseInt(this.props.params.id)].type;
         if (this.state.isSort) {
             return (<React.Fragment>
-                <button className="vk-button" onClick={ this.handleSort }>Cancel</button>
+                <button className="vk-button button-secondary" onClick={ this.handleSort }>Cancel</button>
                 <button className="vk-button">Sort</button>
                 <select className="vk-button">
                     <option>Name</option>
@@ -74,14 +78,21 @@ class DocsHeaderComponent extends React.Component {
         if (this.state.isFilter) {
             return (<React.Fragment>
                 <img className="item-left" onClick={ this.handleFilter } src={ items.filter } />
-                <button className="vk-button" onClick={ this.handleFilter }>Cancel</button>
+                <button className="vk-button button-secondary" onClick={ this.handleFilter }>Cancel</button>
                 <button className="vk-button" onClick={ this.handleFilterStart }>Search</button>
-                <select className="vk-button" onChange={ this.handleSelectFilter } >
+                <select className="vk-button" onChange={ this.handleSelectFilter } value={ this.state.filterSelect }>
                     <option value="name">Name</option>
                     <option value="date">Date</option>
                     <option value="extension">Extension</option>
                 </select>
-                <input className="content-item__input" type="text" placeholder="Search" onChange={ this.handleChange } name="filter" />
+                <input
+                    className="content-item__input"
+                    type="text"
+                    placeholder="Search"
+                    onChange={ this.handleChange }
+                    name="filter"
+                    value={ this.state.filter }
+                />
             </React.Fragment>);
         }
         if (this.props.checkList.length) {
@@ -131,6 +142,8 @@ const mapDispatchToProps = dispatch => ({
         modalOpen,
         setModal,
         loadDocs,
+        setFilter,
+        setSort,
     }, dispatch),
 });
 

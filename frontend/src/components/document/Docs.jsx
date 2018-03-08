@@ -21,6 +21,8 @@ class DocsComponent extends React.Component {
         count: PropTypes.number.isRequired,
         page: PropTypes.number.isRequired,
         isLoading: PropTypes.bool.isRequired,
+        filter: PropTypes.string.isRequired,
+        filterType: PropTypes.string.isRequired,
     };
 
     componentDidMount() {
@@ -34,6 +36,8 @@ class DocsComponent extends React.Component {
             if (this.props.params.id !== nextProps.params.id) {
                 this.props.loadDocs(makeUrls.makeFilterDocsFolder(nextProps.params.id));
                 this.props.loadFilterFolders(makeUrls.makeFilterFoldersFolder(nextProps.params.id));
+            } else if (this.props.filterType !== nextProps.filterType || this.props.filter !== nextProps.filter) {
+                this.props.loadDocs(makeUrls.makeFilterDocs(nextProps.params.id, nextProps.filter, nextProps.filterType));
             }
         }
     }
@@ -48,7 +52,7 @@ class DocsComponent extends React.Component {
     }
 
     handleLoadMore = (e) => {
-        this.props.loadDocsMore(makeUrls.makeDocsMore(this.props.params.id, this.props.page));
+        this.props.loadDocsMore(makeUrls.makeDocsMore(this.props.params.id, this.props.page, this.props.filter, this.props.filterType));
     };
     render() {
         return (
@@ -70,6 +74,8 @@ const mapStoreToProps = state => ({
     isLoading: state.document.isLoading,
     count: state.document.count,
     page: state.document.page,
+    filter: state.page.filter,
+    filterType: state.page.filterSelect,
 });
 
 const mapDispatchToProps = dispatch => ({

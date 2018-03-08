@@ -15,7 +15,7 @@ export const makeUrls = {
     makeFilterFoldersFolder: id => `${urls.folder.customFolderUrl}?folder=${id}`,
     makeCustomFolder: id => `${urls.folder.customFolderUrl + id}/`,
     makeCustomFile: id => `${urls.docs.docsUrl + id}/`,
-    makeDocsMore: (id, page) => `${urls.docs.docsUrl}?folder=${id}&&page=${page}`,
+    makeDocsMore: (id, page, filter, value) => `${urls.docs.docsUrl}?folder=${id}&&page=${page}&&filter&&${filter}=${value}`,
     makeCopyDocs: id => `${urls.docs.docsUrl}?folder=${id}&&bulk_create`,
     makeReplaceDocs: id => `${urls.docs.docsUrl}?folder=${id}&&bulk_update`,
     makeFilterDocs: (id, filter, value) => `${urls.docs.docsUrl}?folder=${id}&&filter&&${filter}=${value}`,

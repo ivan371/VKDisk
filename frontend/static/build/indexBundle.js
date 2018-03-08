@@ -482,8 +482,8 @@ var makeUrls = exports.makeUrls = {
     makeCustomFile: function makeCustomFile(id) {
         return urls.docs.docsUrl + id + '/';
     },
-    makeDocsMore: function makeDocsMore(id, page) {
-        return urls.docs.docsUrl + '?folder=' + id + '&&page=' + page;
+    makeDocsMore: function makeDocsMore(id, page, filter, value) {
+        return urls.docs.docsUrl + '?folder=' + id + '&&page=' + page + '&&filter&&' + filter + '=' + value;
     },
     makeCopyDocs: function makeCopyDocs(id) {
         return urls.docs.docsUrl + '?folder=' + id + '&&bulk_create';
@@ -30987,13 +30987,18 @@ var _modal = __webpack_require__(264);
 
 var _modal2 = _interopRequireDefault(_modal);
 
+var _page = __webpack_require__(296);
+
+var _page2 = _interopRequireDefault(_page);
+
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 exports.default = (0, _redux.combineReducers)({
     routerReducer: _reactRouterRedux.routerReducer,
     folder: _folder2.default,
     document: _document2.default,
-    modal: _modal2.default
+    modal: _modal2.default,
+    page: _page2.default
 });
 
 /***/ }),
@@ -33216,7 +33221,7 @@ var DocsComponent = function (_React$Component) {
         }
 
         return _ret = (_temp = (_this = _possibleConstructorReturn(this, (_ref = DocsComponent.__proto__ || Object.getPrototypeOf(DocsComponent)).call.apply(_ref, [this].concat(args))), _this), _this.handleLoadMore = function (e) {
-            _this.props.loadDocsMore(_constants.makeUrls.makeDocsMore(_this.props.params.id, _this.props.page));
+            _this.props.loadDocsMore(_constants.makeUrls.makeDocsMore(_this.props.params.id, _this.props.page, _this.props.filter, _this.props.filterType));
         }, _temp), _possibleConstructorReturn(_this, _ret);
     }
 
@@ -33235,6 +33240,8 @@ var DocsComponent = function (_React$Component) {
                 if (this.props.params.id !== nextProps.params.id) {
                     this.props.loadDocs(_constants.makeUrls.makeFilterDocsFolder(nextProps.params.id));
                     this.props.loadFilterFolders(_constants.makeUrls.makeFilterFoldersFolder(nextProps.params.id));
+                } else if (this.props.filterType !== nextProps.filterType || this.props.filter !== nextProps.filter) {
+                    this.props.loadDocs(_constants.makeUrls.makeFilterDocs(nextProps.params.id, nextProps.filter, nextProps.filterType));
                 }
             }
         }
@@ -33287,7 +33294,9 @@ DocsComponent.propTypes = {
     loadDocsMore: _propTypes2.default.func.isRequired,
     count: _propTypes2.default.number.isRequired,
     page: _propTypes2.default.number.isRequired,
-    isLoading: _propTypes2.default.bool.isRequired
+    isLoading: _propTypes2.default.bool.isRequired,
+    filter: _propTypes2.default.string.isRequired,
+    filterType: _propTypes2.default.string.isRequired
 };
 
 
@@ -33295,7 +33304,9 @@ var mapStoreToProps = function mapStoreToProps(state) {
     return {
         isLoading: state.document.isLoading,
         count: state.document.count,
-        page: state.document.page
+        page: state.document.page,
+        filter: state.page.filter,
+        filterType: state.page.filterSelect
     };
 };
 
@@ -50584,6 +50595,8 @@ var _modal = __webpack_require__(21);
 
 var _document = __webpack_require__(33);
 
+var _page = __webpack_require__(295);
+
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 function _defineProperty(obj, key, value) { if (key in obj) { Object.defineProperty(obj, key, { value: value, enumerable: true, configurable: true, writable: true }); } else { obj[key] = value; } return obj; }
@@ -50614,7 +50627,8 @@ var DocsHeaderComponent = function (_React$Component) {
             filter: '',
             filterSelect: 'name'
         }, _this.handleFilterStart = function (e) {
-            _this.props.loadDocs(_constants.makeUrls.makeFilterDocs(_this.props.params.id, _this.state.filterSelect, _this.state.filter));
+            // this.props.loadDocs(makeUrls.makeFilterDocs(this.props.params.id, this.state.filterSelect, this.state.filter));
+            _this.props.setFilter(_this.state.filterSelect, _this.state.filter);
         }, _this.handleSelectFilter = function (e) {
             _this.setState({ filterSelect: e.target.value });
         }, _this.handleChange = function (e) {
@@ -50644,7 +50658,7 @@ var DocsHeaderComponent = function (_React$Component) {
                     null,
                     _react2.default.createElement(
                         'button',
-                        { className: 'vk-button', onClick: this.handleSort },
+                        { className: 'vk-button button-secondary', onClick: this.handleSort },
                         'Cancel'
                     ),
                     _react2.default.createElement(
@@ -50675,7 +50689,7 @@ var DocsHeaderComponent = function (_React$Component) {
                     _react2.default.createElement('img', { className: 'item-left', onClick: this.handleFilter, src: _constants.items.filter }),
                     _react2.default.createElement(
                         'button',
-                        { className: 'vk-button', onClick: this.handleFilter },
+                        { className: 'vk-button button-secondary', onClick: this.handleFilter },
                         'Cancel'
                     ),
                     _react2.default.createElement(
@@ -50685,7 +50699,7 @@ var DocsHeaderComponent = function (_React$Component) {
                     ),
                     _react2.default.createElement(
                         'select',
-                        { className: 'vk-button', onChange: this.handleSelectFilter },
+                        { className: 'vk-button', onChange: this.handleSelectFilter, value: this.state.filterSelect },
                         _react2.default.createElement(
                             'option',
                             { value: 'name' },
@@ -50702,7 +50716,14 @@ var DocsHeaderComponent = function (_React$Component) {
                             'Extension'
                         )
                     ),
-                    _react2.default.createElement('input', { className: 'content-item__input', type: 'text', placeholder: 'Search', onChange: this.handleChange, name: 'filter' })
+                    _react2.default.createElement('input', {
+                        className: 'content-item__input',
+                        type: 'text',
+                        placeholder: 'Search',
+                        onChange: this.handleChange,
+                        name: 'filter',
+                        value: this.state.filter
+                    })
                 );
             }
             if (this.props.checkList.length) {
@@ -50776,7 +50797,9 @@ DocsHeaderComponent.propTypes = {
     setModal: _propTypes2.default.func.isRequired,
     isLoading: _propTypes2.default.bool.isRequired,
     isFoldersLoading: _propTypes2.default.bool.isRequired,
-    loadDocs: _propTypes2.default.func.isRequired
+    loadDocs: _propTypes2.default.func.isRequired,
+    setFilter: _propTypes2.default.func.isRequired,
+    setSort: _propTypes2.default.func.isRequired
 };
 
 
@@ -50795,7 +50818,9 @@ var mapDispatchToProps = function mapDispatchToProps(dispatch) {
     return _extends({}, (0, _redux.bindActionCreators)({
         modalOpen: _modal.modalOpen,
         setModal: _modal.setModal,
-        loadDocs: _document.loadDocs
+        loadDocs: _document.loadDocs,
+        setFilter: _page.setFilter,
+        setSort: _page.setSort
     }, dispatch));
 };
 
@@ -51429,7 +51454,7 @@ exports = module.exports = __webpack_require__(292)(false);
 
 
 // module
-exports.push([module.i, "body {\n  background-color: #EDEEF0;\n  margin: 0;\n  font-family: -apple-system,BlinkMacSystemFont,Roboto,Helvetica Neue,sans-serif;\n}\n\na {\n  text-decoration: none;\n  cursor: pointer;\n}\n\n.page-header {\n  height: 42px;\n  background-color: #4A76A8;\n}\n\n.page-content {\n  margin: 0 auto;\n  width: 960px;\n  display: flex;\n  height: 100%;\n  position: sticky;\n}\n\n.page-header-content {\n  margin: 0 auto;\n  width: 960px;\n}\n\n.page-header-content-logo {\n  width: 139px;\n}\n\n.page-header-content h2 {\n  margin: 0;\n  padding-top: 5px;\n  color: white;\n}\n\n.page-content-navigation {\n  margin-top: 15px;\n  width: 139px;\n}\n\n.page-content-content {\n  padding-top: 15px;\n  padding-bottom: 2px;\n  height: 540px;\n  min-width: 400px;\n  display: flex;\n}\n\n.page-content-content-wrap {\n  width: 300px;\n  background-color: white;\n  max-height: 100%;\n  border-radius: 2px 2px 0 0;\n  box-shadow: 0 1px 0 0 #d7d8db, 0 0 0 1px #e3e4e8;\n}\n\n.page-content-content-wrap a {\n  color: #285473;\n}\n\n.page-content-content-content {\n  width: 520px;\n  background-color: white;\n  max-height: 100%;\n  border-radius: 2px 2px 0 0;\n  box-shadow: 0 1px 0 0 #d7d8db, 0 0 0 1px #e3e4e8;\n}\n\n.page-content-link {\n  display: block;\n  white-space: nowrap;\n  padding: 10px;\n  color: #285473;\n}\n\n.page-content-link:hover {\n  background-color: #E1E5EB;\n}\n\n.content-item {\n  padding: 10px;\n  height: 30px;\n  box-shadow: 0 1px 0 0 #d7d8db;\n}\n\n.page-content-link-item {\n  display: flex;\n}\n\n.page-content-link-item:hover {\n  background-color: #EDEEF0;\n  cursor: pointer;\n}\n\n.content-item input {\n  border: 0px;\n}\n\ninput[type=\"text\"]:focus {\n  outline: none;\n}\n\n.content-flex {\n  display: flex;\n  align-content: start;\n  flex-wrap: wrap;\n  overflow-y: auto;\n  height: 480px;\n}\n\n.content-flex-modal {\n  display: flex;\n  align-content: start;\n  flex-wrap: wrap;\n  overflow-y: auto;\n  height: 220px;\n}\n\n.content-flex-item {\n  padding: 10px;\n  height: 80px;\n  width: 80px;\n  text-align: center;\n}\n\n.content-flex-item a {\n  color: black;\n}\n\n.content-flex-item:hover {\n  background-color: #EDEEF0;\n}\n\nimg.icon {\n  width: 50px;\n  height: 50px;\n  cursor: pointer;\n}\n\nimg.item {\n  width: 20px;\n  height: 20px;\n  margin-right: 5px;\n}\n\n.modal-container {\n  position: fixed;\n  left: 0;\n  top: 0;\n  text-align: center;\n  background-color: rgba(0, 0, 0, 0.7);\n  width: 100%;\n  height: 100%;\n  z-index: 10;\n}\n\n.modal {\n  cursor: auto;\n  z-index: 100;\n  height: 336px;\n  width: 500px;\n  background-color: white;\n  margin: 116px auto;\n  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.35);\n  outline: none;\n  border-radius: 5px;\n}\n\n.modal-header {\n  border-radius: 5px 5px 0 0;\n  width: 100%;\n  height: 54px;\n  background-color: #4A76A8;\n}\n\n.modal-header-title {\n  padding: 1px;\n}\n\n.modal-header-title p {\n  color: white;\n}\n\n.modal-content {\n  padding: 20px;\n  height: 240px;\n  background-color: #F7F7F7;\n}\n\n.modal-content__img img {\n  width: 100px;\n}\n\n.vk-button {\n  background-color: #5b88bd;\n  text-decoration: none;\n  float: right;\n  padding: 7px 16px 8px;\n  margin-left: 10px;\n  font-size: 12.5px;\n  display: inline-block;\n  zoom: 1;\n  cursor: pointer;\n  white-space: nowrap;\n  outline: none;\n  font-family: -apple-system,BlinkMacSystemFont,Roboto,Helvetica Neue,sans-serif;\n  vertical-align: top;\n  line-height: 15px;\n  text-align: center;\n  color: #fff;\n  border: 0;\n  border-radius: 4px;\n  box-sizing: border-box;\n}\n\n.vk-input {\n  background: #fff;\n  color: #000;\n  border: 1px solid #c0cad5;\n  padding: 5px;\n  vertical-align: top;\n  margin: 0;\n  overflow: auto;\n  outline: 0;\n  line-height: 150%;\n  word-wrap: break-word;\n  width: 200px;\n  cursor: text;\n}\n\n.modal-footer {\n  margin-top: 80px;\n}\n\n.content-item__title {\n  cursor: text;\n  text-align: center;\n  max-width: 50px;\n  margin: 0 auto;\n  max-height: 38px;\n  text-overflow: ellipsis;\n  white-space: pre-wrap;\n  overflow: hidden;\n}\n\n.content-item__title:hover {\n  white-space: normal;\n  overflow: visible;\n}\n\n.content-item__input {\n  border: 1px solid #c0cad5;\n  cursor: text;\n  margin-top: 4px;\n  outline: 0;\n  line-height: 150%;\n}\n\n.page-content-item__input {\n  width: 100px;\n  border: 1px solid #c0cad5;\n  cursor: text;\n  outline: 0;\n  line-height: 150%;\n}\n\n.item-right {\n  cursor: pointer;\n  padding: 5px;\n  width: 20px;\n  height: 20px;\n  float: right;\n  vertical-align: top;\n}\n\n.item-left {\n  cursor: pointer;\n  padding: 5px;\n  width: 20px;\n  height: 20px;\n  float: left;\n  vertical-align: top;\n}\n\n.item-name {\n  float: left;\n  padding: 5px;\n  height: 20px;\n}\n\n.checked {\n  background-color: #E1E5EB;\n}\n", ""]);
+exports.push([module.i, "body {\n  background-color: #EDEEF0;\n  margin: 0;\n  font-family: -apple-system,BlinkMacSystemFont,Roboto,Helvetica Neue,sans-serif;\n}\n\na {\n  text-decoration: none;\n  cursor: pointer;\n}\n\n.page-header {\n  height: 42px;\n  background-color: #4A76A8;\n}\n\n.page-content {\n  margin: 0 auto;\n  width: 960px;\n  display: flex;\n  height: 100%;\n  position: sticky;\n}\n\n.page-header-content {\n  margin: 0 auto;\n  width: 960px;\n}\n\n.page-header-content-logo {\n  width: 139px;\n}\n\n.page-header-content h2 {\n  margin: 0;\n  padding-top: 5px;\n  color: white;\n}\n\n.page-content-navigation {\n  margin-top: 15px;\n  width: 139px;\n}\n\n.page-content-content {\n  padding-top: 15px;\n  padding-bottom: 2px;\n  height: 540px;\n  min-width: 400px;\n  display: flex;\n}\n\n.page-content-content-wrap {\n  width: 300px;\n  background-color: white;\n  max-height: 100%;\n  border-radius: 2px 2px 0 0;\n  box-shadow: 0 1px 0 0 #d7d8db, 0 0 0 1px #e3e4e8;\n}\n\n.page-content-content-wrap a {\n  color: #285473;\n}\n\n.page-content-content-content {\n  width: 520px;\n  background-color: white;\n  max-height: 100%;\n  border-radius: 2px 2px 0 0;\n  box-shadow: 0 1px 0 0 #d7d8db, 0 0 0 1px #e3e4e8;\n}\n\n.page-content-link {\n  display: block;\n  white-space: nowrap;\n  padding: 10px;\n  color: #285473;\n}\n\n.page-content-link:hover {\n  background-color: #E1E5EB;\n}\n\n.content-item {\n  padding: 10px;\n  height: 30px;\n  box-shadow: 0 1px 0 0 #d7d8db;\n}\n\n.page-content-link-item {\n  display: flex;\n}\n\n.page-content-link-item:hover {\n  background-color: #EDEEF0;\n  cursor: pointer;\n}\n\n.content-item input {\n  border: 0px;\n}\n\ninput[type=\"text\"]:focus {\n  outline: none;\n}\n\n.content-flex {\n  display: flex;\n  align-content: start;\n  flex-wrap: wrap;\n  overflow-y: auto;\n  height: 480px;\n}\n\n.content-flex-modal {\n  display: flex;\n  align-content: start;\n  flex-wrap: wrap;\n  overflow-y: auto;\n  height: 220px;\n}\n\n.content-flex-item {\n  padding: 10px;\n  height: 80px;\n  width: 80px;\n  text-align: center;\n}\n\n.content-flex-item a {\n  color: black;\n}\n\n.content-flex-item:hover {\n  background-color: #EDEEF0;\n}\n\nimg.icon {\n  width: 50px;\n  height: 50px;\n  cursor: pointer;\n}\n\nimg.item {\n  width: 20px;\n  height: 20px;\n  margin-right: 5px;\n}\n\n.modal-container {\n  position: fixed;\n  left: 0;\n  top: 0;\n  text-align: center;\n  background-color: rgba(0, 0, 0, 0.7);\n  width: 100%;\n  height: 100%;\n  z-index: 10;\n}\n\n.modal {\n  cursor: auto;\n  z-index: 100;\n  height: 336px;\n  width: 500px;\n  background-color: white;\n  margin: 116px auto;\n  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.35);\n  outline: none;\n  border-radius: 5px;\n}\n\n.modal-header {\n  border-radius: 5px 5px 0 0;\n  width: 100%;\n  height: 54px;\n  background-color: #4A76A8;\n}\n\n.modal-header-title {\n  padding: 1px;\n}\n\n.modal-header-title p {\n  color: white;\n}\n\n.modal-content {\n  padding: 20px;\n  height: 240px;\n  background-color: #F7F7F7;\n}\n\n.modal-content__img img {\n  width: 100px;\n}\n\n.vk-button {\n  background-color: #5b88bd;\n  text-decoration: none;\n  float: right;\n  padding: 7px 16px 8px;\n  margin-left: 10px;\n  font-size: 12.5px;\n  display: inline-block;\n  zoom: 1;\n  cursor: pointer;\n  white-space: nowrap;\n  outline: none;\n  font-family: -apple-system,BlinkMacSystemFont,Roboto,Helvetica Neue,sans-serif;\n  vertical-align: top;\n  line-height: 15px;\n  text-align: center;\n  color: #fff;\n  border: 0;\n  border-radius: 4px;\n  box-sizing: border-box;\n}\n\n.vk-input {\n  background: #fff;\n  color: #000;\n  border: 1px solid #c0cad5;\n  padding: 5px;\n  vertical-align: top;\n  margin: 0;\n  overflow: auto;\n  outline: 0;\n  line-height: 150%;\n  word-wrap: break-word;\n  width: 200px;\n  cursor: text;\n}\n\n.modal-footer {\n  margin-top: 80px;\n}\n\n.content-item__title {\n  cursor: text;\n  text-align: center;\n  max-width: 50px;\n  margin: 0 auto;\n  max-height: 38px;\n  text-overflow: ellipsis;\n  white-space: pre-wrap;\n  overflow: hidden;\n}\n\n.content-item__title:hover {\n  white-space: normal;\n  overflow: visible;\n}\n\n.content-item__input {\n  border: 1px solid #c0cad5;\n  cursor: text;\n  margin-top: 4px;\n  outline: 0;\n  line-height: 150%;\n}\n\n.page-content-item__input {\n  width: 100px;\n  border: 1px solid #c0cad5;\n  cursor: text;\n  outline: 0;\n  line-height: 150%;\n}\n\n.item-right {\n  cursor: pointer;\n  padding: 5px;\n  width: 20px;\n  height: 20px;\n  float: right;\n  vertical-align: top;\n}\n\n.item-left {\n  cursor: pointer;\n  padding: 5px;\n  width: 20px;\n  height: 20px;\n  float: left;\n  vertical-align: top;\n}\n\n.item-name {\n  float: left;\n  padding: 5px;\n  height: 20px;\n}\n\n.checked {\n  background-color: #E1E5EB;\n}\n\n.button-secondary {\n  background-color: #e5ebf1;\n  color: #55677d;\n}\n", ""]);
 
 // exports
 
@@ -51992,6 +52017,87 @@ module.exports = function (css) {
 	return fixedCss;
 };
 
+
+/***/ }),
+/* 295 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+Object.defineProperty(exports, "__esModule", {
+    value: true
+});
+exports.setFilter = setFilter;
+exports.setSort = setSort;
+var SET_FILTER = exports.SET_FILTER = 'SET_FILTER';
+var SET_SORT = exports.SET_SORT = 'SET_SORT';
+
+function setFilter(filter, filterSelect) {
+    return {
+        type: SET_FILTER,
+        filterSelect: filterSelect,
+        filter: filter
+    };
+}
+
+function setSort(sort, sortSelect) {
+    return {
+        types: SET_SORT,
+        sortSelect: sortSelect
+    };
+}
+
+/***/ }),
+/* 296 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+Object.defineProperty(exports, "__esModule", {
+    value: true
+});
+exports.default = page;
+
+var _reactAddonsUpdate = __webpack_require__(76);
+
+var _reactAddonsUpdate2 = _interopRequireDefault(_reactAddonsUpdate);
+
+var _page = __webpack_require__(295);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+var initalStore = {
+    filter: '',
+    sortSelect: '',
+    filterSelect: ''
+};
+
+function page() {
+    var store = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : initalStore;
+    var action = arguments[1];
+
+    switch (action.type) {
+        case _page.SET_FILTER:
+            return (0, _reactAddonsUpdate2.default)(store, {
+                filter: {
+                    $set: action.filter
+                },
+                filterSelect: {
+                    $set: action.filterSelect
+                }
+            });
+        case _page.SET_SORT:
+            return (0, _reactAddonsUpdate2.default)(store, {
+                sort: {
+                    $set: action.sortSelect
+                }
+            });
+        default:
+            return store;
+    }
+}
 
 /***/ })
 /******/ ]);
