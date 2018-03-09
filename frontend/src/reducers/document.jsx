@@ -1,5 +1,11 @@
 import update from 'react-addons-update';
-import { CHECK_FILE, DOCS_UNMOUNT, LOAD_DOCS, LOAD_DOCS_MORE, LOAD_DOCS_SUCCESS } from '../actions/document';
+import {
+    CHECK_ALL,
+    CHECK_FILE, DOCS_BULK_CREATE_SUCCESS, DOCS_BULK_UPDATE, DOCS_BULK_UPDATE_SUCCESS, DOCS_UNMOUNT, LOAD_DOCS,
+    LOAD_DOCS_MORE,
+    LOAD_DOCS_SUCCESS,
+} from '../actions/document';
+import _ from 'lodash';
 
 const initalState = {
     isLoading: false,
@@ -25,6 +31,7 @@ export default function document(store = initalState, action) {
         }
     }
     let index = null;
+    const deleteList = [];
     switch (action.type) {
         case LOAD_DOCS:
             return update(store, {
@@ -86,7 +93,35 @@ export default function document(store = initalState, action) {
                     $splice: [[index, 1]],
                 },
             });
+        case CHECK_ALL:
+            if (!store.checkList.length) {
+                return update(store, {
+                    checkList: {
+                        $set: store.docList,
+                    },
+                });
+            }
+            return update(store, {
+                checkList: {
+                    $set: [],
+                },
+            });
 
+        case DOCS_BULK_UPDATE_SUCCESS:
+            return update(store, {
+                docList: {
+                    $set: _.difference(store.docList, store.checkList),
+                },
+                checkList: {
+                    $set: [],
+                },
+            });
+        case DOCS_BULK_CREATE_SUCCESS:
+            return update(store, {
+                checkList: {
+                    $set: [],
+                },
+            });
         default:
             return store;
     }

@@ -1,8 +1,10 @@
 export const urls = {
     folder: {
-        foldersUrl: '/api/v1/folders/?root&&',
-        chatFolderUrl: '/api/v1/folders/?chats&&',
+        foldersUrl: '/api/v1/folders/?type=root&&',
+        chatFolderUrl: '/api/v1/folders/?type=chat&&',
         customFolderUrl: '/api/v1/folders/',
+        sortFolderUrl: '/api/v1/folders/?sorted&&',
+        folderFolderUrl: '/api/v1/folders/?type=folder&&',
     },
     docs: {
         docsUrl: '/api/v1/documents/',
@@ -14,8 +16,12 @@ export const makeUrls = {
     makeFilterFoldersFolder: id => `${urls.folder.customFolderUrl}?folder=${id}`,
     makeCustomFolder: id => `${urls.folder.customFolderUrl + id}/`,
     makeCustomFile: id => `${urls.docs.docsUrl + id}/`,
-    makeDocsMore: (id, page) => `${urls.docs.docsUrl}?folder=${id}&&page=${page}`,
+    makeDocsMore: (id, page, filter, value) => `${urls.docs.docsUrl}?folder=${id}&&page=${page}&&filter&&${filter}=${value}`,
+    makeDocsMoreDate: (id, page, year, month, day) => `${urls.docs.docsUrl}?folder=${id}&&page=${page}&&filter&&year=${year}&&month=${month}&&day=${day}`,
     makeCopyDocs: id => `${urls.docs.docsUrl}?folder=${id}&&bulk_create`,
+    makeReplaceDocs: id => `${urls.docs.docsUrl}?folder=${id}&&bulk_update`,
+    makeFilterDocs: (id, filter, value) => `${urls.docs.docsUrl}?folder=${id}&&filter&&${filter}=${value}`,
+    makeFilterDocsDate: (id, year, month, day) => `${urls.docs.docsUrl}?folder=${id}&&filter&&year=${year}&&month=${month}&&day=${day}`,
 };
 
 export const tileType = {
@@ -32,6 +38,7 @@ export const folderType = {
 export const modalType = {
     folderCreate: 'folderCreate',
     folderTransfer: 'folderTransfer',
+    folderReplace: 'folderReplace',
 };
 
 export const format = {
@@ -45,17 +52,21 @@ export const format = {
     pptx: '/static/img/formats/pptx.png',
     ppt: '/static/img/formats/pptx.png',
     xls: '/static/img/formats/xls.png',
+    xlsx: '/static/img/formats/xls.png',
     jpg: '/static/img/formats/jpg.png',
     png: '/static/img/formats/png.png',
     txt: '/static/img/formats/txt.png',
     tex: '/static/img/formats/tex.png',
     py: '/static/img/formats/py.png',
     gif: '/static/img/formats/gif.png',
+    zip: '/static/img/formats/zip.png',
 };
 
 export const items = {
     add: '/static/img/add.png',
     back: '/static/img/back.png',
+    sort: '/static/img/sort.png',
+    filter: '/static/img/search.png',
 };
 
 export function makeFormat(fileUrl) {

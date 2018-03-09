@@ -4,7 +4,7 @@ import { withRouter } from 'react-router-dom';
 import _ from 'lodash';
 import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
-import {switchFolder, updateFolder} from '../../actions/folder';
+import { switchFolder, updateFolder } from '../../actions/folder';
 import { format, makeUrls, tileType, makeFormat } from '../../constants';
 import { checkFile, updateDoc } from '../../actions/document';
 
