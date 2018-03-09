@@ -14,6 +14,7 @@ export const DOCS_BULK_CREATE = 'DOCS_BULK_CREATE';
 export const DOCS_BULK_CREATE_SUCCESS = 'DOCS_BULK_CREATE_SUCCESS';
 export const DOCS_BULK_UPDATE = 'DOCS_BULK_UPDATE';
 export const DOCS_BULK_UPDATE_SUCCESS = 'DOCS_BULK_UPDATE_SUCCESS';
+export const CHECK_ALL = 'CHECK_ALL';
 
 export function loadDocs(url) {
     const types = [LOAD_DOCS, LOAD_DOCS_SUCCESS, LOAD_DOCS_ERROR];
@@ -50,5 +51,11 @@ export function checkFile(id) {
     return {
         type: CHECK_FILE,
         id,
+    };
+}
+
+export function checkAll() {
+    return {
+        type: CHECK_ALL,
     };
 }

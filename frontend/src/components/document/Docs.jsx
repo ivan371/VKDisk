@@ -4,7 +4,7 @@ import { connect } from 'react-redux';
 import { withRouter } from 'react-router-dom';
 import PropTypes from 'prop-types';
 import { makeUrls } from '../../constants';
-import { docsUnMount, loadDocs, loadDocsMore } from '../../actions/document';
+import {checkAll, docsUnMount, loadDocs, loadDocsMore} from '../../actions/document';
 import { loadFilterFolders } from '../../actions/folder';
 import { modalOpen, setModal } from '../../actions/modal';
 import FoldersTile from '../tile/FoldersTile';
@@ -23,6 +23,7 @@ class DocsComponent extends React.Component {
         isLoading: PropTypes.bool.isRequired,
         filter: PropTypes.string.isRequired,
         filterType: PropTypes.string.isRequired,
+        checkAll: PropTypes.func.isRequired,
     };
 
     componentDidMount() {
@@ -36,8 +37,11 @@ class DocsComponent extends React.Component {
             if (this.props.params.id !== nextProps.params.id) {
                 this.props.loadDocs(makeUrls.makeFilterDocsFolder(nextProps.params.id));
                 this.props.loadFilterFolders(makeUrls.makeFilterFoldersFolder(nextProps.params.id));
+                this.props.checkAll();
             } else if (this.props.filterType !== nextProps.filterType || this.props.filter !== nextProps.filter) {
-                this.props.loadDocs(makeUrls.makeFilterDocs(nextProps.params.id, nextProps.filter, nextProps.filterType));
+                this.props.loadDocs(
+                    makeUrls.makeFilterDocs(nextProps.params.id, nextProps.filter, nextProps.filterType)
+                );
             }
         }
     }
@@ -86,6 +90,7 @@ const mapDispatchToProps = dispatch => ({
         loadFilterFolders,
         modalOpen,
         setModal,
+        checkAll,
     }, dispatch),
 });
 

@@ -4,6 +4,12 @@ import Layout from './Layout';
 import RootFolder from './folder/RootFolder';
 import ChatFolder from './folder/ChatFolder';
 
+export function scroll() {
+    const d = document.getElementsByClassName("content-flex")[0];
+    d.scrollTo(0, d.scrollHeight);
+    console.log(d);
+}
+
 class AppComponent extends React.Component {
     render() {
         return (
