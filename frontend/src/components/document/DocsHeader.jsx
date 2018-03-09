@@ -7,7 +7,7 @@ import { modalType, items, makeUrls } from '../../constants';
 import AddFolder from '../folder/AddFolder';
 import { modalOpen, setModal } from '../../actions/modal';
 import { loadDocs } from '../../actions/document';
-import {setFilter, setSort} from "../../actions/page";
+import { setFilter, setSort } from '../../actions/page';
 
 class DocsHeaderComponent extends React.Component {
     static propTypes = {
@@ -26,19 +26,23 @@ class DocsHeaderComponent extends React.Component {
         isFilter: false,
         filter: '',
         filterSelect: 'name',
+        isDate: false,
     };
 
     handleFilterStart = (e) => {
-        // this.props.loadDocs(makeUrls.makeFilterDocs(this.props.params.id, this.state.filterSelect, this.state.filter));
         this.props.setFilter(this.state.filterSelect, this.state.filter);
     };
 
     handleSelectFilter = (e) => {
-        this.setState({ filterSelect: e.target.value });
+        if (e.target.value === 'date') {
+            this.setState({ isDate: true, filterSelect: e.target.value });
+        } else {
+            this.setState({ isDate: false, filterSelect: e.target.value });
+        }
     };
 
     handleChange = (e) => {
-        this.setState({ [e.target.name]: e.target.value });
+        this.setState({ [e.target.name]: e.target.value});
     };
 
     handleSort = () => {
@@ -76,6 +80,26 @@ class DocsHeaderComponent extends React.Component {
             </React.Fragment>);
         }
         if (this.state.isFilter) {
+            let input = null;
+            if (this.state.isDate) {
+                input = (<input
+                    className="content-item__input"
+                    type="date"
+                    onChange={ this.handleChange }
+                    name="filter"
+                    value={ this.state.filter }
+                />);
+            } else {
+                input = (<input
+                    className="content-item__input"
+                    type="text"
+                    placeholder="Search"
+                    onChange={ this.handleChange }
+                    name="filter"
+                    value={ this.state.filter }
+                />);
+            }
+
             return (<React.Fragment>
                 <img className="item-left" onClick={ this.handleFilter } src={ items.filter } />
                 <button className="vk-button button-secondary" onClick={ this.handleFilter }>Cancel</button>
@@ -85,14 +109,7 @@ class DocsHeaderComponent extends React.Component {
                     <option value="date">Date</option>
                     <option value="extension">Extension</option>
                 </select>
-                <input
-                    className="content-item__input"
-                    type="text"
-                    placeholder="Search"
-                    onChange={ this.handleChange }
-                    name="filter"
-                    value={ this.state.filter }
-                />
+                {input}
             </React.Fragment>);
         }
         if (this.props.checkList.length) {
