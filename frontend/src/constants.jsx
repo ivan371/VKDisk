@@ -4,6 +4,7 @@ export const urls = {
         chatFolderUrl: '/api/v1/folders/?type=chat&&',
         customFolderUrl: '/api/v1/folders/',
         sortFolderUrl: '/api/v1/folders/?sorted&&',
+        folderFolderUrl: '/api/v1/folders/?type=folder&&',
     },
     docs: {
         docsUrl: '/api/v1/documents/',
@@ -51,12 +52,14 @@ export const format = {
     pptx: '/static/img/formats/pptx.png',
     ppt: '/static/img/formats/pptx.png',
     xls: '/static/img/formats/xls.png',
+    xlsx: '/static/img/formats/xls.png',
     jpg: '/static/img/formats/jpg.png',
     png: '/static/img/formats/png.png',
     txt: '/static/img/formats/txt.png',
     tex: '/static/img/formats/tex.png',
     py: '/static/img/formats/py.png',
     gif: '/static/img/formats/gif.png',
+    zip: '/static/img/formats/zip.png',
 };
 
 export const items = {

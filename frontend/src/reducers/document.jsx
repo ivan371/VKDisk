@@ -5,6 +5,7 @@ import {
     LOAD_DOCS_MORE,
     LOAD_DOCS_SUCCESS,
 } from '../actions/document';
+import _ from 'lodash';
 
 const initalState = {
     isLoading: false,
@@ -107,14 +108,9 @@ export default function document(store = initalState, action) {
             });
 
         case DOCS_BULK_UPDATE_SUCCESS:
-            for (const i in store.checkList) {
-                if (store.docList.indexOf(store.checkList[i]) !== -1) {
-                    deleteList.push(i);
-                }
-            }
             return update(store, {
                 docList: {
-                    $splice: [[deleteList, deleteList.length]],
+                    $set: _.difference(store.docList, store.checkList),
                 },
                 checkList: {
                     $set: [],

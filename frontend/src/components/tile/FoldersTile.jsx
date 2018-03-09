@@ -4,7 +4,6 @@ import { connect } from 'react-redux';
 import PropTypes from 'prop-types';
 import { tileType } from '../../constants';
 import Tile from '../tile/Tile';
-import { scroll } from '../App';
 
 class FoldersTileComponent extends React.Component {
     static propTypes = {
@@ -36,7 +35,6 @@ class FoldersTileComponent extends React.Component {
                 type={ tileType.folder }
                 isModal={ this.props.isModal }
             />));
-            setTimeout(scroll, 10);
         }
         return (<React.Fragment>{folderList}</React.Fragment>);
     }

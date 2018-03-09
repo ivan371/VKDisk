@@ -8,6 +8,7 @@ import AddFolder from '../folder/AddFolder';
 import { modalOpen, setModal } from '../../actions/modal';
 import { loadDocs } from '../../actions/document';
 import { setFilter, setSort } from '../../actions/page';
+import Modal from "../Modal";
 
 class DocsHeaderComponent extends React.Component {
     static propTypes = {
@@ -113,7 +114,7 @@ class DocsHeaderComponent extends React.Component {
             </React.Fragment>);
         }
         if (this.props.checkList.length) {
-            if (type === 'sorted' || type === 'foldet') {
+            if (type === 'sorted' || type === 'folder') {
                 return (<React.Fragment>
                     <button className="vk-button" onClick={ this.handleOpenCopy }>Копировать</button>
                     <button className="vk-button" onClick={ this.handleOpenReplace }>Переместить</button>
@@ -134,8 +135,13 @@ class DocsHeaderComponent extends React.Component {
 
     render() {
         let folderHeader = null;
+        let modal = null;
+        if (this.props.isOpen) {
+            modal = <Modal />;
+        }
         if (this.props.isLoading && this.props.isFoldersLoading && this.props.params.hasOwnProperty('id')) {
             folderHeader = (<React.Fragment>
+                { modal }
                 {this.renderMenu()}
             </React.Fragment>);
         }
@@ -152,6 +158,7 @@ const mapStoreToProps = state => ({
     checkList: state.document.checkList,
     count: state.document.count,
     page: state.document.page,
+    isOpen: state.modal.isOpen,
 });
 
 const mapDispatchToProps = dispatch => ({

@@ -27,7 +27,7 @@ class ModalComponent extends React.Component {
         let modal = null;
         switch (this.props.modal) {
             case modalType.folderCreate:
-                modal = <CreateFolder />;
+                modal = <CreateFolder id={ this.props.id } />;
                 break;
             case modalType.folderTransfer:
                 modal = <TransferFolder />;

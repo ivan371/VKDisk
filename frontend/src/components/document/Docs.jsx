@@ -37,7 +37,9 @@ class DocsComponent extends React.Component {
             if (this.props.params.id !== nextProps.params.id) {
                 this.props.loadDocs(makeUrls.makeFilterDocsFolder(nextProps.params.id));
                 this.props.loadFilterFolders(makeUrls.makeFilterFoldersFolder(nextProps.params.id));
-                this.props.checkAll();
+                if (this.props.checkList.length) {
+                    this.props.checkAll();
+                }
             } else if (this.props.filterType !== nextProps.filterType || this.props.filter !== nextProps.filter) {
                 this.props.loadDocs(
                     makeUrls.makeFilterDocs(nextProps.params.id, nextProps.filter, nextProps.filterType)
@@ -80,6 +82,7 @@ const mapStoreToProps = state => ({
     page: state.document.page,
     filter: state.page.filter,
     filterType: state.page.filterSelect,
+    checkList: state.document.checkList,
 });
 
 const mapDispatchToProps = dispatch => ({
