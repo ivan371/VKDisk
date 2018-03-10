@@ -19,15 +19,25 @@ from django.contrib import admin
 from django.urls import path, include, re_path
 from django.conf.urls import url, include
 from rest_api.routers import router
+from django.conf import settings
 
 ## TODO: CHANGE URLS
 
-urlpatterns = [
+urlpatterns = []
+
+if settings.DEBUG:
+    import debug_toolbar
+    urlpatterns += [
+        re_path(r'^__debug__/', include(debug_toolbar.urls))
+    ]
+
+urlpatterns += [
     path('admin/', admin.site.urls),
     url(r'^accounts/', include(('core.urls', 'core.apps.CoreConfig'), namespace='core')),
     url(r'^social/', include('social_django.urls', namespace='social')),
     url(r'^api/v1/', include(router.urls)),
 ]
+
 urlpatterns += [
     re_path(r'^', include('core.urls')),
 ]

@@ -3,13 +3,13 @@ import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
 import { withRouter } from 'react-router-dom';
 import PropTypes from 'prop-types';
-import { makeUrls, modalType, items } from '../../constants';
-import { docsUnMount, loadDocs, loadDocsMore } from '../../actions/document';
+import { folderType, makeUrls, urls } from '../../constants';
+import { checkAll, docsUnMount, loadDocs, loadDocsMore } from '../../actions/document';
 import { loadFilterFolders } from '../../actions/folder';
-import AddFolder from '../folder/AddFolder';
 import { modalOpen, setModal } from '../../actions/modal';
 import FoldersTile from '../tile/FoldersTile';
 import DocsTile from '../tile/DocsTile';
+import DocsHeader from './DocsHeader';
 
 class DocsComponent extends React.Component {
     static propTypes = {
@@ -17,11 +17,14 @@ class DocsComponent extends React.Component {
         loadFilterFolders: PropTypes.func.isRequired,
         docsUnMount: PropTypes.func.isRequired,
         params: PropTypes.object.isRequired,
-        modalOpen: PropTypes.func.isRequired,
-        setModal: PropTypes.func.isRequired,
         loadDocsMore: PropTypes.func.isRequired,
         count: PropTypes.number.isRequired,
         page: PropTypes.number.isRequired,
+        isLoading: PropTypes.bool.isRequired,
+        filter: PropTypes.string.isRequired,
+        filterType: PropTypes.string.isRequired,
+        checkAll: PropTypes.func.isRequired,
+        folder: PropTypes.string.isRequired,
     };
 
     componentDidMount() {
@@ -29,16 +32,30 @@ class DocsComponent extends React.Component {
             this.props.loadDocs(makeUrls.makeFilterDocsFolder(this.props.params.id));
             this.props.loadFilterFolders(makeUrls.makeFilterFoldersFolder(this.props.params.id));
         }
+        if (this.props.folder === folderType.root) {
+            this.props.loadDocs(urls.docs.unsortedDocsUrl);
+            this.props.loadFilterFolders(makeUrls.makeRootFoldersFolder());
+        }
     }
-    componentWillReceiveProps(nextProps, nextState) {
+    componentWillReceiveProps(nextProps) {
         if (nextProps.params.hasOwnProperty('id')) {
             if (this.props.params.id !== nextProps.params.id) {
                 this.props.loadDocs(makeUrls.makeFilterDocsFolder(nextProps.params.id));
                 this.props.loadFilterFolders(makeUrls.makeFilterFoldersFolder(nextProps.params.id));
+                if (this.props.checkList.length) {
+                    this.props.checkAll();
+                }
+            } else if (this.props.filterType !== nextProps.filterType || this.props.filter !== nextProps.filter) {
+                this.props.loadDocs(makeUrls.makeFilterDocs(nextProps.params.id, nextProps.filter, nextProps.filterType));
+            }
+        }
+        if (this.props.filterType !== nextProps.filterType || this.props.filter !== nextProps.filter) {
+            if (this.props.folder === folderType.root) {
+                this.props.loadDocs(makeUrls.makeFilterRootDocs(nextProps.filter, nextProps.filterType));
             }
         }
     }
-    componentDidUpdate(prevProps, prevState) {
+    componentDidUpdate(prevProps) {
         if (!this.props.params.hasOwnProperty('id') && prevProps.params.hasOwnProperty('id')) {
             this.props.docsUnMount();
         }
@@ -48,42 +65,22 @@ class DocsComponent extends React.Component {
         this.props.docsUnMount();
     }
 
-    onOpen = () => {
-        this.props.modalOpen();
-        this.props.setModal(modalType.folderTransfer);
-    };
-
-    goBack = (e) => {
-        this.props.history.goBack(e);
-    };
-
-    onLoadMore = (e) => {
-        this.props.loadDocsMore(makeUrls.makeDocsMore(this.props.params.id, this.props.page));
+    handleLoadMore = (e) => {
+        if (this.props.folder === folderType.root) {
+            this.props.loadDocsMore(makeUrls.makeDocsRootMore(this.props.page, this.props.filter, this.props.filterType));
+        } else {
+            this.props.loadDocsMore(makeUrls.makeDocsMore(this.props.params.id, this.props.page, this.props.filter, this.props.filterType));
+        }
     };
     render() {
-        let folderHeader = null;
-        if (this.props.isLoading) {
-            if (this.props.isFolderLoading) {
-                if (this.props.params.hasOwnProperty('id')) {
-                    folderHeader = (<React.Fragment>
-                        <img src={ items.back } className="item-left" onClick={ this.goBack } />
-                        <div className="item-name">{this.props.folders[this.props.params.id].title}</div>
-                        <AddFolder id={ parseInt(this.props.params.id) } />
-                        <button className="vk-button" onClick={ this.onOpen }>Переместить</button>
-                    </React.Fragment>);
-                }
-            }
-        }
         return (
             <div className="page-content-content-content">
-                <div className="content-item">
-                    {folderHeader}
-                </div>
+                <DocsHeader params={ this.props.params } folder={ this.props.folder } />
                 <div className="content-flex">
-                    <FoldersTile isModal={ false }/>
+                    <FoldersTile isModal={ false } />
                     <DocsTile />
                     { this.props.isLoading && this.props.count > (10 * (this.props.page - 1)) ? <div>
-                        <button onClick={ this.onLoadMore }>Показать еще</button>
+                        <button onClick={ this.handleLoadMore }>Показать еще</button>
                     </div> : null }
                 </div>
             </div>
@@ -91,12 +88,13 @@ class DocsComponent extends React.Component {
     }
 }
 
-const mapStoreToProps = (state, props) => ({
+const mapStoreToProps = state => ({
     isLoading: state.document.isLoading,
-    isFolderLoading: state.folder.isLoading,
-    folders: state.folder.folders,
     count: state.document.count,
     page: state.document.page,
+    filter: state.page.filter,
+    filterType: state.page.filterSelect,
+    checkList: state.document.checkList,
 });
 
 const mapDispatchToProps = dispatch => ({
@@ -107,6 +105,7 @@ const mapDispatchToProps = dispatch => ({
         loadFilterFolders,
         modalOpen,
         setModal,
+        checkAll,
     }, dispatch),
 });
 

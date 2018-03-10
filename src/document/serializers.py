@@ -1,3 +1,5 @@
+from __future__ import absolute_import
+from folder.serializers import FolderSerializer
 from .models import Document
 from rest_framework import serializers, fields
 
@@ -13,8 +15,8 @@ class DocumentFilteredPrimaryKeyRelatedField(serializers.PrimaryKeyRelatedField)
 
 class DocumentSerializer(serializers.HyperlinkedModelSerializer):
     author = serializers.PrimaryKeyRelatedField(many=False, read_only=True)
-    folder = serializers.PrimaryKeyRelatedField(many=False, read_only=True)
     vk_url = fields.SerializerMethodField('get_url')
+    folder = FolderSerializer(many=False, read_only=True)
 
     class Meta:
         model = Document

@@ -5,20 +5,21 @@ import PropTypes from 'prop-types';
 import { modalOpen } from '../actions/modal';
 import { createFolder } from '../actions/folder';
 import CreateFolder from './folder/CreateFolder';
-import { modalType } from '../constants';
+import {folderType, modalType} from '../constants';
 import TransferFolder from './folder/TransferFolder';
 
 class ModalComponent extends React.Component {
     static propTypes = {
-        id: PropTypes.number.isRequired,
+        id: PropTypes.number,
         modalOpen: PropTypes.func.isRequired,
+        modal: PropTypes.string.isRequired,
     };
 
-    onOpen = () => {
+    handleOpen = () => {
         this.props.modalOpen();
     };
 
-    onCancelOpen = (e) => {
+    handleCancelOpen = (e) => {
         e.stopPropagation();
     };
 
@@ -26,16 +27,22 @@ class ModalComponent extends React.Component {
         let modal = null;
         switch (this.props.modal) {
             case modalType.folderCreate:
-                modal = <CreateFolder id={ this.props.id } />;
+                modal = <CreateFolder id={ this.props.id } folder={ folderType.folder } />;
+                break;
+            case modalType.folderRootCreate:
+                modal = <CreateFolder folder={ folderType.root } />;
                 break;
             case modalType.folderTransfer:
-                modal = <TransferFolder id={ this.props.id } />;
+                modal = <TransferFolder />;
+                break;
+            case modalType.folderReplace:
+                modal = <TransferFolder />;
                 break;
             default:
         }
         return (
-            <div className="modal-container" onClick={ this.onOpen }>
-                <div className="modal" onClick={ this.onCancelOpen }>
+            <div className="modal-container" onClick={ this.handleOpen }>
+                <div className="modal" onClick={ this.handleCancelOpen }>
                     {modal}
                 </div>
             </div>

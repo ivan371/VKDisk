@@ -11,3 +11,4 @@ djangorestframework==3.7.7
 vk-api==9.3
 celery==4.1.0
 redis==2.10.6
+django-debug-toolbar==1.9.1

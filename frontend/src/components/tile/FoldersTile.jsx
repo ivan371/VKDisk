@@ -13,6 +13,7 @@ class FoldersTileComponent extends React.Component {
         isTransferLoading: PropTypes.bool.isRequired,
         isModal: PropTypes.bool.isRequired,
     };
+
     render() {
         let folderList = [];
         let list = null;
@@ -27,7 +28,7 @@ class FoldersTileComponent extends React.Component {
         if (loading) {
             folderList = list.map(folderId => (<Tile
                 history={ this.props.history }
-                url={ `/root/${folderId}` }
+                url={ `/folder/${folderId}` }
                 title={ this.props.folders[folderId].title }
                 key={ folderId }
                 id={ folderId }
