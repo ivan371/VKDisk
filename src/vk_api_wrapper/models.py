@@ -37,6 +37,7 @@ class VkMessagesList(models.Model):
 
 class BaseAttachment(models.Model):
     user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
+    vk_dialog = models.ForeignKey(VkDialog, null=True, blank=True, on_delete=models.CASCADE)
 
     class Meta:
         abstract = True

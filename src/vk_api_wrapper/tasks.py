@@ -67,7 +67,7 @@ def download_dialog_list(access_token, user_id):
 
 @task
 def download_dialog_history(access_token, user_id, chat_id, is_group_chat, media_type='doc'):
-    vk_dialog = VkDialog.objects.get(user_id=user_id,
+    vk_dialog = VkDialog.objects.select_related('chatfolder').get(user_id=user_id,
                                      chat_id=chat_id,
                                      is_chat=is_group_chat)
     vk_messages_history, created = VkMessagesList.objects.get_or_create(dialog=vk_dialog)
@@ -95,6 +95,7 @@ def download_dialog_history(access_token, user_id, chat_id, is_group_chat, media
             try:
                 attach = VkAttachmentFactory.parse_message(item['attachment'])
                 attach.user_id = user_id
+                attach.vk_dialog = vk_dialog
                 attach.save()
             except IntegrityError:
                 pass
