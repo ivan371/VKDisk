@@ -54,7 +54,7 @@ def download_dialog_list(access_token, user_id):
                                                    item['in_read'],
                                                    item['out_read']
                                                    )
-            current_read = min(current_read, item['in_read'])
+            current_read = min(current_read or item['in_read'], item['in_read'])
             if last_message_id and last_message_id > current_read:
                 break
             dialog_info = {}
