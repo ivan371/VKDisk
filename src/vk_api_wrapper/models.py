@@ -35,6 +35,15 @@ class VkMessagesList(models.Model):
     start_from = models.BigIntegerField(default=None, null=True, blank=False)
 
 
+class VkDocsList(models.Model):
+    user = models.OneToOneField(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
+    owner_id = models.BigIntegerField(default=None, null=True, blank=True)
+    prev_count = models.BigIntegerField(default=0, null=False, blank=False)
+
+    class Meta:
+        unique_together = (('user', 'owner_id'), )
+
+
 class BaseAttachment(models.Model):
     user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
     vk_dialog = models.ForeignKey(VkDialog, null=True, blank=True, on_delete=models.CASCADE)
@@ -44,6 +53,10 @@ class BaseAttachment(models.Model):
 
     @staticmethod
     def parse_message(message):
+        raise NotImplementedError()
+
+    @staticmethod
+    def parse_item(item):
         raise NotImplementedError()
 
 
@@ -59,6 +72,10 @@ class VkAttachmentFactory:
         msg_type = message['type']
         clazz = cls.type_dict[msg_type]
         return clazz.parse_message(message)
+
+    @classmethod
+    def get_for_type(cls, type_name):
+        return cls.type_dict[type_name]
 
 
 class DocAttachment(BaseAttachment, models.Model):
@@ -78,9 +95,9 @@ class DocAttachment(BaseAttachment, models.Model):
     vk_access_key = models.CharField(max_length=255)
     title = models.CharField(max_length=1023)
     size = models.IntegerField()
-    ext = models.CharField(max_length=10)
+    ext = models.CharField(max_length=63)
     url = models.TextField()
-    date = models.IntegerField()
+    date = models.BigIntegerField()
     type = models.IntegerField(choices=DOCUMENT_TYPES)
 
     class Meta:
@@ -89,6 +106,10 @@ class DocAttachment(BaseAttachment, models.Model):
     @staticmethod
     def parse_message(message):
         doc = message['doc']
+        return DocAttachment.parse_item(doc)
+
+    @staticmethod
+    def parse_item(doc):
         attach = DocAttachment()
         attach.vk_id = doc['id']
         attach.vk_owner_id = doc['owner_id']

@@ -3,10 +3,17 @@ from celery.task import task
 from django.conf import settings
 from django.db import IntegrityError
 
-from .models import VkDialogsList, VkDialog, VkMessagesList, VkAttachmentFactory
+from .models import VkDialogsList, VkDialog, VkMessagesList, VkAttachmentFactory, VkDocsList
 
 VK_DIALOG_COUNT = 200
 VK_MESSAGES_COUNT = 200
+VK_DOCS_COUNT = 200
+
+
+def get_vk_api(access_token):
+    vk_session = vk_api.VkApi(token=access_token, client_secret=settings.VK_CLIENT_SECRET_KEY)
+    api = vk_session.get_api()
+    return api
 
 
 def get_user_info(api, user_id):
@@ -22,8 +29,7 @@ def get_group_info(api, group_id):
 @task
 def download_dialog_list(access_token, user_id):
     vk_dialogs_list, created = VkDialogsList.objects.get_or_create(user_id=user_id)
-    vk_session = vk_api.VkApi(token=access_token, client_secret=settings.VK_CLIENT_SECRET_KEY)
-    api = vk_session.get_api()
+    api = get_vk_api(access_token)
     params = {
         'count': VK_DIALOG_COUNT,
         'preview_length': 1,
@@ -86,8 +92,7 @@ def download_dialog_history(access_token, user_id, chat_id, is_group_chat, media
                                                                   chat_id=chat_id,
                                                                   is_chat=is_group_chat)
     vk_messages_history, created = VkMessagesList.objects.get_or_create(dialog=vk_dialog)
-    vk_session = vk_api.VkApi(token=access_token, client_secret=settings.VK_CLIENT_SECRET_KEY)
-    api = vk_session.get_api()
+    api = get_vk_api(access_token)
     params = {
         'peer_id': 2000000000 + chat_id if is_group_chat else chat_id,
         'media_type': media_type,
@@ -122,3 +127,41 @@ def download_dialog_history(access_token, user_id, chat_id, is_group_chat, media
         current_msg_id = int(current_msg_id_str)
 
     vk_messages_history.save()
+
+
+@task
+def download_user_documents(access_token, user_id, owner_id=None):
+    params = {}
+    if owner_id is None:
+        vk_docs_list, created = VkDocsList.objects.get_or_create(user_id=user_id, owner_id__isnull=True)
+    else:
+        vk_docs_list, created = VkDocsList.objects.get_or_create(user_id=user_id, owner_id=owner_id)
+        params['owner_id'] = owner_id
+
+    api = get_vk_api(access_token)
+    params['count'] = 1
+    response = api.docs.get(**params)
+    count_to_download = response['count']
+
+    if not created:
+        count_to_download -= vk_docs_list.prev_count
+        vk_docs_list.prev_count = response['count']
+    offset = 0
+    params['count'] = VK_DOCS_COUNT
+
+    DocumentAttachment = VkAttachmentFactory.get_for_type('doc')
+
+    while offset < count_to_download:
+        response = api.docs.get(**params)
+
+        for item in response['items']:
+            try:
+                attach = DocumentAttachment.parse_item(item)
+                attach.user_id = user_id
+                attach.save()
+            except IntegrityError:
+                pass
+        offset += VK_DOCS_COUNT
+        params['offset'] = offset
+
+    vk_docs_list.save()
