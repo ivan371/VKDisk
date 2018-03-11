@@ -9,6 +9,7 @@ import { modalOpen, setModal } from '../../actions/modal';
 import { loadDocs } from '../../actions/document';
 import { setFilter, setSort } from '../../actions/page';
 import Modal from '../Modal';
+import DocsFilterHeader from "./DocsFilterHeader";
 
 class DocsHeaderComponent extends React.Component {
     static propTypes = {
@@ -26,23 +27,7 @@ class DocsHeaderComponent extends React.Component {
     state = {
         isSort: false,
         isFilter: false,
-        filter: '',
-        filterSelect: 'name',
-        isDate: false,
     };
-
-    handleFilterStart = (e) => {
-        this.props.setFilter(this.state.filterSelect, this.state.filter);
-    };
-
-    handleSelectFilter = (e) => {
-        if (e.target.value === 'date') {
-            this.setState({ isDate: true, filterSelect: e.target.value });
-        } else {
-            this.setState({ isDate: false, filterSelect: e.target.value });
-        }
-    };
-
     handleChange = (e) => {
         this.setState({ [e.target.name]: e.target.value });
     };
@@ -92,37 +77,7 @@ class DocsHeaderComponent extends React.Component {
             </React.Fragment>);
         }
         if (this.state.isFilter) {
-            let input = null;
-            if (this.state.isDate) {
-                input = (<input
-                    className="content-item__input"
-                    type="date"
-                    onChange={ this.handleChange }
-                    name="filter"
-                    value={ this.state.filter }
-                />);
-            } else {
-                input = (<input
-                    className="content-item__input"
-                    type="text"
-                    placeholder="Search"
-                    onChange={ this.handleChange }
-                    name="filter"
-                    value={ this.state.filter }
-                />);
-            }
-
-            return (<React.Fragment>
-                <img className="item-left" onClick={ this.handleFilter } src={ items.filter } />
-                <button className="vk-button button-secondary" onClick={ this.handleFilter }>Cancel</button>
-                <button className="vk-button" onClick={ this.handleFilterStart }>Search</button>
-                <select className="vk-button" onChange={ this.handleSelectFilter } value={ this.state.filterSelect }>
-                    <option value="name">Name</option>
-                    <option value="date">Date</option>
-                    <option value="extension">Extension</option>
-                </select>
-                {input}
-            </React.Fragment>);
+            return (<DocsFilterHeader setFilter={ this.props.setFilter } />);
         }
         if (this.props.checkList.length) {
             if (type === 'sorted' || type === 'folder') {

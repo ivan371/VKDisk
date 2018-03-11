@@ -50953,6 +50953,10 @@ var _Modal = __webpack_require__(142);
 
 var _Modal2 = _interopRequireDefault(_Modal);
 
+var _DocsFilterHeader = __webpack_require__(298);
+
+var _DocsFilterHeader2 = _interopRequireDefault(_DocsFilterHeader);
+
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 function _defineProperty(obj, key, value) { if (key in obj) { Object.defineProperty(obj, key, { value: value, enumerable: true, configurable: true, writable: true }); } else { obj[key] = value; } return obj; }
@@ -50979,18 +50983,7 @@ var DocsHeaderComponent = function (_React$Component) {
 
         return _ret = (_temp = (_this = _possibleConstructorReturn(this, (_ref = DocsHeaderComponent.__proto__ || Object.getPrototypeOf(DocsHeaderComponent)).call.apply(_ref, [this].concat(args))), _this), _this.state = {
             isSort: false,
-            isFilter: false,
-            filter: '',
-            filterSelect: 'name',
-            isDate: false
-        }, _this.handleFilterStart = function (e) {
-            _this.props.setFilter(_this.state.filterSelect, _this.state.filter);
-        }, _this.handleSelectFilter = function (e) {
-            if (e.target.value === 'date') {
-                _this.setState({ isDate: true, filterSelect: e.target.value });
-            } else {
-                _this.setState({ isDate: false, filterSelect: e.target.value });
-            }
+            isFilter: false
         }, _this.handleChange = function (e) {
             _this.setState(_defineProperty({}, e.target.name, e.target.value));
         }, _this.handleSort = function () {
@@ -51059,61 +51052,7 @@ var DocsHeaderComponent = function (_React$Component) {
                 );
             }
             if (this.state.isFilter) {
-                var input = null;
-                if (this.state.isDate) {
-                    input = _react2.default.createElement('input', {
-                        className: 'content-item__input',
-                        type: 'date',
-                        onChange: this.handleChange,
-                        name: 'filter',
-                        value: this.state.filter
-                    });
-                } else {
-                    input = _react2.default.createElement('input', {
-                        className: 'content-item__input',
-                        type: 'text',
-                        placeholder: 'Search',
-                        onChange: this.handleChange,
-                        name: 'filter',
-                        value: this.state.filter
-                    });
-                }
-
-                return _react2.default.createElement(
-                    _react2.default.Fragment,
-                    null,
-                    _react2.default.createElement('img', { className: 'item-left', onClick: this.handleFilter, src: _constants.items.filter }),
-                    _react2.default.createElement(
-                        'button',
-                        { className: 'vk-button button-secondary', onClick: this.handleFilter },
-                        'Cancel'
-                    ),
-                    _react2.default.createElement(
-                        'button',
-                        { className: 'vk-button', onClick: this.handleFilterStart },
-                        'Search'
-                    ),
-                    _react2.default.createElement(
-                        'select',
-                        { className: 'vk-button', onChange: this.handleSelectFilter, value: this.state.filterSelect },
-                        _react2.default.createElement(
-                            'option',
-                            { value: 'name' },
-                            'Name'
-                        ),
-                        _react2.default.createElement(
-                            'option',
-                            { value: 'date' },
-                            'Date'
-                        ),
-                        _react2.default.createElement(
-                            'option',
-                            { value: 'extension' },
-                            'Extension'
-                        )
-                    ),
-                    input
-                );
+                return _react2.default.createElement(_DocsFilterHeader2.default, { setFilter: this.props.setFilter });
             }
             if (this.props.checkList.length) {
                 if (type === 'sorted' || type === 'folder') {
@@ -52353,6 +52292,194 @@ module.exports = function (css) {
 	return fixedCss;
 };
 
+
+/***/ }),
+/* 298 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+Object.defineProperty(exports, "__esModule", {
+    value: true
+});
+
+var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+
+var _react = __webpack_require__(0);
+
+var _react2 = _interopRequireDefault(_react);
+
+var _redux = __webpack_require__(5);
+
+var _reactRedux = __webpack_require__(10);
+
+var _reactRouterDom = __webpack_require__(28);
+
+var _propTypes = __webpack_require__(1);
+
+var _propTypes2 = _interopRequireDefault(_propTypes);
+
+var _constants = __webpack_require__(7);
+
+var _AddFolder = __webpack_require__(288);
+
+var _AddFolder2 = _interopRequireDefault(_AddFolder);
+
+var _modal = __webpack_require__(21);
+
+var _document = __webpack_require__(27);
+
+var _page = __webpack_require__(137);
+
+var _Modal = __webpack_require__(142);
+
+var _Modal2 = _interopRequireDefault(_Modal);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+function _defineProperty(obj, key, value) { if (key in obj) { Object.defineProperty(obj, key, { value: value, enumerable: true, configurable: true, writable: true }); } else { obj[key] = value; } return obj; }
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
+
+function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
+
+var DocsFilterHeader = function (_React$Component) {
+    _inherits(DocsFilterHeader, _React$Component);
+
+    function DocsFilterHeader() {
+        var _ref;
+
+        var _temp, _this, _ret;
+
+        _classCallCheck(this, DocsFilterHeader);
+
+        for (var _len = arguments.length, args = Array(_len), _key = 0; _key < _len; _key++) {
+            args[_key] = arguments[_key];
+        }
+
+        return _ret = (_temp = (_this = _possibleConstructorReturn(this, (_ref = DocsFilterHeader.__proto__ || Object.getPrototypeOf(DocsFilterHeader)).call.apply(_ref, [this].concat(args))), _this), _this.state = {
+            filter: '',
+            filterSelect: 'name',
+            isDate: false,
+            isExt: false
+        }, _this.handleFilterStart = function (e) {
+            _this.props.setFilter(_this.state.filterSelect, _this.state.filter);
+        }, _this.handleSelectFilter = function (e) {
+            if (e.target.value === 'date') {
+                _this.setState({ isDate: true, isExt: false, filterSelect: e.target.value });
+            } else if (e.target.value === 'extension') {
+                _this.setState({ isDate: false, isExt: true, filterSelect: e.target.value });
+            } else {
+                _this.setState({ isDate: false, isExt: false, filterSelect: e.target.value });
+            }
+        }, _this.handleChange = function (e) {
+            _this.setState(_defineProperty({}, e.target.name, e.target.value));
+        }, _temp), _possibleConstructorReturn(_this, _ret);
+    }
+
+    _createClass(DocsFilterHeader, [{
+        key: 'render',
+        value: function render() {
+            var input = null;
+            if (this.state.isDate) {
+                input = _react2.default.createElement('input', {
+                    className: 'content-item__input',
+                    type: 'date',
+                    onChange: this.handleChange,
+                    name: 'filter',
+                    value: this.state.filter
+                });
+            } else if (this.state.isExt) {
+                input = _react2.default.createElement(
+                    _react2.default.Fragment,
+                    null,
+                    _react2.default.createElement('input', {
+                        className: 'content-item__input',
+                        type: 'list',
+                        list: 'extension-list',
+                        placeholder: 'Search',
+                        onChange: this.handleChange,
+                        name: 'filter',
+                        value: this.state.filter
+                    }),
+                    _react2.default.createElement(
+                        'datalist',
+                        { id: 'extension-list' },
+                        _react2.default.createElement('option', { value: 'pdf' }),
+                        _react2.default.createElement('option', { value: 'doc' }),
+                        _react2.default.createElement('option', { value: 'xls' }),
+                        _react2.default.createElement('option', { value: 'docx' }),
+                        _react2.default.createElement('option', { value: 'zip' }),
+                        _react2.default.createElement('option', { value: 'djvu' }),
+                        _react2.default.createElement('option', { value: 'xlsx' }),
+                        _react2.default.createElement('option', { value: 'gif' }),
+                        _react2.default.createElement('option', { value: 'png' }),
+                        _react2.default.createElement('option', { value: 'jpg' }),
+                        _react2.default.createElement('option', { value: 'gz' }),
+                        _react2.default.createElement('option', { value: 'txt' }),
+                        _react2.default.createElement('option', { value: 'tex' }),
+                        _react2.default.createElement('option', { value: 'py' })
+                    )
+                );
+            } else {
+                input = _react2.default.createElement('input', {
+                    className: 'content-item__input',
+                    type: 'text',
+                    placeholder: 'Search',
+                    onChange: this.handleChange,
+                    name: 'filter',
+                    value: this.state.filter
+                });
+            }
+
+            return _react2.default.createElement(
+                _react2.default.Fragment,
+                null,
+                _react2.default.createElement('img', { className: 'item-left', onClick: this.handleFilter, src: _constants.items.filter }),
+                _react2.default.createElement(
+                    'button',
+                    { className: 'vk-button button-secondary', onClick: this.handleFilter },
+                    'Cancel'
+                ),
+                _react2.default.createElement(
+                    'button',
+                    { className: 'vk-button', onClick: this.handleFilterStart },
+                    'Search'
+                ),
+                _react2.default.createElement(
+                    'select',
+                    { className: 'vk-button', onChange: this.handleSelectFilter, value: this.state.filterSelect },
+                    _react2.default.createElement(
+                        'option',
+                        { value: 'name' },
+                        'Name'
+                    ),
+                    _react2.default.createElement(
+                        'option',
+                        { value: 'date' },
+                        'Date'
+                    ),
+                    _react2.default.createElement(
+                        'option',
+                        { value: 'extension' },
+                        'Extension'
+                    )
+                ),
+                input
+            );
+        }
+    }]);
+
+    return DocsFilterHeader;
+}(_react2.default.Component);
+
+DocsFilterHeader.propTypes = {
+    setFilter: _propTypes2.default.func.isRequired
+};
+exports.default = DocsFilterHeader;
 
 /***/ })
 /******/ ]);
