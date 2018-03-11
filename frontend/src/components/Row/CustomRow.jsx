@@ -2,8 +2,8 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
-import {folderUnMount, loadFolders} from '../../actions/folder';
-import { folderType, urls } from '../../constants';
+import {folderUnMount, loadFolders, loadFoldersMore} from '../../actions/folder';
+import {folderType, makeUrls, urls} from '../../constants';
 import Folder from '../folder/Folder';
 import Docs from '../document/Docs';
 
@@ -13,6 +13,9 @@ class CustomRowComponent extends React.Component {
         isLoading: PropTypes.bool.isRequired,
         loadFolders: PropTypes.func.isRequired,
         folderUnMount: PropTypes.func.isRequired,
+        count: PropTypes.number.isRequired,
+        page: PropTypes.number.isRequired,
+        loadFoldersMore: PropTypes.func.isRequired,
     };
 
     componentDidMount() {
@@ -27,6 +30,10 @@ class CustomRowComponent extends React.Component {
     componentWillUnmount() {
         this.props.folderUnMount();
     }
+
+    handleLoadMore = (e) => {
+        this.props.loadFoldersMore(makeUrls.makeChatsMore(this.props.page));
+    };
     render() {
         let folderList = [];
         if (this.props.isLoading || this.props.folder === folderType.root) {
@@ -44,6 +51,9 @@ class CustomRowComponent extends React.Component {
                         <input className="content-item__input" type="text" placeholder="Search" />
                     </div>
                     {folderList}
+                    { this.props.isLoading && this.props.count > (10 * (this.props.page - 1)) ? <div>
+                        <button onClick={ this.handleLoadMore }>Показать еще</button>
+                    </div> : null }
                 </div>
                 <Docs params={ this.props.params } history={ this.props.history } folder={ this.props.folder } />
             </div>
@@ -54,12 +64,15 @@ class CustomRowComponent extends React.Component {
 const mapStoreToProps = state => ({
     isLoading: state.folder.isLoading,
     folderList: state.folder.folderList,
+    page: state.folder.page,
+    count: state.folder.count,
 });
 
 const mapDispatchToProps = dispatch => ({
     ...bindActionCreators({
         loadFolders,
         folderUnMount,
+        loadFoldersMore,
     }, dispatch),
 });
 

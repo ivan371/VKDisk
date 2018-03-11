@@ -79,7 +79,7 @@ class DocsComponent extends React.Component {
                 <div className="content-flex">
                     <FoldersTile isModal={ false } />
                     <DocsTile />
-                    { this.props.isLoading && this.props.count > (10 * (this.props.page - 1)) ? <div>
+                    { this.props.isLoading && this.props.count > (40 * (this.props.page - 1)) ? <div>
                         <button onClick={ this.handleLoadMore }>Показать еще</button>
                     </div> : null }
                 </div>

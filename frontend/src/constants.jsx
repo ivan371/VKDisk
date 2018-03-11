@@ -26,6 +26,7 @@ export const makeUrls = {
     makeFilterDocs: (id, filter, value) => `${urls.docs.docsUrl}?folder=${id}&&filter&&${filter}=${value}`,
     makeFilterRootDocs: (filter, value) => `${urls.docs.docsUrl}?root&&filter&&${filter}=${value}`,
     makeFilterDocsDate: (id, year, month, day) => `${urls.docs.docsUrl}?folder=${id}&&filter&&year=${year}&&month=${month}&&day=${day}`,
+    makeChatsMore: page => `${urls.folder.chatFolderUrl}&&page=${page}`,
 };
 
 export const tileType = {
@@ -66,6 +67,7 @@ export const format = {
     py: '/static/img/formats/py.png',
     gif: '/static/img/formats/gif.png',
     zip: '/static/img/formats/zip.png',
+    djvu: '/static/img/formats/djvu.png',
 };
 
 export const items = {
