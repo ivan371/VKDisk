@@ -29,10 +29,15 @@ export const makeUrls = {
     makeChatsMore: page => `${urls.folder.chatFolderUrl}&&page=${page}`,
 };
 
+export const apps = {
+    modal: 'modal',
+};
+
 export const tileType = {
     file: 'file',
     folder: 'folder',
     folderAdd: 'folderAdd',
+    folderModal: 'folderModal',
 };
 
 export const folderType = {

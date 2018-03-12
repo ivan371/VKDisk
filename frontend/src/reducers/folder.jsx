@@ -2,7 +2,7 @@ import update from 'react-addons-update';
 import {
     FOLDER_CREATE, FOLDER_UNMOUNT,
     LOAD_FILTER_FOLDERS, LOAD_FILTER_FOLDERS_SUCCESS, LOAD_FOLDER, LOAD_FOLDERS, LOAD_FOLDERS_MORE,
-    LOAD_FOLDERS_SUCCESS, LOAD_FOLDERS_TRANSFER, LOAD_FOLDERS_TRANSFER_SUCCESS, SWITCH_FOLDER,
+    LOAD_FOLDERS_SUCCESS, LOAD_FOLDERS_TRANSFER, LOAD_FOLDERS_TRANSFER_SUCCESS, SWITCH_FOLDER, TRANSFER_UNMOUNT,
 } from '../actions/folder';
 import { DOCS_UNMOUNT } from '../actions/document';
 
@@ -138,6 +138,12 @@ export default function folder(store = initalState, action) {
                 },
                 folderList: {
                     $set: [],
+                },
+            });
+        case TRANSFER_UNMOUNT:
+            return update(store, {
+                checkedFolder: {
+                    $set: null,
                 },
             });
         default:

@@ -5,8 +5,9 @@ import _ from 'lodash';
 import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
 import { switchFolder, updateFolder } from '../../actions/folder';
-import { format, makeUrls, tileType, makeFormat } from '../../constants';
+import {format, makeUrls, tileType, makeFormat, apps} from '../../constants';
 import { checkFile, updateDoc } from '../../actions/document';
+import { setLink } from '../../actions/page';
 
 class TileComponent extends React.Component {
     static propTypes = {
@@ -19,23 +20,25 @@ class TileComponent extends React.Component {
         checkFile: PropTypes.func.isRequired,
         isModal: PropTypes.bool.isRequired,
         switchFolder: PropTypes.func.isRequired,
+        checkedFolder: PropTypes.number,
+        setLink: PropTypes.func.isRequired,
     };
 
     state = {
         isClicked: false,
         title: this.props.title,
-        isChecked: false,
+        isChecked: true,
     };
 
     onHandleChange = (e) => {
         this.setState({ isClicked: !this.state.isClicked });
     };
 
-    onChange = (e) => {
+    handleChange = (e) => {
         this.setState({ [e.target.name]: e.target.value });
     };
 
-    onUpdate = (e) => {
+    handleUpdate = (e) => {
         if (e.keyCode === 13) {
             switch (this.props.type) {
                 case tileType.folder:
@@ -57,12 +60,18 @@ class TileComponent extends React.Component {
         if (this.clickedOnce) {
             this._delayedClick.cancel();
             this.clickedOnce = false;
-            switch (this.props.type) {
-              case tileType.file:
-                window.open(this.props.url);
-                break;
-              case tileType.folder:
-                this.props.history.push(this.props.url);
+            if (this.props.isModal) {
+                this.props.setLink(this.props.url, apps.modal);
+            } else {
+                switch (this.props.type) {
+                    case tileType.file:
+                        window.open(this.props.url);
+                        break;
+                    case tileType.folder:
+                        this.props.history.push(this.props.url);
+                        break;
+                    default:
+                }
             }
         } else {
             this._delayedClick(e);
@@ -71,14 +80,22 @@ class TileComponent extends React.Component {
     };
 
     doClick = (e) => {
+        console.log(this.state.isChecked, this.props.id, this.props.checkedFolder);
         this.clickedOnce = undefined;
         if (!this.props.isModal) {
-            this.setState({isChecked: !this.state.isChecked});
+            this.setState({ isChecked: !this.state.isChecked });
             this.props.checkFile(this.props.id);
         } else {
             this.props.switchFolder(this.props.id);
         }
     };
+
+    renderClassName() {
+        if (this.props.isModal) {
+            return `content-flex-item ${this.props.id !== this.props.checkedFolder ? '' : 'checked'}`;
+        }
+        return `content-flex-item ${this.state.isChecked ? '' : 'checked'}`;
+    }
 
     render() {
         let imageUrl = null;
@@ -92,15 +109,15 @@ class TileComponent extends React.Component {
             default:
         }
         return (
-            <div className={ `content-flex-item ${!this.state.isChecked ? '' : 'checked'}` }>
+            <div className={ this.renderClassName() }>
                 <img className="icon" onClick={ this.handleClick } src={ imageUrl } />
                 {!this.state.isClicked ?
                     <div className="content-item__title" onClick={ this.onHandleChange }>{this.props.title}</div>
                     : <input
                         className="content-item__input"
                         value={ this.state.title }
-                        onChange={ this.onChange }
-                        onKeyDown={ this.onUpdate }
+                        onChange={ this.handleChange }
+                        onKeyDown={ this.handleUpdate }
                         name="title"
                     />
                 }
@@ -110,6 +127,7 @@ class TileComponent extends React.Component {
 }
 
 const mapStoreToProps = (state, props) => ({
+    checkedFolder: state.folder.checkedFolder,
 });
 
 const mapDispatchToProps = dispatch => ({
@@ -118,6 +136,7 @@ const mapDispatchToProps = dispatch => ({
         updateDoc,
         checkFile,
         switchFolder,
+        setLink,
     }, dispatch),
 });
 

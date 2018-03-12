@@ -3,10 +3,11 @@ import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import PropTypes from 'prop-types';
 import FoldersTile from '../tile/FoldersTile';
-import { loadTransferFolders } from '../../actions/folder';
+import {loadTransferFolders, transferUnMount} from '../../actions/folder';
 import { makeUrls, modalType, urls } from '../../constants';
-import {bulkCreateDocs, bulkUpdateDocs} from '../../actions/document';
+import { bulkCreateDocs, bulkUpdateDocs } from '../../actions/document';
 import { modalOpen } from '../../actions/modal';
+import {setLink} from "../../actions/page";
 
 class CreateFolderComponent extends React.Component {
     static propTypes = {
@@ -17,10 +18,24 @@ class CreateFolderComponent extends React.Component {
         modalOpen: PropTypes.func.isRequired,
         checkList: PropTypes.array.isRequired,
         modal: PropTypes.string.isRequired,
+        setLink: PropTypes.func.isRequired,
+        link: PropTypes.string.isRequired,
+        transferUnMount: PropTypes.func.isRequired,
     };
 
     componentDidMount() {
-        this.props.loadTransferFolders(urls.folder.folderFolderUrl);
+        this.props.loadTransferFolders(makeUrls.makeRootFoldersFolder());
+        this.props.setLink(makeUrls.makeRootFoldersFolder());
+    }
+
+    componentWillReceiveProps(nextProps) {
+        if (this.props.link !== nextProps.link) {
+            this.props.loadTransferFolders(nextProps.link);
+        }
+    }
+
+    componentWillUnmount() {
+        this.props.transferUnMount();
     }
 
     handleBulkCreate = () => {
@@ -60,6 +75,7 @@ const mapStoreToProps = state => ({
     checkedFolder: state.folder.checkedFolder,
     checkList: state.document.checkList,
     modal: state.modal.modal,
+    link: state.page.link.modal,
 });
 
 const mapDispatchToProps = dispatch => ({
@@ -68,6 +84,8 @@ const mapDispatchToProps = dispatch => ({
         bulkCreateDocs,
         bulkUpdateDocs,
         modalOpen,
+        setLink,
+        transferUnMount,
     }, dispatch),
 });
 

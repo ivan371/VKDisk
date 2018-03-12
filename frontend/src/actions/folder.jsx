@@ -18,6 +18,7 @@ export const SWITCH_FOLDER = 'SWITCH_FOLDER';
 export const FOLDER_UNMOUNT = 'FOLDER_UNMOUNT';
 export const LOAD_FOLDERS_MORE = 'LOAD_FOLDERS_MORE';
 export const LOAD_FOLDERS_MORE_START = 'LOAD_FOLDERS_MORE_START';
+export const TRANSFER_UNMOUNT = 'TRANSFER_UNMOUNT';
 
 export function loadFolders(url) {
     const types = [LOAD_FOLDERS, LOAD_FOLDERS_SUCCESS, LOAD_FOLDERS_ERROR];
@@ -59,5 +60,11 @@ export function switchFolder(id) {
 export function folderUnMount() {
     return {
         type: FOLDER_UNMOUNT,
+    };
+}
+
+export function transferUnMount() {
+    return {
+        type: TRANSFER_UNMOUNT,
     };
 }
