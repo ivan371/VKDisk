@@ -44,6 +44,7 @@ export const folderType = {
     root: 'root',
     chat: 'chat',
     folder: 'folder',
+    modal: 'modal',
 };
 
 export const modalType = {
@@ -80,6 +81,9 @@ export const items = {
     back: '/static/img/back.png',
     sort: '/static/img/sort.png',
     filter: '/static/img/search.png',
+    trash: '/static/img/trash.png',
+    trashGood: '/static/img/trashGood.png',
+    trashBad: '/static/img/trashBad.png',
 };
 
 export function makeFormat(fileUrl) {
@@ -89,3 +93,8 @@ export function makeFormat(fileUrl) {
     if (format[ext] !== undefined) { return format[ext]; }
     return format.file;
 }
+
+export const dragSource = {
+    delete: 'delete',
+    favorite: 'favorite',
+};

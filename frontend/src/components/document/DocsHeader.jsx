@@ -77,7 +77,7 @@ class DocsHeaderComponent extends React.Component {
             </React.Fragment>);
         }
         if (this.state.isFilter) {
-            return (<DocsFilterHeader setFilter={ this.props.setFilter } />);
+            return (<DocsFilterHeader setFilter={ this.props.setFilter } onFilter={ this.handleFilter } />);
         }
         if (this.props.checkList.length) {
             if (type === 'sorted' || type === 'folder') {

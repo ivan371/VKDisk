@@ -13,6 +13,7 @@ import Modal from '../Modal';
 export default class DocsFilterHeader extends React.Component {
     static propTypes = {
         setFilter: PropTypes.func.isRequired,
+        onFilter: PropTypes.func.isRequired,
     };
 
     state = {
@@ -89,7 +90,7 @@ export default class DocsFilterHeader extends React.Component {
 
         return (<React.Fragment>
             <img className="item-left" onClick={ this.handleFilter } src={ items.filter } />
-            <button className="vk-button button-secondary" onClick={ this.handleFilter }>Cancel</button>
+            <button className="vk-button button-secondary" onClick={ this.props.onFilter }>Cancel</button>
             <button className="vk-button" onClick={ this.handleFilterStart }>Search</button>
             <select className="vk-button" onChange={ this.handleSelectFilter } value={ this.state.filterSelect }>
                 <option value="name">Name</option>

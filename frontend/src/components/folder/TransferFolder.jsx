@@ -4,7 +4,7 @@ import { bindActionCreators } from 'redux';
 import PropTypes from 'prop-types';
 import FoldersTile from '../tile/FoldersTile';
 import {loadTransferFolders, transferUnMount} from '../../actions/folder';
-import { makeUrls, modalType, urls } from '../../constants';
+import {folderType, makeUrls, modalType, urls} from '../../constants';
 import { bulkCreateDocs, bulkUpdateDocs } from '../../actions/document';
 import { modalOpen } from '../../actions/modal';
 import {setLink} from "../../actions/page";
@@ -59,7 +59,7 @@ class CreateFolderComponent extends React.Component {
                 </div>
                 <div className="modal-content">
                     <div className="content-flex-modal">
-                        <FoldersTile isModal />
+                        <FoldersTile isModal folder={ folderType.modal } />
                     </div>
                     {this.props.modal !== modalType.folderTransfer ?
                         <button className="vk-button" onClick={ this.handleBulkUpdate }>Переместить</button> :

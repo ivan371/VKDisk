@@ -5,9 +5,10 @@ import _ from 'lodash';
 import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
 import { switchFolder, updateFolder } from '../../actions/folder';
-import {format, makeUrls, tileType, makeFormat, apps} from '../../constants';
+import { format, makeUrls, tileType, makeFormat, apps, folderType, dragSource } from '../../constants';
 import { checkFile, updateDoc } from '../../actions/document';
 import { setLink } from '../../actions/page';
+import {dragEnd, dragStart} from '../../actions/drag';
 
 class TileComponent extends React.Component {
     static propTypes = {
@@ -22,6 +23,9 @@ class TileComponent extends React.Component {
         switchFolder: PropTypes.func.isRequired,
         checkedFolder: PropTypes.number,
         setLink: PropTypes.func.isRequired,
+        dragStart: PropTypes.func.isRequired,
+        dragEnd: PropTypes.func.isRequired,
+        folder: PropTypes.string,
     };
 
     state = {
@@ -53,6 +57,22 @@ class TileComponent extends React.Component {
         }
     };
 
+    handleDragStart = (e) => {
+        switch (this.props.type) {
+            case tileType.file:
+                this.props.dragStart(this.props.folder !== folderType.chat, dragSource.delete);
+                break;
+            case tileType.folder:
+                this.props.dragStart(this.props.folder !== folderType.chat, dragSource.favorite);
+                break;
+            default:
+        }
+    };
+
+    handleDragEnd = (e) => {
+        this.props.dragEnd();
+    };
+
     handleClick = (e) => {
         if (!this._delayedClick) {
             this._delayedClick = _.debounce(this.doClick, 500);
@@ -80,7 +100,6 @@ class TileComponent extends React.Component {
     };
 
     doClick = (e) => {
-        console.log(this.state.isChecked, this.props.id, this.props.checkedFolder);
         this.clickedOnce = undefined;
         if (!this.props.isModal) {
             this.setState({ isChecked: !this.state.isChecked });
@@ -110,7 +129,14 @@ class TileComponent extends React.Component {
         }
         return (
             <div className={ this.renderClassName() }>
-                <img className="icon" onClick={ this.handleClick } src={ imageUrl } />
+                <img
+                    className="icon"
+                    onClick={ this.handleClick }
+                    onDragStart={ this.handleDragStart }
+                    src={ imageUrl }
+                    draggable="true"
+                    onDragEnd={ this.handleDragEnd }
+                />
                 {!this.state.isClicked ?
                     <div className="content-item__title" onClick={ this.onHandleChange }>{this.props.title}</div>
                     : <input
@@ -137,6 +163,8 @@ const mapDispatchToProps = dispatch => ({
         checkFile,
         switchFolder,
         setLink,
+        dragStart,
+        dragEnd,
     }, dispatch),
 });
 

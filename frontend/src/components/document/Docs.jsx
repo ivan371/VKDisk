@@ -77,8 +77,8 @@ class DocsComponent extends React.Component {
             <div className="page-content-content-content">
                 <DocsHeader params={ this.props.params } folder={ this.props.folder } />
                 <div className="content-flex">
-                    <FoldersTile isModal={ false } />
-                    <DocsTile />
+                    <FoldersTile isModal={ false } folder={ this.props.folder } />
+                    <DocsTile folder={ this.props.folder } />
                     { this.props.isLoading && this.props.count > (40 * (this.props.page - 1)) ? <div>
                         <button onClick={ this.handleLoadMore }>Показать еще</button>
                     </div> : null }

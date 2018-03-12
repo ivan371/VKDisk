@@ -27,6 +27,7 @@ class FoldersTileComponent extends React.Component {
         }
         if (loading) {
             folderList = list.map(folderId => (<Tile
+                folder={ this.props.folder }
                 history={ this.props.history }
                 url={ this.props.isModal ? makeUrls.makeFilterFoldersFolder(folderId) : `/folder/${folderId}` }
                 title={ this.props.folders[folderId].title }

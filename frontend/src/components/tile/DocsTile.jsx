@@ -14,6 +14,7 @@ class DocsTileComponent extends React.Component {
         let docList = [];
         if (this.props.isLoading) {
             docList = this.props.docList.map(docId => (<Tile
+                folder={ this.props.folder }
                 history={ this.props.history }
                 id={ docId }
                 url={ this.props.docs[docId].vk_url }
