@@ -16,6 +16,9 @@ export const DOCS_BULK_CREATE_SUCCESS = 'DOCS_BULK_CREATE_SUCCESS';
 export const DOCS_BULK_UPDATE = 'DOCS_BULK_UPDATE';
 export const DOCS_BULK_UPDATE_SUCCESS = 'DOCS_BULK_UPDATE_SUCCESS';
 export const CHECK_ALL = 'CHECK_ALL';
+export const DELETE_DOCS = 'DELETE_DOCS';
+export const DELETE_DOCS_SUCCESS = 'DELETE_DOCS_SUCCESS';
+export const DELETE_DOCS_ERROR = 'DELETE_DOCS_ERROR';
 
 export function loadDocs(url) {
     const types = [LOAD_DOCS, LOAD_DOCS_SUCCESS, LOAD_DOCS_ERROR];
@@ -40,6 +43,11 @@ export function bulkCreateDocs(url, docs) {
 export function bulkUpdateDocs(url, docs) {
     const types = [DOCS_BULK_UPDATE, DOCS_BULK_UPDATE_SUCCESS, LOAD_DOC_ERROR];
     return apiLoad(url, 'POST', types, JSON.stringify({ docs }), () => {}, true);
+}
+
+export function deleteDocs(url, id) {
+    const types = [DELETE_DOCS, DELETE_DOCS_SUCCESS, DELETE_DOCS_ERROR];
+    return apiLoad(url, 'DELETE', types, null, () => {}, true, id);
 }
 
 export function docsUnMount() {

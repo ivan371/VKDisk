@@ -4,6 +4,7 @@ import { DRAG_START, DRAG_END } from '../actions/drag';
 const initalState = {
     allowDrag: false,
     source: null,
+    id: null,
 };
 
 export default function drag(store = initalState, action) {
@@ -15,6 +16,9 @@ export default function drag(store = initalState, action) {
                 },
                 source: {
                     $set: action.source,
+                },
+                id: {
+                    $set: action.id,
                 },
             });
         case DRAG_END:

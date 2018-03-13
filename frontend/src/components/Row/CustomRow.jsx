@@ -6,6 +6,8 @@ import { folderUnMount, loadFolders, loadFoldersMore } from '../../actions/folde
 import {dragSource, folderType, items, makeUrls, urls} from '../../constants';
 import Folder from '../folder/Folder';
 import Docs from '../document/Docs';
+import {dropOver} from "../../actions/drag";
+import {deleteDocs} from "../../actions/document";
 
 
 class CustomRowComponent extends React.Component {
@@ -19,6 +21,9 @@ class CustomRowComponent extends React.Component {
         loadFoldersMore: PropTypes.func.isRequired,
         source: PropTypes.string,
         allowDrag: PropTypes.bool.isRequired,
+        dropOver: PropTypes.func.isRequired,
+        deleteDocs: PropTypes.func.isRequired,
+        id: PropTypes.number,
     };
 
     componentDidMount() {
@@ -38,6 +43,19 @@ class CustomRowComponent extends React.Component {
         this.props.loadFoldersMore(makeUrls.makeChatsMore(this.props.page));
     };
 
+    handleDragOver = (e) => {
+        if (this.props.source === dragSource.delete && this.props.allowDrag) {
+            e.preventDefault();
+        }
+    };
+
+    handleDrop = (e) => {
+        if (this.props.source === dragSource.delete && this.props.allowDrag) {
+            this.props.deleteDocs(makeUrls.makeCustomFile(this.props.id), this.props.id);
+            this.props.dropOver();
+        }
+    };
+
     renderTrash() {
         if (this.props.source === dragSource.delete) {
             if (this.props.allowDrag) {
@@ -47,6 +65,7 @@ class CustomRowComponent extends React.Component {
         }
         return items.trash;
     }
+
     render() {
         let folderList = [];
         if (this.props.isLoading || this.props.folder === folderType.root) {
@@ -62,7 +81,7 @@ class CustomRowComponent extends React.Component {
                 <div className="page-content-content-wrap">
                     <div className="content-item">
                         <input className="content-item__input" type="text" placeholder="Search" />
-                        <img className="item-right" src={ this.renderTrash() } />
+                        <img className="item-right" src={ this.renderTrash() } onDragOver={ this.handleDragOver } onDrop={ this.handleDrop } />
                     </div>
                     {folderList}
                     { this.props.isLoading && this.props.count > (10 * (this.props.page - 1)) ? <div>
@@ -82,6 +101,7 @@ const mapStoreToProps = state => ({
     count: state.folder.count,
     allowDrag: state.drag.allowDrag,
     source: state.drag.source,
+    id: state.drag.id,
 });
 
 const mapDispatchToProps = dispatch => ({
@@ -89,6 +109,8 @@ const mapDispatchToProps = dispatch => ({
         loadFolders,
         folderUnMount,
         loadFoldersMore,
+        dropOver,
+        deleteDocs,
     }, dispatch),
 });
 

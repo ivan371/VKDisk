@@ -60,10 +60,10 @@ class TileComponent extends React.Component {
     handleDragStart = (e) => {
         switch (this.props.type) {
             case tileType.file:
-                this.props.dragStart(this.props.folder !== folderType.chat, dragSource.delete);
+                this.props.dragStart(this.props.folder === folderType.folder, dragSource.delete, this.props.id);
                 break;
             case tileType.folder:
-                this.props.dragStart(this.props.folder !== folderType.chat, dragSource.favorite);
+                this.props.dragStart(this.props.folder !== folderType.chat, dragSource.favorite, this.props.id);
                 break;
             default:
         }

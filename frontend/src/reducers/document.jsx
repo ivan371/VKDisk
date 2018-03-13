@@ -1,7 +1,8 @@
 import update from 'react-addons-update';
 import {
     CHECK_ALL,
-    CHECK_FILE, DOCS_BULK_CREATE_SUCCESS, DOCS_BULK_UPDATE, DOCS_BULK_UPDATE_SUCCESS, DOCS_UNMOUNT, LOAD_DOCS,
+    CHECK_FILE, DELETE_DOCS_SUCCESS, DOCS_BULK_CREATE_SUCCESS, DOCS_BULK_UPDATE, DOCS_BULK_UPDATE_SUCCESS, DOCS_UNMOUNT,
+    LOAD_DOCS,
     LOAD_DOCS_MORE,
     LOAD_DOCS_SUCCESS,
 } from '../actions/document';
@@ -120,6 +121,13 @@ export default function document(store = initalState, action) {
             return update(store, {
                 checkList: {
                     $set: [],
+                },
+            });
+        case DELETE_DOCS_SUCCESS:
+            index = store.docList.indexOf(action.payload.id);
+            return update(store, {
+                docList: {
+                    $splice: [[index, 1]],
                 },
             });
         default:
