@@ -1,11 +1,14 @@
 from django.shortcuts import render
 from rest_framework import viewsets, permissions
 from .serializers import DocumentSerializer, DocumentBulkSerializer
-from .models import Document
+from .models import Document, DocumentData
 from django.http import Http404
 from datetime import datetime
 import re
 from rest_framework.pagination import PageNumberPagination
+from elasticsearch import Elasticsearch, RequestsHttpConnection
+from rest_framework_elasticsearch import es_views, es_filters
+from .search_indexes import DocumentIndex
 
 
 class MediumResultsSetPagination(PageNumberPagination):
@@ -104,3 +107,17 @@ class DocumentViewSet(viewsets.ModelViewSet):
                 if self.request.query_params['name']:
                     q = q.filter(title__istartswith=self.request.query_params['name'])
         return q
+
+
+class DocumentView(es_views.ListElasticAPIView):
+    es_client = Elasticsearch(hosts=['elasticsearch:9200/'],
+                              connection_class=RequestsHttpConnection)
+    es_model = DocumentIndex
+    es_filter_backends = (
+        es_filters.ElasticFieldsFilter,
+        es_filters.ElasticSearchFilter
+    )
+    es_search_fields = (
+        'text',
+        'title',
+    )

@@ -50,7 +50,9 @@ INSTALLED_APPS = [
     'vk_api_wrapper.apps.VkApiWrapperConfig',
     'social_django',
     'debug_toolbar',
-    # 'sphinxql'
+    'elasticsearch_dsl',
+    'rest_framework_elasticsearch',
+    'django_elasticsearch'
     # 'widget_tweaks'
 ]
 
@@ -192,7 +194,6 @@ CELERY_TASK_SERIALIZER = 'json'
 CELERY_RESULT_SERIALIZER = 'json'
 # CELERY_BEAT_SCHEDULER = 'django_celery_beat.schedulers.DatabaseScheduler'
 
-# INDEXES = {
-#     'path': os.path.join(BASE_DIR, '_index'),  # also do `mkdir _index`.
-#     'sphinx_path': BASE_DIR
-# }
+ELASTICSEARCH_URL='http://localhost:9200'
+ELASTICSEARCH_DEFAULT_INDEX = 'document'
+ELASTICSEARCH_AUTO_INDEX = True
