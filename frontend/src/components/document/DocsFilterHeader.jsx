@@ -3,7 +3,7 @@ import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
 import { withRouter } from 'react-router-dom';
 import PropTypes from 'prop-types';
-import { modalType, items, makeUrls, folderType } from '../../constants';
+import {modalType, items, makeUrls, folderType, apps} from '../../constants';
 import AddFolder from '../folder/AddFolder';
 import { modalOpen, setModal } from '../../actions/modal';
 import { loadDocs } from '../../actions/document';
@@ -14,17 +14,19 @@ export default class DocsFilterHeader extends React.Component {
     static propTypes = {
         setFilter: PropTypes.func.isRequired,
         onFilter: PropTypes.func.isRequired,
+        filter: PropTypes.string.isRequired,
+        filterSelect: PropTypes.string.isRequired,
     };
 
     state = {
-        filter: '',
-        filterSelect: 'name',
+        filter: this.props.filter,
+        filterSelect: this.props.filterSelect,
         isDate: false,
         isExt: false,
     };
 
     handleFilterStart = (e) => {
-        this.props.setFilter(this.state.filterSelect, this.state.filter);
+        this.props.setFilter(this.state.filter, this.state.filterSelect, apps.docs);
     };
 
     handleSelectFilter = (e) => {

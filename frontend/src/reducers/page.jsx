@@ -2,9 +2,18 @@ import update from 'react-addons-update';
 import { SET_FILTER, SET_SORT, SET_LINK } from '../actions/page';
 
 const initalStore = {
-    filter: '',
-    sortSelect: '',
-    filterSelect: '',
+    filter: {
+        folder: '',
+        docs: '',
+    },
+    sortSelect: {
+        folder: '',
+        docs: '',
+    },
+    filterSelect: {
+        folder: 'name',
+        docs: 'name',
+    },
     link: {
         global: '',
         modal: '',
@@ -16,16 +25,22 @@ export default function page(store = initalStore, action) {
         case SET_FILTER:
             return update(store, {
                 filter: {
-                    $set: action.filter,
+                    [action.app]: {
+                        $set: action.filter,
+                    },
                 },
                 filterSelect: {
-                    $set: action.filterSelect,
+                    [action.app]: {
+                        $set: action.filterSelect,
+                    },
                 },
             });
         case SET_SORT:
             return update(store, {
                 sort: {
-                    $set: action.sortSelect,
+                    [action.app]: {
+                        $set: action.sortSelect,
+                    },
                 },
             });
         case SET_LINK:

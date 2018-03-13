@@ -23,14 +23,18 @@ export const makeUrls = {
     makeDocsMoreDate: (id, page, year, month, day) => `${urls.docs.docsUrl}?folder=${id}&&page=${page}&&filter&&year=${year}&&month=${month}&&day=${day}`,
     makeCopyDocs: id => `${urls.docs.docsUrl}?folder=${id}&&bulk_create`,
     makeReplaceDocs: id => `${urls.docs.docsUrl}?folder=${id}&&bulk_update`,
-    makeFilterDocs: (id, filter, value) => `${urls.docs.docsUrl}?folder=${id}&&filter&&${filter}=${value}`,
-    makeFilterRootDocs: (filter, value) => `${urls.docs.docsUrl}?root&&filter&&${filter}=${value}`,
+    makeFilterDocs: (id, filter, value) => `${urls.docs.docsUrl}?folder=${id}&&filter&&${value}=${filter}`,
+    makeFilterRootDocs: (filter, value) => `${urls.docs.docsUrl}?root&&filter&&${value}=${filter}`,
     makeFilterDocsDate: (id, year, month, day) => `${urls.docs.docsUrl}?folder=${id}&&filter&&year=${year}&&month=${month}&&day=${day}`,
     makeChatsMore: page => `${urls.folder.chatFolderUrl}&&page=${page}`,
+    makeFilterChats: name => `${urls.folder.chatFolderUrl}filter&&name=${name}`,
+    makeFilterChatsMore: (name, page) => `${urls.folder.chatFolderUrl}filter&&name=${name}&&page=${page}`,
 };
 
 export const apps = {
     modal: 'modal',
+    folder: 'folder',
+    docs: 'docs',
 };
 
 export const tileType = {

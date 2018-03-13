@@ -9,7 +9,7 @@ import { modalOpen, setModal } from '../../actions/modal';
 import { loadDocs } from '../../actions/document';
 import { setFilter, setSort } from '../../actions/page';
 import Modal from '../Modal';
-import DocsFilterHeader from "./DocsFilterHeader";
+import DocsFilterHeader from './DocsFilterHeader';
 
 class DocsHeaderComponent extends React.Component {
     static propTypes = {
@@ -22,6 +22,8 @@ class DocsHeaderComponent extends React.Component {
         setFilter: PropTypes.func.isRequired,
         setSort: PropTypes.func.isRequired,
         folder: PropTypes.string.isRequired,
+        filter: PropTypes.string.isRequired,
+        filterSelect: PropTypes.string.isRequired,
     };
 
     state = {
@@ -77,7 +79,12 @@ class DocsHeaderComponent extends React.Component {
             </React.Fragment>);
         }
         if (this.state.isFilter) {
-            return (<DocsFilterHeader setFilter={ this.props.setFilter } onFilter={ this.handleFilter } />);
+            return (<DocsFilterHeader
+                setFilter={ this.props.setFilter }
+                onFilter={ this.handleFilter }
+                filter={ this.props.filter }
+                filterSelect={ this.props.filterSelect }
+            />);
         }
         if (this.props.checkList.length) {
             if (type === 'sorted' || type === 'folder') {
@@ -127,6 +134,8 @@ const mapStoreToProps = state => ({
     count: state.document.count,
     page: state.document.page,
     isOpen: state.modal.isOpen,
+    filterSelect: state.page.filterSelect.docs,
+    filter: state.page.filter.docs,
 });
 
 const mapDispatchToProps = dispatch => ({

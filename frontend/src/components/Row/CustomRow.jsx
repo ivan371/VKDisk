@@ -3,11 +3,12 @@ import PropTypes from 'prop-types';
 import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
 import { folderUnMount, loadFolders, loadFoldersMore } from '../../actions/folder';
-import {dragSource, folderType, items, makeUrls, urls} from '../../constants';
+import { apps, dragSource, folderType, items, makeUrls, urls } from '../../constants';
 import Folder from '../folder/Folder';
 import Docs from '../document/Docs';
-import {dropOver} from "../../actions/drag";
-import {deleteDocs} from "../../actions/document";
+import { dropOver } from '../../actions/drag';
+import { deleteDocs } from '../../actions/document';
+import { setFilter } from '../../actions/page';
 
 
 class CustomRowComponent extends React.Component {
@@ -24,6 +25,14 @@ class CustomRowComponent extends React.Component {
         dropOver: PropTypes.func.isRequired,
         deleteDocs: PropTypes.func.isRequired,
         id: PropTypes.number,
+        filter: PropTypes.string.isRequired,
+        filterSelect: PropTypes.string.isRequired,
+        setFilter: PropTypes.func.isRequired,
+    };
+
+    state = {
+        filter: this.props.filter,
+        filterSelect: this.props.filterSelect,
     };
 
     componentDidMount() {
@@ -32,6 +41,12 @@ class CustomRowComponent extends React.Component {
                 this.props.loadFolders(urls.folder.chatFolderUrl);
                 break;
             default:
+        }
+    }
+
+    componentWillReceiveProps(nextProps) {
+        if (this.props.filter !== nextProps.filter) {
+            this.props.loadFolders(makeUrls.makeFilterChats(nextProps.filter));
         }
     }
 
@@ -53,6 +68,16 @@ class CustomRowComponent extends React.Component {
         if (this.props.source === dragSource.delete && this.props.allowDrag) {
             this.props.deleteDocs(makeUrls.makeCustomFile(this.props.id), this.props.id);
             this.props.dropOver();
+        }
+    };
+
+    handleChange = (e) => {
+        this.setState({ [e.target.name]: e.target.value });
+    };
+
+    handleFilter = (e) => {
+        if (e.keyCode === 13) {
+            this.props.setFilter(this.state.filter, this.state.filterSelect, apps.folder);
         }
     };
 
@@ -80,7 +105,15 @@ class CustomRowComponent extends React.Component {
             <div className="page-content-content">
                 <div className="page-content-content-wrap">
                     <div className="content-item">
-                        <input className="content-item__input" type="text" placeholder="Search" />
+                        <input
+                            className="content-item__input"
+                            type="text"
+                            placeholder="Search"
+                            name="filter"
+                            value={ this.state.filter }
+                            onChange={ this.handleChange }
+                            onKeyDown={ this.handleFilter }
+                        />
                         <img className="item-right" src={ this.renderTrash() } onDragOver={ this.handleDragOver } onDrop={ this.handleDrop } />
                     </div>
                     {folderList}
@@ -102,6 +135,8 @@ const mapStoreToProps = state => ({
     allowDrag: state.drag.allowDrag,
     source: state.drag.source,
     id: state.drag.id,
+    filter: state.page.filter.folder,
+    filterSelect: state.page.filterSelect.folder,
 });
 
 const mapDispatchToProps = dispatch => ({
@@ -111,6 +146,7 @@ const mapDispatchToProps = dispatch => ({
         loadFoldersMore,
         dropOver,
         deleteDocs,
+        setFilter,
     }, dispatch),
 });
 

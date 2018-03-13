@@ -8,7 +8,6 @@ from django.utils.translation import ugettext_lazy as _
 
 from vk_api_wrapper.models import DocAttachment
 
-
 class Document(Named, Authored, Dated):
     type = models.CharField(max_length=128, blank=False, default=_(u'file'), verbose_name=_(u'file'))
     folder = models.ForeignKey(Folder, on_delete=models.CASCADE, null=True, blank=True, verbose_name=_(u"folder"))
@@ -23,3 +22,5 @@ class Document(Named, Authored, Dated):
     class Meta:
         verbose_name = _(u'file')
         verbose_name_plural = _(u'files')
+
+

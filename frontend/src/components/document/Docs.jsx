@@ -92,8 +92,8 @@ const mapStoreToProps = state => ({
     isLoading: state.document.isLoading,
     count: state.document.count,
     page: state.document.page,
-    filter: state.page.filter,
-    filterType: state.page.filterSelect,
+    filter: state.page.filter.docs,
+    filterType: state.page.filterSelect.docs,
     checkList: state.document.checkList,
 });
 

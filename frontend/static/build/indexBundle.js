@@ -474,21 +474,29 @@ var makeUrls = exports.makeUrls = {
         return urls.docs.docsUrl + '?folder=' + id + '&&bulk_update';
     },
     makeFilterDocs: function makeFilterDocs(id, filter, value) {
-        return urls.docs.docsUrl + '?folder=' + id + '&&filter&&' + filter + '=' + value;
+        return urls.docs.docsUrl + '?folder=' + id + '&&filter&&' + value + '=' + filter;
     },
     makeFilterRootDocs: function makeFilterRootDocs(filter, value) {
-        return urls.docs.docsUrl + '?root&&filter&&' + filter + '=' + value;
+        return urls.docs.docsUrl + '?root&&filter&&' + value + '=' + filter;
     },
     makeFilterDocsDate: function makeFilterDocsDate(id, year, month, day) {
         return urls.docs.docsUrl + '?folder=' + id + '&&filter&&year=' + year + '&&month=' + month + '&&day=' + day;
     },
     makeChatsMore: function makeChatsMore(page) {
         return urls.folder.chatFolderUrl + '&&page=' + page;
+    },
+    makeFilterChats: function makeFilterChats(name) {
+        return urls.folder.chatFolderUrl + 'filter&&name=' + name;
+    },
+    makeFilterChatsMore: function makeFilterChatsMore(name, page) {
+        return urls.folder.chatFolderUrl + 'filter&&name=' + name + '&&page=' + page;
     }
 };
 
 var apps = exports.apps = {
-    modal: 'modal'
+    modal: 'modal',
+    folder: 'folder',
+    docs: 'docs'
 };
 
 var tileType = exports.tileType = {
@@ -3499,7 +3507,11 @@ var _drag = __webpack_require__(139);
 
 var _document = __webpack_require__(22);
 
+var _page = __webpack_require__(35);
+
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+function _defineProperty(obj, key, value) { if (key in obj) { Object.defineProperty(obj, key, { value: value, enumerable: true, configurable: true, writable: true }); } else { obj[key] = value; } return obj; }
 
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 
@@ -3521,7 +3533,10 @@ var CustomRowComponent = function (_React$Component) {
             args[_key] = arguments[_key];
         }
 
-        return _ret = (_temp = (_this = _possibleConstructorReturn(this, (_ref = CustomRowComponent.__proto__ || Object.getPrototypeOf(CustomRowComponent)).call.apply(_ref, [this].concat(args))), _this), _this.handleLoadMore = function (e) {
+        return _ret = (_temp = (_this = _possibleConstructorReturn(this, (_ref = CustomRowComponent.__proto__ || Object.getPrototypeOf(CustomRowComponent)).call.apply(_ref, [this].concat(args))), _this), _this.state = {
+            filter: _this.props.filter,
+            filterSelect: _this.props.filterSelect
+        }, _this.handleLoadMore = function (e) {
             _this.props.loadFoldersMore(_constants.makeUrls.makeChatsMore(_this.props.page));
         }, _this.handleDragOver = function (e) {
             if (_this.props.source === _constants.dragSource.delete && _this.props.allowDrag) {
@@ -3531,6 +3546,12 @@ var CustomRowComponent = function (_React$Component) {
             if (_this.props.source === _constants.dragSource.delete && _this.props.allowDrag) {
                 _this.props.deleteDocs(_constants.makeUrls.makeCustomFile(_this.props.id), _this.props.id);
                 _this.props.dropOver();
+            }
+        }, _this.handleChange = function (e) {
+            _this.setState(_defineProperty({}, e.target.name, e.target.value));
+        }, _this.handleFilter = function (e) {
+            if (e.keyCode === 13) {
+                _this.props.setFilter(_this.state.filter, _this.state.filterSelect, _constants.apps.folder);
             }
         }, _temp), _possibleConstructorReturn(_this, _ret);
     }
@@ -3543,6 +3564,13 @@ var CustomRowComponent = function (_React$Component) {
                     this.props.loadFolders(_constants.urls.folder.chatFolderUrl);
                     break;
                 default:
+            }
+        }
+    }, {
+        key: 'componentWillReceiveProps',
+        value: function componentWillReceiveProps(nextProps) {
+            if (this.props.filter !== nextProps.filter) {
+                this.props.loadFolders(_constants.makeUrls.makeFilterChats(nextProps.filter));
             }
         }
     }, {
@@ -3589,7 +3617,15 @@ var CustomRowComponent = function (_React$Component) {
                     _react2.default.createElement(
                         'div',
                         { className: 'content-item' },
-                        _react2.default.createElement('input', { className: 'content-item__input', type: 'text', placeholder: 'Search' }),
+                        _react2.default.createElement('input', {
+                            className: 'content-item__input',
+                            type: 'text',
+                            placeholder: 'Search',
+                            name: 'filter',
+                            value: this.state.filter,
+                            onChange: this.handleChange,
+                            onKeyDown: this.handleFilter
+                        }),
                         _react2.default.createElement('img', { className: 'item-right', src: this.renderTrash(), onDragOver: this.handleDragOver, onDrop: this.handleDrop })
                     ),
                     folderList,
@@ -3623,7 +3659,10 @@ CustomRowComponent.propTypes = {
     allowDrag: _propTypes2.default.bool.isRequired,
     dropOver: _propTypes2.default.func.isRequired,
     deleteDocs: _propTypes2.default.func.isRequired,
-    id: _propTypes2.default.number
+    id: _propTypes2.default.number,
+    filter: _propTypes2.default.string.isRequired,
+    filterSelect: _propTypes2.default.string.isRequired,
+    setFilter: _propTypes2.default.func.isRequired
 };
 
 
@@ -3635,7 +3674,9 @@ var mapStoreToProps = function mapStoreToProps(state) {
         count: state.folder.count,
         allowDrag: state.drag.allowDrag,
         source: state.drag.source,
-        id: state.drag.id
+        id: state.drag.id,
+        filter: state.page.filter.folder,
+        filterSelect: state.page.filterSelect.folder
     };
 };
 
@@ -3645,7 +3686,8 @@ var mapDispatchToProps = function mapDispatchToProps(dispatch) {
         folderUnMount: _folder.folderUnMount,
         loadFoldersMore: _folder.loadFoldersMore,
         dropOver: _drag.dropOver,
-        deleteDocs: _document.deleteDocs
+        deleteDocs: _document.deleteDocs,
+        setFilter: _page.setFilter
     }, dispatch));
 };
 
@@ -49927,9 +49969,18 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
 function _defineProperty(obj, key, value) { if (key in obj) { Object.defineProperty(obj, key, { value: value, enumerable: true, configurable: true, writable: true }); } else { obj[key] = value; } return obj; }
 
 var initalStore = {
-    filter: '',
-    sortSelect: '',
-    filterSelect: '',
+    filter: {
+        folder: '',
+        docs: ''
+    },
+    sortSelect: {
+        folder: '',
+        docs: ''
+    },
+    filterSelect: {
+        folder: 'name',
+        docs: 'name'
+    },
     link: {
         global: '',
         modal: ''
@@ -49943,18 +49994,18 @@ function page() {
     switch (action.type) {
         case _page.SET_FILTER:
             return (0, _reactAddonsUpdate2.default)(store, {
-                filter: {
+                filter: _defineProperty({}, action.app, {
                     $set: action.filter
-                },
-                filterSelect: {
+                }),
+                filterSelect: _defineProperty({}, action.app, {
                     $set: action.filterSelect
-                }
+                })
             });
         case _page.SET_SORT:
             return (0, _reactAddonsUpdate2.default)(store, {
-                sort: {
+                sort: _defineProperty({}, action.app, {
                     $set: action.sortSelect
-                }
+                })
             });
         case _page.SET_LINK:
             return (0, _reactAddonsUpdate2.default)(store, {
@@ -51155,8 +51206,8 @@ var mapStoreToProps = function mapStoreToProps(state) {
         isLoading: state.document.isLoading,
         count: state.document.count,
         page: state.document.page,
-        filter: state.page.filter,
-        filterType: state.page.filterSelect,
+        filter: state.page.filter.docs,
+        filterType: state.page.filterSelect.docs,
         checkList: state.document.checkList
     };
 };
@@ -51420,7 +51471,12 @@ var DocsHeaderComponent = function (_React$Component) {
                 );
             }
             if (this.state.isFilter) {
-                return _react2.default.createElement(_DocsFilterHeader2.default, { setFilter: this.props.setFilter, onFilter: this.handleFilter });
+                return _react2.default.createElement(_DocsFilterHeader2.default, {
+                    setFilter: this.props.setFilter,
+                    onFilter: this.handleFilter,
+                    filter: this.props.filter,
+                    filterSelect: this.props.filterSelect
+                });
             }
             if (this.props.checkList.length) {
                 if (type === 'sorted' || type === 'folder') {
@@ -51496,7 +51552,9 @@ DocsHeaderComponent.propTypes = {
     loadDocs: _propTypes2.default.func.isRequired,
     setFilter: _propTypes2.default.func.isRequired,
     setSort: _propTypes2.default.func.isRequired,
-    folder: _propTypes2.default.string.isRequired
+    folder: _propTypes2.default.string.isRequired,
+    filter: _propTypes2.default.string.isRequired,
+    filterSelect: _propTypes2.default.string.isRequired
 };
 
 
@@ -51508,7 +51566,9 @@ var mapStoreToProps = function mapStoreToProps(state) {
         checkList: state.document.checkList,
         count: state.document.count,
         page: state.document.page,
-        isOpen: state.modal.isOpen
+        isOpen: state.modal.isOpen,
+        filterSelect: state.page.filterSelect.docs,
+        filter: state.page.filter.docs
     };
 };
 
@@ -51908,12 +51968,12 @@ var DocsFilterHeader = function (_React$Component) {
         }
 
         return _ret = (_temp = (_this = _possibleConstructorReturn(this, (_ref = DocsFilterHeader.__proto__ || Object.getPrototypeOf(DocsFilterHeader)).call.apply(_ref, [this].concat(args))), _this), _this.state = {
-            filter: '',
-            filterSelect: 'name',
+            filter: _this.props.filter,
+            filterSelect: _this.props.filterSelect,
             isDate: false,
             isExt: false
         }, _this.handleFilterStart = function (e) {
-            _this.props.setFilter(_this.state.filterSelect, _this.state.filter);
+            _this.props.setFilter(_this.state.filter, _this.state.filterSelect, _constants.apps.docs);
         }, _this.handleSelectFilter = function (e) {
             if (e.target.value === 'date') {
                 _this.setState({ isDate: true, isExt: false, filterSelect: e.target.value });
@@ -52025,7 +52085,9 @@ var DocsFilterHeader = function (_React$Component) {
 
 DocsFilterHeader.propTypes = {
     setFilter: _propTypes2.default.func.isRequired,
-    onFilter: _propTypes2.default.func.isRequired
+    onFilter: _propTypes2.default.func.isRequired,
+    filter: _propTypes2.default.string.isRequired,
+    filterSelect: _propTypes2.default.string.isRequired
 };
 exports.default = DocsFilterHeader;
 

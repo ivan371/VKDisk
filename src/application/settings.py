@@ -49,7 +49,8 @@ INSTALLED_APPS = [
     'rest_api.apps.RestApiConfig',
     'vk_api_wrapper.apps.VkApiWrapperConfig',
     'social_django',
-    'debug_toolbar'
+    'debug_toolbar',
+    # 'sphinxql'
     # 'widget_tweaks'
 ]
 
@@ -190,3 +191,8 @@ CELERY_ACCEPT_CONTENT = ['json']
 CELERY_TASK_SERIALIZER = 'json'
 CELERY_RESULT_SERIALIZER = 'json'
 # CELERY_BEAT_SCHEDULER = 'django_celery_beat.schedulers.DatabaseScheduler'
+
+# INDEXES = {
+#     'path': os.path.join(BASE_DIR, '_index'),  # also do `mkdir _index`.
+#     'sphinx_path': BASE_DIR
+# }
