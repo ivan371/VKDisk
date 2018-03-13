@@ -1,5 +1,8 @@
 from django.contrib.auth.views import LoginView as BaseLoginView, login
 from django.shortcuts import render
+from django.urls import reverse_lazy, reverse
+from rest_framework.decorators import api_view
+from rest_framework.response import Response
 from social_django.utils import psa
 
 from .forms import AuthenticationForm
@@ -27,3 +30,17 @@ class LoginView(BaseLoginView):
 
 def index(request):
     return render(request, 'core/index.html')
+
+
+@api_view(['GET'])
+def oAuthUrls(request):
+    if request.user.is_authenticated:
+        response_object = {
+            'status': 'ok',
+        }
+    else:
+        response_object = {
+            'status': 'auth',
+            'vk_url': reverse('social:begin', kwargs={'backend': 'vk-oauth2'})
+        }
+    return Response(response_object)
