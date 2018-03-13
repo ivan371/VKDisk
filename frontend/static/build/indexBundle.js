@@ -3569,7 +3569,7 @@ var CustomRowComponent = function (_React$Component) {
     }, {
         key: 'componentWillReceiveProps',
         value: function componentWillReceiveProps(nextProps) {
-            if (this.props.filter !== nextProps.filter) {
+            if (this.props.filter !== nextProps.filter && this.props.folder === _constants.folderType.chat) {
                 this.props.loadFolders(_constants.makeUrls.makeFilterChats(nextProps.filter));
             }
         }

@@ -45,7 +45,7 @@ class CustomRowComponent extends React.Component {
     }
 
     componentWillReceiveProps(nextProps) {
-        if (this.props.filter !== nextProps.filter) {
+        if (this.props.filter !== nextProps.filter && this.props.folder === folderType.chat) {
             this.props.loadFolders(makeUrls.makeFilterChats(nextProps.filter));
         }
     }
