@@ -27,7 +27,9 @@ class VKOAuth2(BaseVKOAuth2):
         return self.strategy.authenticate(*args, **kwargs)
 
     def auth_extra_arguments(self):
-        return super().auth_extra_arguments()
+        args = super().auth_extra_arguments()
+        args['display'] = 'page'
+        return args
 
 
 
