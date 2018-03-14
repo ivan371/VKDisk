@@ -26,7 +26,7 @@ class Document(Named, Authored, Dated):
         verbose_name_plural = _(u'files')
 
 
-class DocumentData(EsIndexable, models.Model):
+class DocumentData(models.Model):
     document = models.OneToOneField(Document, on_delete=models.CASCADE)
     text = models.TextField(null=True)
 

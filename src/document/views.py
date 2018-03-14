@@ -110,12 +110,15 @@ class DocumentViewSet(viewsets.ModelViewSet):
 
 
 class DocumentView(es_views.ListElasticAPIView):
-    es_client = Elasticsearch(hosts=['elasticsearch:9200/'],
+    es_client = Elasticsearch(hosts=['localhost:9200/'],
                               connection_class=RequestsHttpConnection)
     es_model = DocumentIndex
     es_filter_backends = (
         es_filters.ElasticFieldsFilter,
         es_filters.ElasticSearchFilter
+    )
+    es_filter_fields = (
+        es_filters.ESFieldFilter('text', 'title'),
     )
     es_search_fields = (
         'text',
