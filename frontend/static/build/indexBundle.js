@@ -549,7 +549,8 @@ var items = exports.items = {
     filter: '/static/img/search.png',
     trash: '/static/img/trash.png',
     trashGood: '/static/img/trashGood.png',
-    trashBad: '/static/img/trashBad.png'
+    trashBad: '/static/img/trashBad.png',
+    clear: '/static/img/clear.png'
 };
 
 function makeFormat(fileUrl) {
@@ -24920,7 +24921,7 @@ var TileComponent = function (_React$Component) {
         }, _this.doClick = function (e) {
             _this.clickedOnce = undefined;
             if (!_this.props.isModal) {
-                _this.setState({ isChecked: !_this.state.isChecked });
+                // this.setState({ isChecked: !this.state.isChecked });
                 _this.props.checkFile(_this.props.id);
             } else {
                 _this.props.switchFolder(_this.props.id);
@@ -24933,6 +24934,11 @@ var TileComponent = function (_React$Component) {
         value: function renderClassName() {
             if (this.props.isModal) {
                 return 'content-flex-item ' + (this.props.id !== this.props.checkedFolder ? '' : 'checked');
+            }
+            if (this.props.type === _constants.tileType.file) {
+                if (this.props.checkList.indexOf(this.props.id) !== -1) {
+                    return 'content-flex-item checked';
+                }
             }
             return 'content-flex-item ' + (this.state.isChecked ? '' : 'checked');
         }
@@ -24992,13 +24998,15 @@ TileComponent.propTypes = {
     setLink: _propTypes2.default.func.isRequired,
     dragStart: _propTypes2.default.func.isRequired,
     dragEnd: _propTypes2.default.func.isRequired,
-    folder: _propTypes2.default.string
+    folder: _propTypes2.default.string,
+    checkList: _propTypes2.default.array.isRequired
 };
 
 
 var mapStoreToProps = function mapStoreToProps(state, props) {
     return {
-        checkedFolder: state.folder.checkedFolder
+        checkedFolder: state.folder.checkedFolder,
+        checkList: state.document.checkList
     };
 };
 
@@ -49747,7 +49755,8 @@ var initalState = {
     page: 2,
     docs: {},
     docList: [],
-    checkList: []
+    checkList: [],
+    countCheck: 0
 };
 
 function document() {
@@ -49821,13 +49830,28 @@ function document() {
                 return (0, _reactAddonsUpdate2.default)(store, {
                     checkList: {
                         $push: [action.id]
+                    },
+                    countCheck: {
+                        $set: store.countCheck + 1
                     }
                 });
             }
-
+            if (store.countCheck === 1) {
+                return (0, _reactAddonsUpdate2.default)(store, {
+                    checkList: {
+                        $set: []
+                    },
+                    countCheck: {
+                        $set: 0
+                    }
+                });
+            }
             return (0, _reactAddonsUpdate2.default)(store, {
                 checkList: {
                     $splice: [[index, 1]]
+                },
+                countCheck: {
+                    $set: store.countCheck - 1
                 }
             });
         case _document.CHECK_ALL:
@@ -49835,12 +49859,18 @@ function document() {
                 return (0, _reactAddonsUpdate2.default)(store, {
                     checkList: {
                         $set: store.docList
+                    },
+                    countCheck: {
+                        $set: store.count
                     }
                 });
             }
             return (0, _reactAddonsUpdate2.default)(store, {
                 checkList: {
                     $set: []
+                },
+                countCheck: {
+                    $set: 0
                 }
             });
 
@@ -49851,12 +49881,18 @@ function document() {
                 },
                 checkList: {
                     $set: []
+                },
+                countCheck: {
+                    $set: 0
                 }
             });
         case _document.DOCS_BULK_CREATE_SUCCESS:
             return (0, _reactAddonsUpdate2.default)(store, {
                 checkList: {
                     $set: []
+                },
+                countCheck: {
+                    $set: 0
                 }
             });
         case _document.DELETE_DOCS_SUCCESS:
@@ -51376,6 +51412,10 @@ var _DocsFilterHeader = __webpack_require__(293);
 
 var _DocsFilterHeader2 = _interopRequireDefault(_DocsFilterHeader);
 
+var _DocsCheckHeader = __webpack_require__(301);
+
+var _DocsCheckHeader2 = _interopRequireDefault(_DocsCheckHeader);
+
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 function _defineProperty(obj, key, value) { if (key in obj) { Object.defineProperty(obj, key, { value: value, enumerable: true, configurable: true, writable: true }); } else { obj[key] = value; } return obj; }
@@ -51417,6 +51457,8 @@ var DocsHeaderComponent = function (_React$Component) {
             _this.props.setModal(_constants.modalType.folderReplace);
         }, _this.handleGoBack = function (e) {
             _this.props.history.goBack(e);
+        }, _this.handleClearAll = function () {
+            _this.props.checkAll();
         }, _temp), _possibleConstructorReturn(_this, _ret);
     }
 
@@ -51427,6 +51469,17 @@ var DocsHeaderComponent = function (_React$Component) {
             var title = null;
             if (this.props.folder === _constants.folderType.root) {
                 type = 'root';
+                title = _react2.default.createElement(
+                    _react2.default.Fragment,
+                    null,
+                    _react2.default.createElement(
+                        'div',
+                        { className: 'item-name' },
+                        'You have ',
+                        this.props.count,
+                        ' files'
+                    )
+                );
             } else {
                 type = this.props.folders[parseInt(this.props.params.id)].type;
                 title = _react2.default.createElement(
@@ -51436,7 +51489,10 @@ var DocsHeaderComponent = function (_React$Component) {
                     _react2.default.createElement(
                         'div',
                         { className: 'item-name' },
-                        this.props.folders[this.props.params.id].title
+                        this.props.folders[this.props.params.id].title,
+                        ' (',
+                        this.props.count,
+                        ' files)'
                     )
                 );
             }
@@ -51478,33 +51534,14 @@ var DocsHeaderComponent = function (_React$Component) {
                     filterSelect: this.props.filterSelect
                 });
             }
-            if (this.props.checkList.length) {
-                if (type === 'sorted' || type === 'folder') {
-                    return _react2.default.createElement(
-                        _react2.default.Fragment,
-                        null,
-                        _react2.default.createElement(
-                            'button',
-                            { className: 'vk-button', onClick: this.handleOpenCopy },
-                            '\u041A\u043E\u043F\u0438\u0440\u043E\u0432\u0430\u0442\u044C'
-                        ),
-                        _react2.default.createElement(
-                            'button',
-                            { className: 'vk-button', onClick: this.handleOpenReplace },
-                            '\u041F\u0435\u0440\u0435\u043C\u0435\u0441\u0442\u0438\u0442\u044C'
-                        ),
-                        _react2.default.createElement(
-                            'button',
-                            { className: 'vk-button' },
-                            '\u0423\u0434\u0430\u043B\u0438\u0442\u044C'
-                        )
-                    );
-                }
-                return _react2.default.createElement(
-                    'button',
-                    { className: 'vk-button', onClick: this.handleOpenCopy },
-                    '\u041A\u043E\u043F\u0438\u0440\u043E\u0432\u0430\u0442\u044C'
-                );
+            if (this.props.countCheck) {
+                return _react2.default.createElement(_DocsCheckHeader2.default, {
+                    type: type,
+                    setModal: this.props.setModal,
+                    modalOpen: this.props.modalOpen,
+                    countCheck: this.props.countCheck,
+                    checkAll: this.props.checkAll
+                });
             }
 
             return _react2.default.createElement(
@@ -51548,13 +51585,12 @@ DocsHeaderComponent.propTypes = {
     modalOpen: _propTypes2.default.func.isRequired,
     setModal: _propTypes2.default.func.isRequired,
     isLoading: _propTypes2.default.bool.isRequired,
-    isFoldersLoading: _propTypes2.default.bool.isRequired,
-    loadDocs: _propTypes2.default.func.isRequired,
     setFilter: _propTypes2.default.func.isRequired,
-    setSort: _propTypes2.default.func.isRequired,
     folder: _propTypes2.default.string.isRequired,
     filter: _propTypes2.default.string.isRequired,
-    filterSelect: _propTypes2.default.string.isRequired
+    filterSelect: _propTypes2.default.string.isRequired,
+    countCheck: _propTypes2.default.number.isRequired,
+    checkAll: _propTypes2.default.func.isRequired
 };
 
 
@@ -51568,7 +51604,8 @@ var mapStoreToProps = function mapStoreToProps(state) {
         page: state.document.page,
         isOpen: state.modal.isOpen,
         filterSelect: state.page.filterSelect.docs,
-        filter: state.page.filter.docs
+        filter: state.page.filter.docs,
+        countCheck: state.document.countCheck
     };
 };
 
@@ -51578,7 +51615,8 @@ var mapDispatchToProps = function mapDispatchToProps(dispatch) {
         setModal: _modal.setModal,
         loadDocs: _document.loadDocs,
         setFilter: _page.setFilter,
-        setSort: _page.setSort
+        setSort: _page.setSort,
+        checkAll: _document.checkAll
     }, dispatch));
 };
 
@@ -52817,6 +52855,125 @@ module.exports = function (css) {
 	return fixedCss;
 };
 
+
+/***/ }),
+/* 301 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+Object.defineProperty(exports, "__esModule", {
+    value: true
+});
+
+var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+
+var _react = __webpack_require__(0);
+
+var _react2 = _interopRequireDefault(_react);
+
+var _propTypes = __webpack_require__(1);
+
+var _propTypes2 = _interopRequireDefault(_propTypes);
+
+var _constants = __webpack_require__(6);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
+
+function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
+
+var DocsCheckHeader = function (_React$Component) {
+    _inherits(DocsCheckHeader, _React$Component);
+
+    function DocsCheckHeader() {
+        var _ref;
+
+        var _temp, _this, _ret;
+
+        _classCallCheck(this, DocsCheckHeader);
+
+        for (var _len = arguments.length, args = Array(_len), _key = 0; _key < _len; _key++) {
+            args[_key] = arguments[_key];
+        }
+
+        return _ret = (_temp = (_this = _possibleConstructorReturn(this, (_ref = DocsCheckHeader.__proto__ || Object.getPrototypeOf(DocsCheckHeader)).call.apply(_ref, [this].concat(args))), _this), _this.handleOpenCopy = function () {
+            _this.props.modalOpen();
+            _this.props.setModal(_constants.modalType.folderTransfer);
+        }, _this.handleOpenReplace = function () {
+            _this.props.modalOpen();
+            _this.props.setModal(_constants.modalType.folderReplace);
+        }, _this.handleClearAll = function () {
+            _this.props.checkAll();
+        }, _temp), _possibleConstructorReturn(_this, _ret);
+    }
+
+    _createClass(DocsCheckHeader, [{
+        key: 'render',
+        value: function render() {
+            if (this.props.type !== 'chat') {
+                return _react2.default.createElement(
+                    _react2.default.Fragment,
+                    null,
+                    _react2.default.createElement(
+                        'div',
+                        { className: 'item-name' },
+                        this.props.countCheck,
+                        ' files'
+                    ),
+                    _react2.default.createElement('img', { src: _constants.items.clear, className: 'item-left', onClick: this.handleClearAll }),
+                    _react2.default.createElement(
+                        'button',
+                        { className: 'vk-button', onClick: this.handleOpenCopy },
+                        '\u041A\u043E\u043F\u0438\u0440\u043E\u0432\u0430\u0442\u044C'
+                    ),
+                    _react2.default.createElement(
+                        'button',
+                        { className: 'vk-button', onClick: this.handleOpenReplace },
+                        '\u041F\u0435\u0440\u0435\u043C\u0435\u0441\u0442\u0438\u0442\u044C'
+                    ),
+                    _react2.default.createElement(
+                        'button',
+                        { className: 'vk-button' },
+                        '\u0423\u0434\u0430\u043B\u0438\u0442\u044C'
+                    )
+                );
+            }
+            return _react2.default.createElement(
+                _react2.default.Fragment,
+                null,
+                _react2.default.createElement(
+                    'div',
+                    { className: 'item-name' },
+                    this.props.countCheck,
+                    ' files'
+                ),
+                _react2.default.createElement('img', { src: _constants.items.clear, className: 'item-left', onClick: this.handleClearAll }),
+                _react2.default.createElement('img', { src: _constants.items.clear, className: 'item-left' }),
+                _react2.default.createElement(
+                    'button',
+                    { className: 'vk-button', onClick: this.handleOpenCopy },
+                    '\u041A\u043E\u043F\u0438\u0440\u043E\u0432\u0430\u0442\u044C'
+                )
+            );
+        }
+    }]);
+
+    return DocsCheckHeader;
+}(_react2.default.Component);
+
+DocsCheckHeader.propTypes = {
+    modalOpen: _propTypes2.default.func.isRequired,
+    setModal: _propTypes2.default.func.isRequired,
+    countCheck: _propTypes2.default.number.isRequired,
+    checkAll: _propTypes2.default.func.isRequired,
+    type: _propTypes2.default.string.isRequired
+};
+exports.default = DocsCheckHeader;
 
 /***/ })
 /******/ ]);

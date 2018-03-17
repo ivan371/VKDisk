@@ -8,7 +8,7 @@ import { switchFolder, updateFolder } from '../../actions/folder';
 import { format, makeUrls, tileType, makeFormat, apps, folderType, dragSource } from '../../constants';
 import { checkFile, updateDoc } from '../../actions/document';
 import { setLink } from '../../actions/page';
-import {dragEnd, dragStart} from '../../actions/drag';
+import { dragEnd, dragStart } from '../../actions/drag';
 
 class TileComponent extends React.Component {
     static propTypes = {
@@ -26,6 +26,7 @@ class TileComponent extends React.Component {
         dragStart: PropTypes.func.isRequired,
         dragEnd: PropTypes.func.isRequired,
         folder: PropTypes.string,
+        checkList: PropTypes.array.isRequired,
     };
 
     state = {
@@ -102,7 +103,7 @@ class TileComponent extends React.Component {
     doClick = (e) => {
         this.clickedOnce = undefined;
         if (!this.props.isModal) {
-            this.setState({ isChecked: !this.state.isChecked });
+            // this.setState({ isChecked: !this.state.isChecked });
             this.props.checkFile(this.props.id);
         } else {
             this.props.switchFolder(this.props.id);
@@ -112,6 +113,11 @@ class TileComponent extends React.Component {
     renderClassName() {
         if (this.props.isModal) {
             return `content-flex-item ${this.props.id !== this.props.checkedFolder ? '' : 'checked'}`;
+        }
+        if (this.props.type === tileType.file) {
+            if (this.props.checkList.indexOf(this.props.id) !== -1) {
+                return 'content-flex-item checked';
+            }
         }
         return `content-flex-item ${this.state.isChecked ? '' : 'checked'}`;
     }
@@ -154,6 +160,7 @@ class TileComponent extends React.Component {
 
 const mapStoreToProps = (state, props) => ({
     checkedFolder: state.folder.checkedFolder,
+    checkList: state.document.checkList,
 });
 
 const mapDispatchToProps = dispatch => ({

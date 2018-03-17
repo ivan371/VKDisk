@@ -88,6 +88,7 @@ export const items = {
     trash: '/static/img/trash.png',
     trashGood: '/static/img/trashGood.png',
     trashBad: '/static/img/trashBad.png',
+    clear: '/static/img/clear.png',
 };
 
 export function makeFormat(fileUrl) {
