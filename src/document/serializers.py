@@ -37,6 +37,13 @@ class DocumentSerializer(serializers.HyperlinkedModelSerializer):
         return base + "?" + query
 
 
+class DocumentTransferSerializer(serializers.ModelSerializer):
+
+    class Meta:
+        model = Document
+        fields = ('id', 'folder')
+
+
 class DocumentBulkSerializer(serializers.ModelSerializer):
     docs = DocumentFilteredPrimaryKeyRelatedField(many=True, queryset=Document.objects.all(), write_only=True)
 

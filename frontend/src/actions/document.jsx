@@ -1,5 +1,5 @@
 import { apiLoad } from './load';
-import {docNormalize, docsNormalize} from '../normalizers/document';
+import { docNormalize, docsNormalize } from '../normalizers/document';
 
 export const LOAD_DOCS = 'LOAD_DOCS';
 export const LOAD_DOCS_SUCCESS = 'LOAD_DOCS_SUCCESS';
@@ -33,6 +33,11 @@ export function loadDocsMore(url) {
 export function updateDoc(url, title) {
     const types = [LOAD_DOC, UPDATE_DOC, LOAD_DOC_ERROR];
     return apiLoad(url, 'PUT', types, JSON.stringify({ title }), docNormalize, true);
+}
+
+export function updateDocRoot(url, folder) {
+    const types = [DELETE_DOCS, DELETE_DOCS_SUCCESS, DELETE_DOCS_ERROR];
+    return apiLoad(url, 'PUT', types, JSON.stringify({ folder }), a => a, true);
 }
 
 export function bulkCreateDocs(url, docs) {

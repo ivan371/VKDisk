@@ -7,7 +7,7 @@ import { modalType, items, folderType } from '../../constants';
 import AddFolder from '../folder/AddFolder';
 import { modalOpen, setModal } from '../../actions/modal';
 import { checkAll, loadDocs } from '../../actions/document';
-import { setFilter, setSort } from '../../actions/page';
+import {changeView, setFilter, setSort} from '../../actions/page';
 import Modal from '../Modal';
 import DocsFilterHeader from './DocsFilterHeader';
 import DocsCheckHeader from './DocsCheckHeader';
@@ -24,6 +24,7 @@ class DocsHeaderComponent extends React.Component {
         filterSelect: PropTypes.string.isRequired,
         countCheck: PropTypes.number.isRequired,
         checkAll: PropTypes.func.isRequired,
+        changeView: PropTypes.func.isRequired,
     };
 
     state = {
@@ -58,6 +59,10 @@ class DocsHeaderComponent extends React.Component {
 
     handleClearAll = () => {
         this.props.checkAll();
+    };
+
+    handleChangeView = () => {
+        this.props.changeView();
     };
 
     renderMenu() {
@@ -105,6 +110,7 @@ class DocsHeaderComponent extends React.Component {
 
         return (<React.Fragment>
             { title }
+            <img className="item-right" src={ items.colRow } onClick={ this.handleChangeView } />
             {type === 'sorted' || type === 'folder' || type === 'root' ?
                 <AddFolder id={ parseInt(this.props.params.id) } folder={ this.props.folder } />
                 : null}
@@ -153,6 +159,7 @@ const mapDispatchToProps = dispatch => ({
         setFilter,
         setSort,
         checkAll,
+        changeView,
     }, dispatch),
 });
 

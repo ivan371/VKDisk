@@ -1,6 +1,6 @@
 from django.shortcuts import render
 from rest_framework import viewsets, permissions
-from .serializers import DocumentSerializer, DocumentBulkSerializer
+from .serializers import DocumentSerializer, DocumentBulkSerializer, DocumentTransferSerializer
 from .models import Document, DocumentData
 from django.http import Http404
 from datetime import datetime
@@ -47,6 +47,8 @@ class DocumentViewSet(viewsets.ModelViewSet):
         if self.request.method == 'POST' \
                 and ('bulk_create' in self.request.query_params or 'bulk_update' in self.request.query_params):
             return DocumentBulkSerializer
+        if self.request.method == 'PUT' and 'root' in self.request.query_params:
+            return DocumentTransferSerializer
         return DocumentSerializer
 
     def perform_create(self, serializer):

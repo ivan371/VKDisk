@@ -1,6 +1,7 @@
 export const SET_FILTER = 'SET_FILTER';
 export const SET_SORT = 'SET_SORT';
 export const SET_LINK = 'SET_LINK';
+export const CHANGE_VIEW = 'CHANGE_VIEW';
 
 export function setFilter(filter, filterSelect, app) {
     return {
@@ -25,5 +26,11 @@ export function setLink(link, app) {
         type: SET_LINK,
         link,
         app,
+    };
+}
+
+export function changeView() {
+    return {
+        type: CHANGE_VIEW,
     };
 }

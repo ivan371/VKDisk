@@ -6,9 +6,9 @@ import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
 import { switchFolder, updateFolder } from '../../actions/folder';
 import { format, makeUrls, tileType, makeFormat, apps, folderType, dragSource } from '../../constants';
-import { checkFile, updateDoc } from '../../actions/document';
+import { checkFile, updateDoc, updateDocRoot } from '../../actions/document';
 import { setLink } from '../../actions/page';
-import { dragEnd, dragStart } from '../../actions/drag';
+import { dragEnd, dragStart, dropOver } from '../../actions/drag';
 
 class TileComponent extends React.Component {
     static propTypes = {
@@ -25,8 +25,13 @@ class TileComponent extends React.Component {
         setLink: PropTypes.func.isRequired,
         dragStart: PropTypes.func.isRequired,
         dragEnd: PropTypes.func.isRequired,
+        dropOver: PropTypes.func.isRequired,
         folder: PropTypes.string,
         checkList: PropTypes.array.isRequired,
+        source: PropTypes.string,
+        dragId: PropTypes.number,
+        allowDrag: PropTypes.bool.isRequired,
+        updateDocRoot: PropTypes.func.isRequired,
     };
 
     state = {
@@ -35,7 +40,7 @@ class TileComponent extends React.Component {
         isChecked: true,
     };
 
-    onHandleChange = (e) => {
+    handleChangeClick = (e) => {
         this.setState({ isClicked: !this.state.isClicked });
     };
 
@@ -61,10 +66,10 @@ class TileComponent extends React.Component {
     handleDragStart = (e) => {
         switch (this.props.type) {
             case tileType.file:
-                this.props.dragStart(this.props.folder === folderType.folder, dragSource.delete, this.props.id);
+                this.props.dragStart(this.props.folder !== folderType.chat, dragSource.file, this.props.id);
                 break;
             case tileType.folder:
-                this.props.dragStart(this.props.folder !== folderType.chat, dragSource.favorite, this.props.id);
+                this.props.dragStart(this.props.folder === folderType.folder, dragSource.favorite, this.props.id);
                 break;
             default:
         }
@@ -73,6 +78,20 @@ class TileComponent extends React.Component {
     handleDragEnd = (e) => {
         this.props.dragEnd();
     };
+
+    handleDragOver = (e) => {
+        if (this.props.source === dragSource.file && this.props.allowDrag) {
+            e.preventDefault();
+        }
+    };
+
+    handleDrop = (e) => {
+        if (this.props.source === dragSource.file && this.props.allowDrag) {
+            this.props.updateDocRoot(makeUrls.makeTransferFile(this.props.dragId), this.props.id);
+            this.props.dropOver();
+        }
+    };
+
 
     handleClick = (e) => {
         if (!this._delayedClick) {
@@ -111,18 +130,19 @@ class TileComponent extends React.Component {
     };
 
     renderClassName() {
+        const itemClass = 'content-flex-item';
         if (this.props.isModal) {
-            return `content-flex-item ${this.props.id !== this.props.checkedFolder ? '' : 'checked'}`;
+            return `${itemClass} ${this.props.id !== this.props.checkedFolder ? '' : 'checked'}`;
         }
         if (this.props.type === tileType.file) {
             if (this.props.checkList.indexOf(this.props.id) !== -1) {
-                return 'content-flex-item checked';
+                return `${itemClass} checked`;
             }
         }
-        return `content-flex-item ${this.state.isChecked ? '' : 'checked'}`;
+        return `${itemClass} ${this.state.isChecked ? '' : 'checked'}`;
     }
 
-    render() {
+    renderItem() {
         let imageUrl = null;
         switch (this.props.type) {
             case tileType.folder:
@@ -133,18 +153,34 @@ class TileComponent extends React.Component {
                 break;
             default:
         }
+        if (this.props.type === tileType.file) {
+            return (<img
+                className="icon"
+                onClick={ this.handleClick }
+                onDragStart={ this.handleDragStart }
+                src={ imageUrl }
+                draggable="true"
+                onDragEnd={ this.handleDragEnd }
+            />);
+        }
+        if (this.props.type === tileType.folder) {
+            return (<img
+                className="icon"
+                onClick={ this.handleClick }
+                src={ imageUrl }
+                onDragOver={ this.handleDragOver }
+                onDrop={ this.handleDrop }
+            />);
+        }
+        return null;
+    }
+
+    render() {
         return (
             <div className={ this.renderClassName() }>
-                <img
-                    className="icon"
-                    onClick={ this.handleClick }
-                    onDragStart={ this.handleDragStart }
-                    src={ imageUrl }
-                    draggable="true"
-                    onDragEnd={ this.handleDragEnd }
-                />
+                { this.renderItem() }
                 {!this.state.isClicked ?
-                    <div className="content-item__title" onClick={ this.onHandleChange }>{this.props.title}</div>
+                    <div className="content-item__title" onClick={ this.handleChangeClick }>{this.props.title}</div>
                     : <input
                         className="content-item__input"
                         value={ this.state.title }
@@ -161,6 +197,10 @@ class TileComponent extends React.Component {
 const mapStoreToProps = (state, props) => ({
     checkedFolder: state.folder.checkedFolder,
     checkList: state.document.checkList,
+    allowDrag: state.drag.allowDrag,
+    source: state.drag.source,
+    dragId: state.drag.id,
+    view: state.page.view,
 });
 
 const mapDispatchToProps = dispatch => ({
@@ -172,6 +212,8 @@ const mapDispatchToProps = dispatch => ({
         setLink,
         dragStart,
         dragEnd,
+        dropOver,
+        updateDocRoot,
     }, dispatch),
 });
 

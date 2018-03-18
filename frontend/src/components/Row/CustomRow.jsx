@@ -59,13 +59,13 @@ class CustomRowComponent extends React.Component {
     };
 
     handleDragOver = (e) => {
-        if (this.props.source === dragSource.delete && this.props.allowDrag) {
+        if (this.props.source === dragSource.file && this.props.allowDrag) {
             e.preventDefault();
         }
     };
 
     handleDrop = (e) => {
-        if (this.props.source === dragSource.delete && this.props.allowDrag) {
+        if (this.props.source === dragSource.file && this.props.allowDrag) {
             this.props.deleteDocs(makeUrls.makeCustomFile(this.props.id), this.props.id);
             this.props.dropOver();
         }
@@ -82,7 +82,7 @@ class CustomRowComponent extends React.Component {
     };
 
     renderTrash() {
-        if (this.props.source === dragSource.delete) {
+        if (this.props.source === dragSource.file) {
             if (this.props.allowDrag) {
                 return items.trashGood;
             }

@@ -18,6 +18,7 @@ export const makeUrls = {
     makeRootFoldersFolder: () => `${urls.folder.customFolderUrl}?root`,
     makeCustomFolder: id => `${urls.folder.customFolderUrl + id}/`,
     makeCustomFile: id => `${urls.docs.docsUrl + id}/`,
+    makeTransferFile: id => `${urls.docs.docsUrl + id}/?root`,
     makeDocsMore: (id, page, filter, value) => `${urls.docs.docsUrl}?folder=${id}&&page=${page}&&filter&&${filter}=${value}`,
     makeDocsRootMore: (page, filter, value) => `${urls.docs.docsUrl}?root&&page=${page}&&filter&&${filter}=${value}`,
     makeDocsMoreDate: (id, page, year, month, day) => `${urls.docs.docsUrl}?folder=${id}&&page=${page}&&filter&&year=${year}&&month=${month}&&day=${day}`,
@@ -89,6 +90,7 @@ export const items = {
     trashGood: '/static/img/trashGood.png',
     trashBad: '/static/img/trashBad.png',
     clear: '/static/img/clear.png',
+    colRow: '/static/img/row-col.png',
 };
 
 export function makeFormat(fileUrl) {
@@ -100,6 +102,11 @@ export function makeFormat(fileUrl) {
 }
 
 export const dragSource = {
-    delete: 'delete',
+    file: 'file',
     favorite: 'favorite',
+};
+
+export const view = {
+    col: 'col',
+    row: 'row',
 };

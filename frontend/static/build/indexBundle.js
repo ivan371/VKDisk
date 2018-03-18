@@ -458,6 +458,9 @@ var makeUrls = exports.makeUrls = {
     makeCustomFile: function makeCustomFile(id) {
         return urls.docs.docsUrl + id + '/';
     },
+    makeTransferFile: function makeTransferFile(id) {
+        return urls.docs.docsUrl + id + '/?root';
+    },
     makeDocsMore: function makeDocsMore(id, page, filter, value) {
         return urls.docs.docsUrl + '?folder=' + id + '&&page=' + page + '&&filter&&' + filter + '=' + value;
     },
@@ -550,7 +553,8 @@ var items = exports.items = {
     trash: '/static/img/trash.png',
     trashGood: '/static/img/trashGood.png',
     trashBad: '/static/img/trashBad.png',
-    clear: '/static/img/clear.png'
+    clear: '/static/img/clear.png',
+    colRow: '/static/img/row-col.png'
 };
 
 function makeFormat(fileUrl) {
@@ -564,8 +568,13 @@ function makeFormat(fileUrl) {
 }
 
 var dragSource = exports.dragSource = {
-    delete: 'delete',
+    file: 'file',
     favorite: 'favorite'
+};
+
+var view = exports.view = {
+    col: 'col',
+    row: 'row'
 };
 
 /***/ }),
@@ -838,6 +847,7 @@ exports.DELETE_DOCS_ERROR = exports.DELETE_DOCS_SUCCESS = exports.DELETE_DOCS = 
 exports.loadDocs = loadDocs;
 exports.loadDocsMore = loadDocsMore;
 exports.updateDoc = updateDoc;
+exports.updateDocRoot = updateDocRoot;
 exports.bulkCreateDocs = bulkCreateDocs;
 exports.bulkUpdateDocs = bulkUpdateDocs;
 exports.deleteDocs = deleteDocs;
@@ -881,6 +891,13 @@ function loadDocsMore(url) {
 function updateDoc(url, title) {
     var types = [LOAD_DOC, UPDATE_DOC, LOAD_DOC_ERROR];
     return (0, _load.apiLoad)(url, 'PUT', types, JSON.stringify({ title: title }), _document.docNormalize, true);
+}
+
+function updateDocRoot(url, folder) {
+    var types = [DELETE_DOCS, DELETE_DOCS_SUCCESS, DELETE_DOCS_ERROR];
+    return (0, _load.apiLoad)(url, 'PUT', types, JSON.stringify({ folder: folder }), function (a) {
+        return a;
+    }, true);
 }
 
 function bulkCreateDocs(url, docs) {
@@ -1359,9 +1376,11 @@ Object.defineProperty(exports, "__esModule", {
 exports.setFilter = setFilter;
 exports.setSort = setSort;
 exports.setLink = setLink;
+exports.changeView = changeView;
 var SET_FILTER = exports.SET_FILTER = 'SET_FILTER';
 var SET_SORT = exports.SET_SORT = 'SET_SORT';
 var SET_LINK = exports.SET_LINK = 'SET_LINK';
+var CHANGE_VIEW = exports.CHANGE_VIEW = 'CHANGE_VIEW';
 
 function setFilter(filter, filterSelect, app) {
     return {
@@ -1386,6 +1405,12 @@ function setLink(link, app) {
         type: SET_LINK,
         link: link,
         app: app
+    };
+}
+
+function changeView() {
+    return {
+        type: CHANGE_VIEW
     };
 }
 
@@ -3578,11 +3603,11 @@ var CustomRowComponent = function (_React$Component) {
         }, _this.handleLoadMore = function (e) {
             _this.props.loadFoldersMore(_constants.makeUrls.makeChatsMore(_this.props.page));
         }, _this.handleDragOver = function (e) {
-            if (_this.props.source === _constants.dragSource.delete && _this.props.allowDrag) {
+            if (_this.props.source === _constants.dragSource.file && _this.props.allowDrag) {
                 e.preventDefault();
             }
         }, _this.handleDrop = function (e) {
-            if (_this.props.source === _constants.dragSource.delete && _this.props.allowDrag) {
+            if (_this.props.source === _constants.dragSource.file && _this.props.allowDrag) {
                 _this.props.deleteDocs(_constants.makeUrls.makeCustomFile(_this.props.id), _this.props.id);
                 _this.props.dropOver();
             }
@@ -3620,7 +3645,7 @@ var CustomRowComponent = function (_React$Component) {
     }, {
         key: 'renderTrash',
         value: function renderTrash() {
-            if (this.props.source === _constants.dragSource.delete) {
+            if (this.props.source === _constants.dragSource.file) {
                 if (this.props.allowDrag) {
                     return _constants.items.trashGood;
                 }
@@ -24865,7 +24890,7 @@ var TileComponent = function (_React$Component) {
             isClicked: false,
             title: _this.props.title,
             isChecked: true
-        }, _this.onHandleChange = function (e) {
+        }, _this.handleChangeClick = function (e) {
             _this.setState({ isClicked: !_this.state.isClicked });
         }, _this.handleChange = function (e) {
             _this.setState(_defineProperty({}, e.target.name, e.target.value));
@@ -24885,15 +24910,24 @@ var TileComponent = function (_React$Component) {
         }, _this.handleDragStart = function (e) {
             switch (_this.props.type) {
                 case _constants.tileType.file:
-                    _this.props.dragStart(_this.props.folder === _constants.folderType.folder, _constants.dragSource.delete, _this.props.id);
+                    _this.props.dragStart(_this.props.folder !== _constants.folderType.chat, _constants.dragSource.file, _this.props.id);
                     break;
                 case _constants.tileType.folder:
-                    _this.props.dragStart(_this.props.folder !== _constants.folderType.chat, _constants.dragSource.favorite, _this.props.id);
+                    _this.props.dragStart(_this.props.folder === _constants.folderType.folder, _constants.dragSource.favorite, _this.props.id);
                     break;
                 default:
             }
         }, _this.handleDragEnd = function (e) {
             _this.props.dragEnd();
+        }, _this.handleDragOver = function (e) {
+            if (_this.props.source === _constants.dragSource.file && _this.props.allowDrag) {
+                e.preventDefault();
+            }
+        }, _this.handleDrop = function (e) {
+            if (_this.props.source === _constants.dragSource.file && _this.props.allowDrag) {
+                _this.props.updateDocRoot(_constants.makeUrls.makeTransferFile(_this.props.dragId), _this.props.id);
+                _this.props.dropOver();
+            }
         }, _this.handleClick = function (e) {
             if (!_this._delayedClick) {
                 _this._delayedClick = _lodash2.default.debounce(_this.doClick, 500);
@@ -24932,19 +24966,20 @@ var TileComponent = function (_React$Component) {
     _createClass(TileComponent, [{
         key: 'renderClassName',
         value: function renderClassName() {
+            var itemClass = 'content-flex-item';
             if (this.props.isModal) {
-                return 'content-flex-item ' + (this.props.id !== this.props.checkedFolder ? '' : 'checked');
+                return itemClass + ' ' + (this.props.id !== this.props.checkedFolder ? '' : 'checked');
             }
             if (this.props.type === _constants.tileType.file) {
                 if (this.props.checkList.indexOf(this.props.id) !== -1) {
-                    return 'content-flex-item checked';
+                    return itemClass + ' checked';
                 }
             }
-            return 'content-flex-item ' + (this.state.isChecked ? '' : 'checked');
+            return itemClass + ' ' + (this.state.isChecked ? '' : 'checked');
         }
     }, {
-        key: 'render',
-        value: function render() {
+        key: 'renderItem',
+        value: function renderItem() {
             var imageUrl = null;
             switch (this.props.type) {
                 case _constants.tileType.folder:
@@ -24955,20 +24990,37 @@ var TileComponent = function (_React$Component) {
                     break;
                 default:
             }
-            return _react2.default.createElement(
-                'div',
-                { className: this.renderClassName() },
-                _react2.default.createElement('img', {
+            if (this.props.type === _constants.tileType.file) {
+                return _react2.default.createElement('img', {
                     className: 'icon',
                     onClick: this.handleClick,
                     onDragStart: this.handleDragStart,
                     src: imageUrl,
                     draggable: 'true',
                     onDragEnd: this.handleDragEnd
-                }),
+                });
+            }
+            if (this.props.type === _constants.tileType.folder) {
+                return _react2.default.createElement('img', {
+                    className: 'icon',
+                    onClick: this.handleClick,
+                    src: imageUrl,
+                    onDragOver: this.handleDragOver,
+                    onDrop: this.handleDrop
+                });
+            }
+            return null;
+        }
+    }, {
+        key: 'render',
+        value: function render() {
+            return _react2.default.createElement(
+                'div',
+                { className: this.renderClassName() },
+                this.renderItem(),
                 !this.state.isClicked ? _react2.default.createElement(
                     'div',
-                    { className: 'content-item__title', onClick: this.onHandleChange },
+                    { className: 'content-item__title', onClick: this.handleChangeClick },
                     this.props.title
                 ) : _react2.default.createElement('input', {
                     className: 'content-item__input',
@@ -24998,15 +25050,24 @@ TileComponent.propTypes = {
     setLink: _propTypes2.default.func.isRequired,
     dragStart: _propTypes2.default.func.isRequired,
     dragEnd: _propTypes2.default.func.isRequired,
+    dropOver: _propTypes2.default.func.isRequired,
     folder: _propTypes2.default.string,
-    checkList: _propTypes2.default.array.isRequired
+    checkList: _propTypes2.default.array.isRequired,
+    source: _propTypes2.default.string,
+    dragId: _propTypes2.default.number,
+    allowDrag: _propTypes2.default.bool.isRequired,
+    updateDocRoot: _propTypes2.default.func.isRequired
 };
 
 
 var mapStoreToProps = function mapStoreToProps(state, props) {
     return {
         checkedFolder: state.folder.checkedFolder,
-        checkList: state.document.checkList
+        checkList: state.document.checkList,
+        allowDrag: state.drag.allowDrag,
+        source: state.drag.source,
+        dragId: state.drag.id,
+        view: state.page.view
     };
 };
 
@@ -25018,7 +25079,9 @@ var mapDispatchToProps = function mapDispatchToProps(dispatch) {
         switchFolder: _folder.switchFolder,
         setLink: _page.setLink,
         dragStart: _drag.dragStart,
-        dragEnd: _drag.dragEnd
+        dragEnd: _drag.dragEnd,
+        dropOver: _drag.dropOver,
+        updateDocRoot: _document.updateDocRoot
     }, dispatch));
 };
 
@@ -25170,7 +25233,7 @@ var _App = __webpack_require__(273);
 
 var _App2 = _interopRequireDefault(_App);
 
-__webpack_require__(296);
+__webpack_require__(297);
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
@@ -49896,6 +49959,7 @@ function document() {
                 }
             });
         case _document.DELETE_DOCS_SUCCESS:
+            console.log(action.payload.id, store.docList);
             index = store.docList.indexOf(action.payload.id);
             return (0, _reactAddonsUpdate2.default)(store, {
                 docList: {
@@ -50000,6 +50064,8 @@ var _reactAddonsUpdate2 = _interopRequireDefault(_reactAddonsUpdate);
 
 var _page = __webpack_require__(29);
 
+var _constants = __webpack_require__(6);
+
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 function _defineProperty(obj, key, value) { if (key in obj) { Object.defineProperty(obj, key, { value: value, enumerable: true, configurable: true, writable: true }); } else { obj[key] = value; } return obj; }
@@ -50020,7 +50086,8 @@ var initalStore = {
     link: {
         global: '',
         modal: ''
-    }
+    },
+    view: _constants.view.row
 };
 
 function page() {
@@ -50048,6 +50115,19 @@ function page() {
                 link: _defineProperty({}, action.app, {
                     $set: action.link
                 })
+            });
+        case _page.CHANGE_VIEW:
+            if (store.view === _constants.view.row) {
+                return (0, _reactAddonsUpdate2.default)(store, {
+                    view: {
+                        $set: _constants.view.col
+                    }
+                });
+            }
+            return (0, _reactAddonsUpdate2.default)(store, {
+                view: {
+                    $set: _constants.view.row
+                }
             });
         default:
             return store;
@@ -50140,11 +50220,11 @@ var _RootFolder = __webpack_require__(286);
 
 var _RootFolder2 = _interopRequireDefault(_RootFolder);
 
-var _ChatFolder = __webpack_require__(294);
+var _ChatFolder = __webpack_require__(295);
 
 var _ChatFolder2 = _interopRequireDefault(_ChatFolder);
 
-var _FolderFolder = __webpack_require__(295);
+var _FolderFolder = __webpack_require__(296);
 
 var _FolderFolder2 = _interopRequireDefault(_FolderFolder);
 
@@ -51117,6 +51197,8 @@ var _DocsHeader = __webpack_require__(290);
 
 var _DocsHeader2 = _interopRequireDefault(_DocsHeader);
 
+var _page = __webpack_require__(29);
+
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
@@ -51193,6 +51275,14 @@ var DocsComponent = function (_React$Component) {
             this.props.docsUnMount();
         }
     }, {
+        key: 'renderView',
+        value: function renderView() {
+            if (this.props.view === _constants.view.row) {
+                return 'content-flex content-flex-row';
+            }
+            return 'content-flex content-flex-column';
+        }
+    }, {
         key: 'render',
         value: function render() {
             return _react2.default.createElement(
@@ -51201,7 +51291,7 @@ var DocsComponent = function (_React$Component) {
                 _react2.default.createElement(_DocsHeader2.default, { params: this.props.params, folder: this.props.folder }),
                 _react2.default.createElement(
                     'div',
-                    { className: 'content-flex' },
+                    { className: this.renderView() },
                     _react2.default.createElement(_FoldersTile2.default, { isModal: false, folder: this.props.folder }),
                     _react2.default.createElement(_DocsTile2.default, { folder: this.props.folder }),
                     this.props.isLoading && this.props.count > 40 * (this.props.page - 1) ? _react2.default.createElement(
@@ -51233,7 +51323,8 @@ DocsComponent.propTypes = {
     filter: _propTypes2.default.string.isRequired,
     filterType: _propTypes2.default.string.isRequired,
     checkAll: _propTypes2.default.func.isRequired,
-    folder: _propTypes2.default.string.isRequired
+    folder: _propTypes2.default.string.isRequired,
+    view: _propTypes2.default.string.isRequired
 };
 
 
@@ -51244,7 +51335,8 @@ var mapStoreToProps = function mapStoreToProps(state) {
         page: state.document.page,
         filter: state.page.filter.docs,
         filterType: state.page.filterSelect.docs,
-        checkList: state.document.checkList
+        checkList: state.document.checkList,
+        view: state.page.view
     };
 };
 
@@ -51256,7 +51348,8 @@ var mapDispatchToProps = function mapDispatchToProps(dispatch) {
         loadFilterFolders: _folder.loadFilterFolders,
         modalOpen: _modal.modalOpen,
         setModal: _modal.setModal,
-        checkAll: _document.checkAll
+        checkAll: _document.checkAll,
+        changeView: _page.changeView
     }, dispatch));
 };
 
@@ -51412,7 +51505,7 @@ var _DocsFilterHeader = __webpack_require__(293);
 
 var _DocsFilterHeader2 = _interopRequireDefault(_DocsFilterHeader);
 
-var _DocsCheckHeader = __webpack_require__(301);
+var _DocsCheckHeader = __webpack_require__(294);
 
 var _DocsCheckHeader2 = _interopRequireDefault(_DocsCheckHeader);
 
@@ -51459,6 +51552,8 @@ var DocsHeaderComponent = function (_React$Component) {
             _this.props.history.goBack(e);
         }, _this.handleClearAll = function () {
             _this.props.checkAll();
+        }, _this.handleChangeView = function () {
+            _this.props.changeView();
         }, _temp), _possibleConstructorReturn(_this, _ret);
     }
 
@@ -51548,6 +51643,7 @@ var DocsHeaderComponent = function (_React$Component) {
                 _react2.default.Fragment,
                 null,
                 title,
+                _react2.default.createElement('img', { className: 'item-right', src: _constants.items.colRow, onClick: this.handleChangeView }),
                 type === 'sorted' || type === 'folder' || type === 'root' ? _react2.default.createElement(_AddFolder2.default, { id: parseInt(this.props.params.id), folder: this.props.folder }) : null,
                 _react2.default.createElement('img', { className: 'item-right', onClick: this.handleSort, src: _constants.items.sort }),
                 _react2.default.createElement('img', { className: 'item-right', onClick: this.handleFilter, src: _constants.items.filter })
@@ -51590,7 +51686,8 @@ DocsHeaderComponent.propTypes = {
     filter: _propTypes2.default.string.isRequired,
     filterSelect: _propTypes2.default.string.isRequired,
     countCheck: _propTypes2.default.number.isRequired,
-    checkAll: _propTypes2.default.func.isRequired
+    checkAll: _propTypes2.default.func.isRequired,
+    changeView: _propTypes2.default.func.isRequired
 };
 
 
@@ -51616,7 +51713,8 @@ var mapDispatchToProps = function mapDispatchToProps(dispatch) {
         loadDocs: _document.loadDocs,
         setFilter: _page.setFilter,
         setSort: _page.setSort,
-        checkAll: _document.checkAll
+        checkAll: _document.checkAll,
+        changeView: _page.changeView
     }, dispatch));
 };
 
@@ -52146,6 +52244,125 @@ var _react = __webpack_require__(0);
 
 var _react2 = _interopRequireDefault(_react);
 
+var _propTypes = __webpack_require__(1);
+
+var _propTypes2 = _interopRequireDefault(_propTypes);
+
+var _constants = __webpack_require__(6);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
+
+function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
+
+var DocsCheckHeader = function (_React$Component) {
+    _inherits(DocsCheckHeader, _React$Component);
+
+    function DocsCheckHeader() {
+        var _ref;
+
+        var _temp, _this, _ret;
+
+        _classCallCheck(this, DocsCheckHeader);
+
+        for (var _len = arguments.length, args = Array(_len), _key = 0; _key < _len; _key++) {
+            args[_key] = arguments[_key];
+        }
+
+        return _ret = (_temp = (_this = _possibleConstructorReturn(this, (_ref = DocsCheckHeader.__proto__ || Object.getPrototypeOf(DocsCheckHeader)).call.apply(_ref, [this].concat(args))), _this), _this.handleOpenCopy = function () {
+            _this.props.modalOpen();
+            _this.props.setModal(_constants.modalType.folderTransfer);
+        }, _this.handleOpenReplace = function () {
+            _this.props.modalOpen();
+            _this.props.setModal(_constants.modalType.folderReplace);
+        }, _this.handleClearAll = function () {
+            _this.props.checkAll();
+        }, _temp), _possibleConstructorReturn(_this, _ret);
+    }
+
+    _createClass(DocsCheckHeader, [{
+        key: 'render',
+        value: function render() {
+            if (this.props.type !== 'chat') {
+                return _react2.default.createElement(
+                    _react2.default.Fragment,
+                    null,
+                    _react2.default.createElement(
+                        'div',
+                        { className: 'item-name' },
+                        this.props.countCheck,
+                        ' files'
+                    ),
+                    _react2.default.createElement('img', { src: _constants.items.clear, className: 'item-left', onClick: this.handleClearAll }),
+                    _react2.default.createElement(
+                        'button',
+                        { className: 'vk-button', onClick: this.handleOpenCopy },
+                        '\u041A\u043E\u043F\u0438\u0440\u043E\u0432\u0430\u0442\u044C'
+                    ),
+                    _react2.default.createElement(
+                        'button',
+                        { className: 'vk-button', onClick: this.handleOpenReplace },
+                        '\u041F\u0435\u0440\u0435\u043C\u0435\u0441\u0442\u0438\u0442\u044C'
+                    ),
+                    _react2.default.createElement(
+                        'button',
+                        { className: 'vk-button' },
+                        '\u0423\u0434\u0430\u043B\u0438\u0442\u044C'
+                    )
+                );
+            }
+            return _react2.default.createElement(
+                _react2.default.Fragment,
+                null,
+                _react2.default.createElement(
+                    'div',
+                    { className: 'item-name' },
+                    this.props.countCheck,
+                    ' files'
+                ),
+                _react2.default.createElement('img', { src: _constants.items.clear, className: 'item-left', onClick: this.handleClearAll }),
+                _react2.default.createElement('img', { src: _constants.items.clear, className: 'item-left' }),
+                _react2.default.createElement(
+                    'button',
+                    { className: 'vk-button', onClick: this.handleOpenCopy },
+                    '\u041A\u043E\u043F\u0438\u0440\u043E\u0432\u0430\u0442\u044C'
+                )
+            );
+        }
+    }]);
+
+    return DocsCheckHeader;
+}(_react2.default.Component);
+
+DocsCheckHeader.propTypes = {
+    modalOpen: _propTypes2.default.func.isRequired,
+    setModal: _propTypes2.default.func.isRequired,
+    countCheck: _propTypes2.default.number.isRequired,
+    checkAll: _propTypes2.default.func.isRequired,
+    type: _propTypes2.default.string.isRequired
+};
+exports.default = DocsCheckHeader;
+
+/***/ }),
+/* 295 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+Object.defineProperty(exports, "__esModule", {
+    value: true
+});
+
+var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+
+var _react = __webpack_require__(0);
+
+var _react2 = _interopRequireDefault(_react);
+
 var _constants = __webpack_require__(6);
 
 var _CustomRow = __webpack_require__(81);
@@ -52182,7 +52399,7 @@ var ChatFolderComponent = function (_React$Component) {
 exports.default = ChatFolderComponent;
 
 /***/ }),
-/* 295 */
+/* 296 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -52234,11 +52451,11 @@ var FolderFolderComponent = function (_React$Component) {
 exports.default = FolderFolderComponent;
 
 /***/ }),
-/* 296 */
+/* 297 */
 /***/ (function(module, exports, __webpack_require__) {
 
 
-var content = __webpack_require__(297);
+var content = __webpack_require__(298);
 
 if(typeof content === 'string') content = [[module.i, content, '']];
 
@@ -52252,7 +52469,7 @@ var options = {"hmr":true}
 options.transform = transform
 options.insertInto = undefined;
 
-var update = __webpack_require__(299)(content, options);
+var update = __webpack_require__(300)(content, options);
 
 if(content.locals) module.exports = content.locals;
 
@@ -52284,21 +52501,21 @@ if(false) {
 }
 
 /***/ }),
-/* 297 */
+/* 298 */
 /***/ (function(module, exports, __webpack_require__) {
 
-exports = module.exports = __webpack_require__(298)(false);
+exports = module.exports = __webpack_require__(299)(false);
 // imports
 
 
 // module
-exports.push([module.i, "body {\n  background-color: #EDEEF0;\n  margin: 0;\n  font-family: -apple-system,BlinkMacSystemFont,Roboto,Helvetica Neue,sans-serif;\n}\n\na {\n  text-decoration: none;\n  cursor: pointer;\n}\n\n.page-header {\n  height: 42px;\n  background-color: #4A76A8;\n}\n\n.page-content {\n  margin: 0 auto;\n  width: 960px;\n  display: flex;\n  height: 100%;\n  position: sticky;\n}\n\n.page-header-content {\n  margin: 0 auto;\n  width: 960px;\n}\n\n.page-header-content-logo {\n  width: 139px;\n}\n\n.page-header-content h2 {\n  margin: 0;\n  padding-top: 5px;\n  color: white;\n}\n\n.page-content-navigation {\n  margin-top: 15px;\n  width: 139px;\n}\n\n.page-content-content {\n  padding-top: 15px;\n  padding-bottom: 2px;\n  min-width: 400px;\n  display: flex;\n}\n\n.page-content-content-wrap {\n  width: 300px;\n  background-color: white;\n  max-height: 100%;\n  border-radius: 2px 2px 0 0;\n  box-shadow: 0 1px 0 0 #d7d8db, 0 0 0 1px #e3e4e8;\n  overflow-y: auto;\n}\n\n.page-content-content-wrap a {\n  color: #285473;\n}\n\n.page-content-content-content {\n  background-color: white;\n  max-height: 100%;\n  border-radius: 2px 2px 0 0;\n  box-shadow: 0 1px 0 0 #d7d8db, 0 0 0 1px #e3e4e8;\n}\n\n.page-content-link {\n  display: block;\n  white-space: nowrap;\n  padding: 10px;\n  color: #285473;\n}\n\n.page-content-link:hover {\n  background-color: #E1E5EB;\n}\n\n.content-item {\n  padding: 10px;\n  height: 30px;\n  box-shadow: 0 1px 0 0 #d7d8db;\n}\n\n.page-content-link-item {\n  display: flex;\n}\n\n.page-content-link-item:hover {\n  background-color: #EDEEF0;\n  cursor: pointer;\n}\n\n.content-item input {\n  border: 0px;\n}\n\ninput[type=\"text\"]:focus {\n  outline: none;\n}\n\n.content-flex {\n  display: flex;\n  align-content: start;\n  flex-wrap: wrap;\n  overflow-y: auto;\n}\n\n@media screen and (min-height: 0px) and (max-height: 720px) {\n  .content-flex {\n    height: 480px;\n  }\n  .page-content-content {\n    height: 540px;\n  }\n  .page-content-content-content {\n    width: 520px;\n  }\n}\n\n@media screen and (min-height: 700px) and (max-height: 1500px) {\n  .content-flex {\n    height: 640px;\n  }\n  .page-content-content {\n    height: 700px;\n  }\n  .page-content-content-content {\n    width: 680px;\n  }\n}\n\n.content-flex-modal {\n  display: flex;\n  align-content: start;\n  flex-wrap: wrap;\n  overflow-y: auto;\n  height: 220px;\n}\n\n.content-flex-item {\n  padding: 10px;\n  height: 80px;\n  width: 80px;\n  text-align: center;\n}\n\n.content-flex-item a {\n  color: black;\n}\n\n.content-flex-item:hover {\n  background-color: #EDEEF0;\n}\n\nimg.icon {\n  width: 50px;\n  height: 50px;\n  cursor: pointer;\n}\n\nimg.item {\n  width: 20px;\n  height: 20px;\n  margin-right: 5px;\n}\n\n.modal-container {\n  position: fixed;\n  left: 0;\n  top: 0;\n  text-align: center;\n  background-color: rgba(0, 0, 0, 0.7);\n  width: 100%;\n  height: 100%;\n  z-index: 10;\n}\n\n.modal {\n  cursor: auto;\n  z-index: 100;\n  height: 336px;\n  width: 500px;\n  background-color: white;\n  margin: 116px auto;\n  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.35);\n  outline: none;\n  border-radius: 5px;\n}\n\n.modal-header {\n  border-radius: 5px 5px 0 0;\n  width: 100%;\n  height: 54px;\n  background-color: #4A76A8;\n}\n\n.modal-header-title {\n  padding: 1px;\n}\n\n.modal-header-title p {\n  color: white;\n}\n\n.modal-content {\n  padding: 20px;\n  height: 240px;\n  background-color: #F7F7F7;\n}\n\n.modal-content__img img {\n  width: 100px;\n}\n\n.vk-button {\n  background-color: #5b88bd;\n  text-decoration: none;\n  float: right;\n  padding: 7px 16px 8px;\n  margin-left: 10px;\n  font-size: 12.5px;\n  display: inline-block;\n  zoom: 1;\n  cursor: pointer;\n  white-space: nowrap;\n  outline: none;\n  font-family: -apple-system,BlinkMacSystemFont,Roboto,Helvetica Neue,sans-serif;\n  vertical-align: top;\n  line-height: 15px;\n  text-align: center;\n  color: #fff;\n  border: 0;\n  border-radius: 4px;\n  box-sizing: border-box;\n}\n\n.vk-input {\n  background: #fff;\n  color: #000;\n  border: 1px solid #c0cad5;\n  padding: 5px;\n  vertical-align: top;\n  margin: 0;\n  overflow: auto;\n  outline: 0;\n  line-height: 150%;\n  word-wrap: break-word;\n  width: 200px;\n  cursor: text;\n}\n\n.modal-footer {\n  margin-top: 80px;\n}\n\n.content-item__title {\n  cursor: text;\n  text-align: center;\n  max-width: 50px;\n  margin: 0 auto;\n  max-height: 38px;\n  text-overflow: ellipsis;\n  white-space: pre-wrap;\n  overflow: hidden;\n}\n\n.content-item__title:hover {\n  white-space: normal;\n  overflow: visible;\n}\n\n.content-item__input {\n  border: 1px solid #c0cad5;\n  cursor: text;\n  margin-top: 4px;\n  outline: 0;\n  line-height: 150%;\n}\n\n.page-content-item__input {\n  width: 100px;\n  border: 1px solid #c0cad5;\n  cursor: text;\n  outline: 0;\n  line-height: 150%;\n}\n\n.item-right {\n  cursor: pointer;\n  padding: 5px;\n  width: 20px;\n  height: 20px;\n  float: right;\n  vertical-align: top;\n}\n\n.item-left {\n  cursor: pointer;\n  padding: 5px;\n  width: 20px;\n  height: 20px;\n  float: left;\n  vertical-align: top;\n}\n\n.item-name {\n  float: left;\n  padding: 5px;\n  height: 20px;\n}\n\n.checked {\n  background-color: #E1E5EB;\n}\n\n.button-secondary {\n  background-color: #e5ebf1;\n  color: #55677d;\n}\n", ""]);
+exports.push([module.i, "body {\n  background-color: #EDEEF0;\n  margin: 0;\n  font-family: -apple-system,BlinkMacSystemFont,Roboto,Helvetica Neue,sans-serif;\n}\n\na {\n  text-decoration: none;\n  cursor: pointer;\n}\n\n.page-header {\n  height: 42px;\n  background-color: #4A76A8;\n}\n\n.page-content {\n  margin: 0 auto;\n  width: 960px;\n  display: flex;\n  height: 100%;\n  position: sticky;\n}\n\n.page-header-content {\n  margin: 0 auto;\n  width: 960px;\n}\n\n.page-header-content-logo {\n  width: 139px;\n}\n\n.page-header-content h2 {\n  margin: 0;\n  padding-top: 5px;\n  color: white;\n}\n\n.page-content-navigation {\n  margin-top: 15px;\n  width: 139px;\n}\n\n.page-content-content {\n  padding-top: 15px;\n  padding-bottom: 2px;\n  min-width: 400px;\n  display: flex;\n}\n\n.page-content-content-wrap {\n  width: 300px;\n  background-color: white;\n  max-height: 100%;\n  border-radius: 2px 2px 0 0;\n  box-shadow: 0 1px 0 0 #d7d8db, 0 0 0 1px #e3e4e8;\n  overflow-y: auto;\n}\n\n.page-content-content-wrap a {\n  color: #285473;\n}\n\n.page-content-content-content {\n  background-color: white;\n  max-height: 100%;\n  border-radius: 2px 2px 0 0;\n  box-shadow: 0 1px 0 0 #d7d8db, 0 0 0 1px #e3e4e8;\n}\n\n.page-content-link {\n  display: block;\n  white-space: nowrap;\n  padding: 10px;\n  color: #285473;\n}\n\n.page-content-link:hover {\n  background-color: #E1E5EB;\n}\n\n.content-item {\n  padding: 10px;\n  height: 30px;\n  box-shadow: 0 1px 0 0 #d7d8db;\n}\n\n.page-content-link-item {\n  display: flex;\n}\n\n.page-content-link-item:hover {\n  background-color: #EDEEF0;\n  cursor: pointer;\n}\n\n.content-item input {\n  border: 0px;\n}\n\ninput[type=\"text\"]:focus {\n  outline: none;\n}\n\n.content-flex {\n  display: flex;\n}\n\n.content-flex-row {\n  align-content: start;\n  flex-wrap: wrap;\n  overflow-y: auto;\n}\n\n.content-flex-column {\n  flex-direction: column;\n  overflow-y: auto;\n}\n\n@media screen and (min-height: 0px) and (max-height: 720px) {\n  .content-flex {\n    height: 480px;\n  }\n  .page-content-content {\n    height: 540px;\n  }\n  .page-content-content-content {\n    width: 520px;\n  }\n}\n\n@media screen and (min-height: 700px) and (max-height: 1500px) {\n  .content-flex {\n    height: 640px;\n  }\n  .page-content-content {\n    height: 700px;\n  }\n  .page-content-content-content {\n    width: 680px;\n  }\n}\n\n.content-flex-modal {\n  display: flex;\n  align-content: start;\n  flex-wrap: wrap;\n  overflow-y: auto;\n  height: 220px;\n}\n\n.content-flex-item {\n  padding: 10px;\n  height: 80px;\n  width: 80px;\n  text-align: center;\n}\n\n.content-flex-item a {\n  color: black;\n}\n\n.content-flex-item:hover {\n  background-color: #EDEEF0;\n}\n\nimg.icon {\n  width: 50px;\n  height: 50px;\n  cursor: pointer;\n}\n\nimg.item {\n  width: 20px;\n  height: 20px;\n  margin-right: 5px;\n}\n\n.modal-container {\n  position: fixed;\n  left: 0;\n  top: 0;\n  text-align: center;\n  background-color: rgba(0, 0, 0, 0.7);\n  width: 100%;\n  height: 100%;\n  z-index: 10;\n}\n\n.modal {\n  cursor: auto;\n  z-index: 100;\n  height: 336px;\n  width: 500px;\n  background-color: white;\n  margin: 116px auto;\n  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.35);\n  outline: none;\n  border-radius: 5px;\n}\n\n.modal-header {\n  border-radius: 5px 5px 0 0;\n  width: 100%;\n  height: 54px;\n  background-color: #4A76A8;\n}\n\n.modal-header-title {\n  padding: 1px;\n}\n\n.modal-header-title p {\n  color: white;\n}\n\n.modal-content {\n  padding: 20px;\n  height: 240px;\n  background-color: #F7F7F7;\n}\n\n.modal-content__img img {\n  width: 100px;\n}\n\n.vk-button {\n  background-color: #5b88bd;\n  text-decoration: none;\n  float: right;\n  padding: 7px 16px 8px;\n  margin-left: 10px;\n  font-size: 12.5px;\n  display: inline-block;\n  zoom: 1;\n  cursor: pointer;\n  white-space: nowrap;\n  outline: none;\n  font-family: -apple-system,BlinkMacSystemFont,Roboto,Helvetica Neue,sans-serif;\n  vertical-align: top;\n  line-height: 15px;\n  text-align: center;\n  color: #fff;\n  border: 0;\n  border-radius: 4px;\n  box-sizing: border-box;\n}\n\n.vk-input {\n  background: #fff;\n  color: #000;\n  border: 1px solid #c0cad5;\n  padding: 5px;\n  vertical-align: top;\n  margin: 0;\n  overflow: auto;\n  outline: 0;\n  line-height: 150%;\n  word-wrap: break-word;\n  width: 200px;\n  cursor: text;\n}\n\n.modal-footer {\n  margin-top: 80px;\n}\n\n.content-item__title {\n  cursor: text;\n  text-align: center;\n  max-width: 50px;\n  margin: 0 auto;\n  max-height: 38px;\n  text-overflow: ellipsis;\n  white-space: pre-wrap;\n  overflow: hidden;\n}\n\n.content-item__title:hover {\n  white-space: normal;\n  overflow: visible;\n}\n\n.content-item__input {\n  border: 1px solid #c0cad5;\n  cursor: text;\n  margin-top: 4px;\n  outline: 0;\n  line-height: 150%;\n}\n\n.page-content-item__input {\n  width: 100px;\n  border: 1px solid #c0cad5;\n  cursor: text;\n  outline: 0;\n  line-height: 150%;\n}\n\n.item-right {\n  cursor: pointer;\n  padding: 5px;\n  width: 20px;\n  height: 20px;\n  float: right;\n  vertical-align: top;\n}\n\n.item-left {\n  cursor: pointer;\n  padding: 5px;\n  width: 20px;\n  height: 20px;\n  float: left;\n  vertical-align: top;\n}\n\n.item-name {\n  float: left;\n  padding: 5px;\n  height: 20px;\n}\n\n.checked {\n  background-color: #E1E5EB;\n}\n\n.button-secondary {\n  background-color: #e5ebf1;\n  color: #55677d;\n}\n", ""]);
 
 // exports
 
 
 /***/ }),
-/* 298 */
+/* 299 */
 /***/ (function(module, exports) {
 
 /*
@@ -52380,7 +52597,7 @@ function toComment(sourceMap) {
 
 
 /***/ }),
-/* 299 */
+/* 300 */
 /***/ (function(module, exports, __webpack_require__) {
 
 /*
@@ -52446,7 +52663,7 @@ var singleton = null;
 var	singletonCounter = 0;
 var	stylesInsertedAtTop = [];
 
-var	fixUrls = __webpack_require__(300);
+var	fixUrls = __webpack_require__(301);
 
 module.exports = function(list, options) {
 	if (typeof DEBUG !== "undefined" && DEBUG) {
@@ -52762,7 +52979,7 @@ function updateLink (link, options, obj) {
 
 
 /***/ }),
-/* 300 */
+/* 301 */
 /***/ (function(module, exports) {
 
 
@@ -52855,125 +53072,6 @@ module.exports = function (css) {
 	return fixedCss;
 };
 
-
-/***/ }),
-/* 301 */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-
-
-Object.defineProperty(exports, "__esModule", {
-    value: true
-});
-
-var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
-
-var _react = __webpack_require__(0);
-
-var _react2 = _interopRequireDefault(_react);
-
-var _propTypes = __webpack_require__(1);
-
-var _propTypes2 = _interopRequireDefault(_propTypes);
-
-var _constants = __webpack_require__(6);
-
-function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-
-function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
-
-function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
-
-function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
-
-var DocsCheckHeader = function (_React$Component) {
-    _inherits(DocsCheckHeader, _React$Component);
-
-    function DocsCheckHeader() {
-        var _ref;
-
-        var _temp, _this, _ret;
-
-        _classCallCheck(this, DocsCheckHeader);
-
-        for (var _len = arguments.length, args = Array(_len), _key = 0; _key < _len; _key++) {
-            args[_key] = arguments[_key];
-        }
-
-        return _ret = (_temp = (_this = _possibleConstructorReturn(this, (_ref = DocsCheckHeader.__proto__ || Object.getPrototypeOf(DocsCheckHeader)).call.apply(_ref, [this].concat(args))), _this), _this.handleOpenCopy = function () {
-            _this.props.modalOpen();
-            _this.props.setModal(_constants.modalType.folderTransfer);
-        }, _this.handleOpenReplace = function () {
-            _this.props.modalOpen();
-            _this.props.setModal(_constants.modalType.folderReplace);
-        }, _this.handleClearAll = function () {
-            _this.props.checkAll();
-        }, _temp), _possibleConstructorReturn(_this, _ret);
-    }
-
-    _createClass(DocsCheckHeader, [{
-        key: 'render',
-        value: function render() {
-            if (this.props.type !== 'chat') {
-                return _react2.default.createElement(
-                    _react2.default.Fragment,
-                    null,
-                    _react2.default.createElement(
-                        'div',
-                        { className: 'item-name' },
-                        this.props.countCheck,
-                        ' files'
-                    ),
-                    _react2.default.createElement('img', { src: _constants.items.clear, className: 'item-left', onClick: this.handleClearAll }),
-                    _react2.default.createElement(
-                        'button',
-                        { className: 'vk-button', onClick: this.handleOpenCopy },
-                        '\u041A\u043E\u043F\u0438\u0440\u043E\u0432\u0430\u0442\u044C'
-                    ),
-                    _react2.default.createElement(
-                        'button',
-                        { className: 'vk-button', onClick: this.handleOpenReplace },
-                        '\u041F\u0435\u0440\u0435\u043C\u0435\u0441\u0442\u0438\u0442\u044C'
-                    ),
-                    _react2.default.createElement(
-                        'button',
-                        { className: 'vk-button' },
-                        '\u0423\u0434\u0430\u043B\u0438\u0442\u044C'
-                    )
-                );
-            }
-            return _react2.default.createElement(
-                _react2.default.Fragment,
-                null,
-                _react2.default.createElement(
-                    'div',
-                    { className: 'item-name' },
-                    this.props.countCheck,
-                    ' files'
-                ),
-                _react2.default.createElement('img', { src: _constants.items.clear, className: 'item-left', onClick: this.handleClearAll }),
-                _react2.default.createElement('img', { src: _constants.items.clear, className: 'item-left' }),
-                _react2.default.createElement(
-                    'button',
-                    { className: 'vk-button', onClick: this.handleOpenCopy },
-                    '\u041A\u043E\u043F\u0438\u0440\u043E\u0432\u0430\u0442\u044C'
-                )
-            );
-        }
-    }]);
-
-    return DocsCheckHeader;
-}(_react2.default.Component);
-
-DocsCheckHeader.propTypes = {
-    modalOpen: _propTypes2.default.func.isRequired,
-    setModal: _propTypes2.default.func.isRequired,
-    countCheck: _propTypes2.default.number.isRequired,
-    checkAll: _propTypes2.default.func.isRequired,
-    type: _propTypes2.default.string.isRequired
-};
-exports.default = DocsCheckHeader;
 
 /***/ })
 /******/ ]);

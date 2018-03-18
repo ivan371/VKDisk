@@ -1,5 +1,6 @@
 import update from 'react-addons-update';
-import { SET_FILTER, SET_SORT, SET_LINK } from '../actions/page';
+import { SET_FILTER, SET_SORT, SET_LINK, CHANGE_VIEW } from '../actions/page';
+import { view } from '../constants';
 
 const initalStore = {
     filter: {
@@ -18,6 +19,7 @@ const initalStore = {
         global: '',
         modal: '',
     },
+    view: view.row,
 };
 
 export default function page(store = initalStore, action) {
@@ -49,6 +51,19 @@ export default function page(store = initalStore, action) {
                     [action.app]: {
                         $set: action.link,
                     },
+                },
+            });
+        case CHANGE_VIEW:
+            if (store.view === view.row) {
+                return update(store, {
+                    view: {
+                        $set: view.col,
+                    },
+                });
+            }
+            return update(store, {
+                view: {
+                    $set: view.row,
                 },
             });
         default:

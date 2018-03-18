@@ -152,6 +152,7 @@ export default function document(store = initalState, action) {
                 },
             });
         case DELETE_DOCS_SUCCESS:
+            console.log(action.payload.id, store.docList);
             index = store.docList.indexOf(action.payload.id);
             return update(store, {
                 docList: {

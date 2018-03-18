@@ -3,13 +3,14 @@ import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
 import { withRouter } from 'react-router-dom';
 import PropTypes from 'prop-types';
-import { folderType, makeUrls, urls } from '../../constants';
+import {folderType, makeUrls, urls, view} from '../../constants';
 import { checkAll, docsUnMount, loadDocs, loadDocsMore } from '../../actions/document';
 import { loadFilterFolders } from '../../actions/folder';
 import { modalOpen, setModal } from '../../actions/modal';
 import FoldersTile from '../tile/FoldersTile';
 import DocsTile from '../tile/DocsTile';
 import DocsHeader from './DocsHeader';
+import { changeView } from '../../actions/page';
 
 class DocsComponent extends React.Component {
     static propTypes = {
@@ -25,6 +26,7 @@ class DocsComponent extends React.Component {
         filterType: PropTypes.string.isRequired,
         checkAll: PropTypes.func.isRequired,
         folder: PropTypes.string.isRequired,
+        view: PropTypes.string.isRequired,
     };
 
     componentDidMount() {
@@ -72,11 +74,18 @@ class DocsComponent extends React.Component {
             this.props.loadDocsMore(makeUrls.makeDocsMore(this.props.params.id, this.props.page, this.props.filter, this.props.filterType));
         }
     };
+
+    renderView() {
+        if (this.props.view === view.row) {
+            return 'content-flex content-flex-row';
+        }
+        return 'content-flex content-flex-column';
+    }
     render() {
         return (
             <div className="page-content-content-content">
                 <DocsHeader params={ this.props.params } folder={ this.props.folder } />
-                <div className="content-flex">
+                <div className={ this.renderView() }>
                     <FoldersTile isModal={ false } folder={ this.props.folder } />
                     <DocsTile folder={ this.props.folder } />
                     { this.props.isLoading && this.props.count > (40 * (this.props.page - 1)) ? <div>
@@ -95,6 +104,7 @@ const mapStoreToProps = state => ({
     filter: state.page.filter.docs,
     filterType: state.page.filterSelect.docs,
     checkList: state.document.checkList,
+    view: state.page.view,
 });
 
 const mapDispatchToProps = dispatch => ({
@@ -106,6 +116,7 @@ const mapDispatchToProps = dispatch => ({
         modalOpen,
         setModal,
         checkAll,
+        changeView,
     }, dispatch),
 });
 
