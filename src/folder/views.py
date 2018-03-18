@@ -8,6 +8,7 @@ from .serializers import FolderSerializer, FolderBulkSerializer
 from django.db.models import Q
 from django.http import Http404
 
+
 class LargeResultsSetPagination(PageNumberPagination):
     page_size = 100
     page_size_query_param = 'page_size'
@@ -56,12 +57,16 @@ class FolderViewSet(viewsets.ModelViewSet):
             raise Http404
 
     def get_queryset(self):
-        q = super(FolderViewSet, self).get_queryset()
+        q = super(FolderViewSet, self).get_queryset().filter(author=self.request.user)
         if 'folder' in self.request.query_params:
             if self.request.query_params['folder'].isdigit():
                 q = q.filter(root_id=int(self.request.query_params['folder']))
-        if 'chats' in self.request.query_params:
-            q = q.filter(type='chat')
-        if 'root' in self.request.query_params:
-            q = q.filter(root=None).filter(type='folder')
+        if 'type' in self.request.query_params:
+            q = q.filter(type=self.request.query_params['type'])
+        if 'sorted' in self.request.query_params:
+            q = q.exclude(type='folder').exclude(type='chat')  # I delete this when I add favorite
+        if 'filter' in self.request.query_params:
+            if 'name' in self.request.query_params:
+                if self.request.query_params['name']:
+                    q = q.filter(title__istartswith=self.request.query_params['name'])
         return q

@@ -3,10 +3,12 @@ from rest_framework import viewsets, permissions
 from .serializers import DocumentSerializer, DocumentBulkSerializer
 from .models import Document
 from django.http import Http404
+from datetime import datetime
+import re
 
 
 class DocumentViewSet(viewsets.ModelViewSet):
-    queryset = Document.objects.all()
+    queryset = Document.objects.all().select_related('folder')
     serializer_class = DocumentSerializer
 
     def add_docs(self, documents):
@@ -51,8 +53,22 @@ class DocumentViewSet(viewsets.ModelViewSet):
             raise Http404
 
     def get_queryset(self):
-        q = super(DocumentViewSet, self).get_queryset()
+        q = super(DocumentViewSet, self).get_queryset().filter(author=self.request.user)
         if 'folder' in self.request.query_params:
             if self.request.query_params['folder'].isdigit():
                 q = q.filter(folder=self.request.query_params['folder'])
+        if 'order' in self.request.query_params:
+            if self.request.query_params['order'] == 'title':
+                q = q.order_by('title')
+        if 'filter' in self.request.query_params:
+            if 'date' in self.request.query_params:
+                if re.match(r'\d\d\d\d-\d\d-\d\d', self.request.query_params['date']):
+                    d = datetime.strptime(self.request.query_params['date'], '%Y-%m-%d')
+                    q = q.filter(created__lte=d)
+            if 'extension' in self.request.query_params:
+                if self.request.query_params['extension']:
+                    q = q.filter(title__endswith='.{}'.format(self.request.query_params['extension']))
+            if 'name' in self.request.query_params:
+                if self.request.query_params['name']:
+                    q = q.filter(title__istartswith=self.request.query_params['name'])
         return q

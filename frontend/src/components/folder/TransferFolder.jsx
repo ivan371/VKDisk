@@ -4,26 +4,32 @@ import { bindActionCreators } from 'redux';
 import PropTypes from 'prop-types';
 import FoldersTile from '../tile/FoldersTile';
 import { loadTransferFolders } from '../../actions/folder';
-import { makeUrls, urls } from '../../constants';
-import { bulkCreateDocs } from '../../actions/document';
+import { makeUrls, modalType, urls } from '../../constants';
+import {bulkCreateDocs, bulkUpdateDocs} from '../../actions/document';
 import { modalOpen } from '../../actions/modal';
 
 class CreateFolderComponent extends React.Component {
     static propTypes = {
-        id: PropTypes.number.isRequired,
         loadTransferFolders: PropTypes.func.isRequired,
         bulkCreateDocs: PropTypes.func.isRequired,
-        checkedFolder: PropTypes.number.isRequired,
+        bulkUpdateDocs: PropTypes.func.isRequired,
+        checkedFolder: PropTypes.number,
         modalOpen: PropTypes.func.isRequired,
         checkList: PropTypes.array.isRequired,
+        modal: PropTypes.string.isRequired,
     };
 
     componentDidMount() {
-        this.props.loadTransferFolders(urls.folder.customFolderUrl);
+        this.props.loadTransferFolders(urls.folder.folderFolderUrl);
     }
 
-    onBulkCreate = (e) => {
+    handleBulkCreate = () => {
         this.props.bulkCreateDocs(makeUrls.makeCopyDocs(this.props.checkedFolder), this.props.checkList);
+        this.props.modalOpen();
+    };
+
+    handleBulkUpdate = () => {
+        this.props.bulkUpdateDocs(makeUrls.makeReplaceDocs(this.props.checkedFolder), this.props.checkList);
         this.props.modalOpen();
     };
 
@@ -32,14 +38,17 @@ class CreateFolderComponent extends React.Component {
             <React.Fragment>
                 <div className="modal-header">
                     <div className="modal-header-title">
-                        <p>Переместить файл</p>
+                        {this.props.modal !== modalType.folderTransfer ?
+                            <p>Переместить файлы</p> : <p>Копировать файлы</p>}
                     </div>
                 </div>
                 <div className="modal-content">
                     <div className="content-flex-modal">
                         <FoldersTile isModal />
                     </div>
-                    <button className="vk-button" onClick={ this.onBulkCreate }>Переместить</button>
+                    {this.props.modal !== modalType.folderTransfer ?
+                        <button className="vk-button" onClick={ this.handleBulkUpdate }>Переместить</button> :
+                        <button className="vk-button" onClick={ this.handleBulkCreate }>Копировать</button>}
                 </div>
             </React.Fragment>
         );
@@ -47,15 +56,17 @@ class CreateFolderComponent extends React.Component {
 }
 
 
-const mapStoreToProps = (state, props) => ({
+const mapStoreToProps = state => ({
     checkedFolder: state.folder.checkedFolder,
     checkList: state.document.checkList,
+    modal: state.modal.modal,
 });
 
 const mapDispatchToProps = dispatch => ({
     ...bindActionCreators({
         loadTransferFolders,
         bulkCreateDocs,
+        bulkUpdateDocs,
         modalOpen,
     }, dispatch),
 });

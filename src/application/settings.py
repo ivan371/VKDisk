@@ -49,6 +49,7 @@ INSTALLED_APPS = [
     'rest_api.apps.RestApiConfig',
     'vk_api_wrapper.apps.VkApiWrapperConfig',
     'social_django',
+    'debug_toolbar'
     # 'widget_tweaks'
 ]
 
@@ -60,6 +61,7 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
+    'debug_toolbar.middleware.DebugToolbarMiddleware',
 ]
 
 
@@ -143,6 +145,8 @@ AUTH_PASSWORD_VALIDATORS = [
 
 # Internationalization
 # https://docs.djangoproject.com/en/2.0/topics/i18n/
+
+INTERNAL_IPS = '127.0.0.1'
 
 LANGUAGE_CODE = 'en-us'
 

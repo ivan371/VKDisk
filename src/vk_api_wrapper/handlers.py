@@ -36,4 +36,4 @@ def on_dialog_create_load_files(sender, instance, created, *args, **kwargs):
         })
 
 
-post_save.connect(on_dialog_create_load_files, VkDialog)
+# post_save.connect(on_dialog_create_load_files, VkDialog)

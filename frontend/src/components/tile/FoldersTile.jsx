@@ -13,6 +13,7 @@ class FoldersTileComponent extends React.Component {
         isTransferLoading: PropTypes.bool.isRequired,
         isModal: PropTypes.bool.isRequired,
     };
+
     render() {
         let folderList = [];
         let list = null;

@@ -3,6 +3,7 @@ import {docNormalize, docsNormalize} from '../normalizers/document';
 
 export const LOAD_DOCS = 'LOAD_DOCS';
 export const LOAD_DOCS_SUCCESS = 'LOAD_DOCS_SUCCESS';
+export const LOAD_DOCS_MORE_START = 'LOAD_DOCS_MORE_START';
 export const LOAD_DOCS_MORE = 'LOAD_DOCS_MORE';
 export const LOAD_DOCS_ERROR = 'LOAD_DOCS_ERROR';
 export const DOCS_UNMOUNT = 'DOCS_UNMOUNT';
@@ -12,6 +13,9 @@ export const UPDATE_DOC = 'UPDATE_DOC';
 export const CHECK_FILE = 'CHECK_FILE';
 export const DOCS_BULK_CREATE = 'DOCS_BULK_CREATE';
 export const DOCS_BULK_CREATE_SUCCESS = 'DOCS_BULK_CREATE_SUCCESS';
+export const DOCS_BULK_UPDATE = 'DOCS_BULK_UPDATE';
+export const DOCS_BULK_UPDATE_SUCCESS = 'DOCS_BULK_UPDATE_SUCCESS';
+export const CHECK_ALL = 'CHECK_ALL';
 
 export function loadDocs(url) {
     const types = [LOAD_DOCS, LOAD_DOCS_SUCCESS, LOAD_DOCS_ERROR];
@@ -19,7 +23,7 @@ export function loadDocs(url) {
 }
 
 export function loadDocsMore(url) {
-    const types = [LOAD_DOCS, LOAD_DOCS_MORE, LOAD_DOCS_ERROR];
+    const types = [LOAD_DOCS_MORE_START, LOAD_DOCS_MORE, LOAD_DOCS_ERROR];
     return apiLoad(url, 'GET', types, null, docsNormalize, false);
 }
 
@@ -33,6 +37,11 @@ export function bulkCreateDocs(url, docs) {
     return apiLoad(url, 'POST', types, JSON.stringify({ docs }), () => {}, true);
 }
 
+export function bulkUpdateDocs(url, docs) {
+    const types = [DOCS_BULK_UPDATE, DOCS_BULK_UPDATE_SUCCESS, LOAD_DOC_ERROR];
+    return apiLoad(url, 'POST', types, JSON.stringify({ docs }), () => {}, true);
+}
+
 export function docsUnMount() {
     return {
         type: DOCS_UNMOUNT,
@@ -43,5 +52,11 @@ export function checkFile(id) {
     return {
         type: CHECK_FILE,
         id,
+    };
+}
+
+export function checkAll() {
+    return {
+        type: CHECK_ALL,
     };
 }

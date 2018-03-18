@@ -3,26 +3,13 @@ import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import PropTypes from 'prop-types';
 import { Link } from 'react-router-dom';
-import {folderType} from "../../constants";
+import { folderType, format } from '../../constants';
 
 class FolderComponent extends React.Component {
     static propTypes = {
         id: PropTypes.number.isRequired,
         folder: PropTypes.string.isRequired,
         title: PropTypes.string.isRequired,
-    };
-
-    state = {
-        isClicked: false,
-        title: this.props.title,
-    };
-
-    onHandleChange = (e) => {
-        this.setState({ isClicked: !this.state.isClicked });
-    };
-
-    onChange = (e) => {
-        this.setState({ [e.target.name]: e.target.value });
     };
 
     render() {
@@ -39,18 +26,8 @@ class FolderComponent extends React.Component {
         return (
             <Link to={ link }>
                 <div className="content-item page-content-link-item">
-                    <div><img className="item" src="/static/img/folder.png" /></div>
-                    {!this.state.isClicked ?
-                        <div onClick={ this.onHandleChange }>{this.props.title}</div>
-                        : <input
-                            className="page-content-item__input"
-                            value={ this.state.title }
-                            onChange={ this.onChange }
-                            onKeyDown={ this.onUpdate }
-                            name="title"
-                        />
-                    }
-                    <img className="item-right" src="/static/img/edit.png"/>
+                    <div><img className="item" src={ format.folder } /></div>
+                    <div>{this.props.title}</div>
                 </div>
             </Link>
         );
@@ -60,6 +37,7 @@ class FolderComponent extends React.Component {
 
 const mapStoreToProps = (state, props) => ({
     title: state.folder.folders[props.id].title,
+    type: state.folder.folders[props.id].type,
 });
 
 const mapDispatchToProps = dispatch => ({

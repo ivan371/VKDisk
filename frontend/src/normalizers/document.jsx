@@ -1,11 +1,13 @@
 import { normalize, schema } from 'normalizr';
 
 export function docsNormalize(docs) {
-    const doc = new schema.Entity('doc');
+    const folder = new schema.Entity('folder');
+    const doc = new schema.Entity('doc', { folder });
     return normalize(docs, [doc]);
 }
 
 export function docNormalize(docs) {
-    const doc = new schema.Entity('doc');
+    const folder = new schema.Entity('folder');
+    const doc = new schema.Entity('doc', { folder });
     return normalize(docs, doc);
 }

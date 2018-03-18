@@ -12,13 +12,14 @@ class ModalComponent extends React.Component {
     static propTypes = {
         id: PropTypes.number.isRequired,
         modalOpen: PropTypes.func.isRequired,
+        modal: PropTypes.string.isRequired,
     };
 
-    onOpen = () => {
+    handleOpen = () => {
         this.props.modalOpen();
     };
 
-    onCancelOpen = (e) => {
+    handleCancelOpen = (e) => {
         e.stopPropagation();
     };
 
@@ -29,13 +30,16 @@ class ModalComponent extends React.Component {
                 modal = <CreateFolder id={ this.props.id } />;
                 break;
             case modalType.folderTransfer:
-                modal = <TransferFolder id={ this.props.id } />;
+                modal = <TransferFolder />;
+                break;
+            case modalType.folderReplace:
+                modal = <TransferFolder />;
                 break;
             default:
         }
         return (
-            <div className="modal-container" onClick={ this.onOpen }>
-                <div className="modal" onClick={ this.onCancelOpen }>
+            <div className="modal-container" onClick={ this.handleOpen }>
+                <div className="modal" onClick={ this.handleCancelOpen }>
                     {modal}
                 </div>
             </div>
