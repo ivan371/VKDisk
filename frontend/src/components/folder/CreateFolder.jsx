@@ -4,13 +4,14 @@ import { bindActionCreators } from 'redux';
 import PropTypes from 'prop-types';
 import { modalOpen } from '../../actions/modal';
 import { createFolder } from '../../actions/folder';
-import {format, makeUrls} from '../../constants';
+import {folderType, format, makeUrls} from '../../constants';
 
 class CreateFolderComponent extends React.Component {
     static propTypes = {
         id: PropTypes.number.isRequired,
         modalOpen: PropTypes.func.isRequired,
         createFolder: PropTypes.func.isRequired,
+        folder: PropTypes.string.isRequired,
     };
 
     state = {
@@ -18,7 +19,12 @@ class CreateFolderComponent extends React.Component {
     };
 
     onCreate = (e) => {
-        this.props.createFolder(makeUrls.makeFilterFoldersFolder(this.props.id), this.state.title);
+        if (this.props.folder === folderType.folder) {
+            this.props.createFolder(makeUrls.makeFilterFoldersFolder(this.props.id), this.state.title);
+        }
+        if (this.props.folder === folderType.root) {
+            this.props.createFolder(makeUrls.makeRootFoldersFolder(), this.state.title);
+        }
         this.props.modalOpen();
     };
 

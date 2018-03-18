@@ -42,10 +42,6 @@ def download_dialog_list(access_token, user_id):
     if vk_dialogs_list.start_message_id:
         last_message_id = vk_dialogs_list.start_message_id
         current_read = vk_dialogs_list.start_message_id + 1
-        # params['start_message_id'] = vk_dialogs_list.start_message_id
-        # response = api.messages.getDialogs(**params)
-        # count_to_download -= response['count']
-        # del params['start_message_id']
     while offset < count_to_download and (last_message_id is None or last_message_id < current_read):
         response = api.messages.getDialogs(**params)
 
@@ -54,7 +50,10 @@ def download_dialog_list(access_token, user_id):
                                                    item['in_read'],
                                                    item['out_read']
                                                    )
-            current_read = min(current_read or item['in_read'], item['in_read'])
+            if current_read is None:
+                current_read = item['in_read']
+            else:
+                current_read = min(current_read, item['in_read'])
             if last_message_id and last_message_id > current_read:
                 break
             dialog_info = {}

@@ -5,6 +5,7 @@ from django.db import models
 from core.models import Named, Authored, Dated
 from folder.models import Folder
 from django.utils.translation import ugettext_lazy as _
+from django_elasticsearch.models import EsIndexable
 
 from vk_api_wrapper.models import DocAttachment
 
@@ -23,3 +24,9 @@ class Document(Named, Authored, Dated):
     class Meta:
         verbose_name = _(u'file')
         verbose_name_plural = _(u'files')
+
+
+class DocumentData(models.Model):
+    document = models.OneToOneField(Document, on_delete=models.CASCADE)
+    text = models.TextField(null=True)
+

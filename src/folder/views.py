@@ -18,7 +18,7 @@ class LargeResultsSetPagination(PageNumberPagination):
 class FolderViewSet(viewsets.ModelViewSet):
     queryset = Folder.objects.all().prefetch_related('author')
     serializer_class = FolderSerializer
-    pagination_class = LargeResultsSetPagination
+    # pagination_class = LargeResultsSetPagination
 
     def add_folders(self, folders):
         folder_list = [Folder(
@@ -63,8 +63,8 @@ class FolderViewSet(viewsets.ModelViewSet):
                 q = q.filter(root_id=int(self.request.query_params['folder']))
         if 'type' in self.request.query_params:
             q = q.filter(type=self.request.query_params['type'])
-        if 'sorted' in self.request.query_params:
-            q = q.exclude(type='folder').exclude(type='chat')  # I delete this when I add favorite
+        if 'root' in self.request.query_params:
+            q = q.filter(root=None, type='folder')
         if 'filter' in self.request.query_params:
             if 'name' in self.request.query_params:
                 if self.request.query_params['name']:

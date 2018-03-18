@@ -2,7 +2,7 @@ import React from 'react';
 import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
 import PropTypes from 'prop-types';
-import { tileType } from '../../constants';
+import {makeUrls, tileType} from '../../constants';
 import Tile from '../tile/Tile';
 
 class FoldersTileComponent extends React.Component {
@@ -27,8 +27,9 @@ class FoldersTileComponent extends React.Component {
         }
         if (loading) {
             folderList = list.map(folderId => (<Tile
+                folder={ this.props.folder }
                 history={ this.props.history }
-                url={ `/root/${folderId}` }
+                url={ this.props.isModal ? makeUrls.makeFilterFoldersFolder(folderId) : `/folder/${folderId}` }
                 title={ this.props.folders[folderId].title }
                 key={ folderId }
                 id={ folderId }

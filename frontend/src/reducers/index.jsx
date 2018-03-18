@@ -4,6 +4,7 @@ import folder from './folder';
 import document from './document';
 import modal from "./modal";
 import page from "./page";
+import drag from "./drag";
 
 export default combineReducers({
     routerReducer,
@@ -11,4 +12,5 @@ export default combineReducers({
     document,
     modal,
     page,
+    drag,
 });

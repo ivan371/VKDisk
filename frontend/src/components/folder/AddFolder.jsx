@@ -4,7 +4,7 @@ import { bindActionCreators } from 'redux';
 import PropTypes from 'prop-types';
 import { modalOpen, setModal } from '../../actions/modal';
 import Modal from '../Modal';
-import {items, modalType} from '../../constants';
+import {folderType, items, modalType} from '../../constants';
 
 class AddFolderComponent extends React.Component {
     static propTypes = {
@@ -12,17 +12,27 @@ class AddFolderComponent extends React.Component {
         modalOpen: PropTypes.func.isRequired,
         setModal: PropTypes.func.isRequired,
         isOpen: PropTypes.bool.isRequired,
+        folder: PropTypes.string.isRequired,
     };
 
     onOpen = () => {
         this.props.modalOpen();
-        this.props.setModal(modalType.folderCreate);
+        if (this.props.folder === folderType.root) {
+            this.props.setModal(modalType.folderRootCreate);
+        } else {
+            this.props.setModal(modalType.folderCreate);
+        }
     };
 
     render() {
         let modal = null;
+        console.log(this.props.folder, folderType.root);
         if (this.props.isOpen) {
-            modal = <Modal id={ this.props.id } />;
+            if (this.props.folder === folderType.root) {
+                modal = <Modal />;
+            } else {
+                modal = <Modal id={ this.props.id }/>;
+            }
         }
         return (
             <React.Fragment>
