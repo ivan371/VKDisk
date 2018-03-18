@@ -3,13 +3,14 @@ import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
 import { withRouter } from 'react-router-dom';
 import PropTypes from 'prop-types';
-import { makeUrls } from '../../constants';
-import {checkAll, docsUnMount, loadDocs, loadDocsMore} from '../../actions/document';
+import {folderType, makeUrls, urls, view} from '../../constants';
+import { checkAll, docsUnMount, loadDocs, loadDocsMore } from '../../actions/document';
 import { loadFilterFolders } from '../../actions/folder';
 import { modalOpen, setModal } from '../../actions/modal';
 import FoldersTile from '../tile/FoldersTile';
 import DocsTile from '../tile/DocsTile';
 import DocsHeader from './DocsHeader';
+import { changeView } from '../../actions/page';
 
 class DocsComponent extends React.Component {
     static propTypes = {
@@ -24,12 +25,18 @@ class DocsComponent extends React.Component {
         filter: PropTypes.string.isRequired,
         filterType: PropTypes.string.isRequired,
         checkAll: PropTypes.func.isRequired,
+        folder: PropTypes.string.isRequired,
+        view: PropTypes.string.isRequired,
     };
 
     componentDidMount() {
         if (this.props.params.hasOwnProperty('id')) {
             this.props.loadDocs(makeUrls.makeFilterDocsFolder(this.props.params.id));
             this.props.loadFilterFolders(makeUrls.makeFilterFoldersFolder(this.props.params.id));
+        }
+        if (this.props.folder === folderType.root) {
+            this.props.loadDocs(urls.docs.unsortedDocsUrl);
+            this.props.loadFilterFolders(makeUrls.makeRootFoldersFolder());
         }
     }
     componentWillReceiveProps(nextProps) {
@@ -41,9 +48,12 @@ class DocsComponent extends React.Component {
                     this.props.checkAll();
                 }
             } else if (this.props.filterType !== nextProps.filterType || this.props.filter !== nextProps.filter) {
-                this.props.loadDocs(
-                    makeUrls.makeFilterDocs(nextProps.params.id, nextProps.filter, nextProps.filterType)
-                );
+                this.props.loadDocs(makeUrls.makeFilterDocs(nextProps.params.id, nextProps.filter, nextProps.filterType));
+            }
+        }
+        if (this.props.filterType !== nextProps.filterType || this.props.filter !== nextProps.filter) {
+            if (this.props.folder === folderType.root) {
+                this.props.loadDocs(makeUrls.makeFilterRootDocs(nextProps.filter, nextProps.filterType));
             }
         }
     }
@@ -58,16 +68,27 @@ class DocsComponent extends React.Component {
     }
 
     handleLoadMore = (e) => {
-        this.props.loadDocsMore(makeUrls.makeDocsMore(this.props.params.id, this.props.page, this.props.filter, this.props.filterType));
+        if (this.props.folder === folderType.root) {
+            this.props.loadDocsMore(makeUrls.makeDocsRootMore(this.props.page, this.props.filter, this.props.filterType));
+        } else {
+            this.props.loadDocsMore(makeUrls.makeDocsMore(this.props.params.id, this.props.page, this.props.filter, this.props.filterType));
+        }
     };
+
+    renderView() {
+        if (this.props.view === view.row) {
+            return 'content-flex content-flex-row';
+        }
+        return 'content-flex content-flex-column';
+    }
     render() {
         return (
             <div className="page-content-content-content">
-                <DocsHeader params={ this.props.params } />
-                <div className="content-flex">
-                    <FoldersTile isModal={ false } />
-                    <DocsTile />
-                    { this.props.isLoading && this.props.count > (10 * (this.props.page - 1)) ? <div>
+                <DocsHeader params={ this.props.params } folder={ this.props.folder } />
+                <div className={ this.renderView() }>
+                    <FoldersTile isModal={ false } folder={ this.props.folder } />
+                    <DocsTile folder={ this.props.folder } />
+                    { this.props.isLoading && this.props.count > (40 * (this.props.page - 1)) ? <div>
                         <button onClick={ this.handleLoadMore }>Показать еще</button>
                     </div> : null }
                 </div>
@@ -80,9 +101,10 @@ const mapStoreToProps = state => ({
     isLoading: state.document.isLoading,
     count: state.document.count,
     page: state.document.page,
-    filter: state.page.filter,
-    filterType: state.page.filterSelect,
+    filter: state.page.filter.docs,
+    filterType: state.page.filterSelect.docs,
     checkList: state.document.checkList,
+    view: state.page.view,
 });
 
 const mapDispatchToProps = dispatch => ({
@@ -94,6 +116,7 @@ const mapDispatchToProps = dispatch => ({
         modalOpen,
         setModal,
         checkAll,
+        changeView,
     }, dispatch),
 });
 

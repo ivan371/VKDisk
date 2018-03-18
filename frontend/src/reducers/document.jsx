@@ -1,7 +1,8 @@
 import update from 'react-addons-update';
 import {
     CHECK_ALL,
-    CHECK_FILE, DOCS_BULK_CREATE_SUCCESS, DOCS_BULK_UPDATE, DOCS_BULK_UPDATE_SUCCESS, DOCS_UNMOUNT, LOAD_DOCS,
+    CHECK_FILE, DELETE_DOCS_SUCCESS, DOCS_BULK_CREATE_SUCCESS, DOCS_BULK_UPDATE, DOCS_BULK_UPDATE_SUCCESS, DOCS_UNMOUNT,
+    LOAD_DOCS,
     LOAD_DOCS_MORE,
     LOAD_DOCS_SUCCESS,
 } from '../actions/document';
@@ -14,6 +15,7 @@ const initalState = {
     docs: {},
     docList: [],
     checkList: [],
+    countCheck: 0,
 };
 
 export default function document(store = initalState, action) {
@@ -85,12 +87,27 @@ export default function document(store = initalState, action) {
                     checkList: {
                         $push: [action.id],
                     },
+                    countCheck: {
+                        $set: store.countCheck + 1,
+                    },
                 });
             }
-
+            if (store.countCheck === 1) {
+                return update(store, {
+                    checkList: {
+                        $set: [],
+                    },
+                    countCheck: {
+                        $set: 0,
+                    },
+                });
+            }
             return update(store, {
                 checkList: {
                     $splice: [[index, 1]],
+                },
+                countCheck: {
+                    $set: store.countCheck - 1,
                 },
             });
         case CHECK_ALL:
@@ -99,11 +116,17 @@ export default function document(store = initalState, action) {
                     checkList: {
                         $set: store.docList,
                     },
+                    countCheck: {
+                        $set: store.count,
+                    },
                 });
             }
             return update(store, {
                 checkList: {
                     $set: [],
+                },
+                countCheck: {
+                    $set: 0,
                 },
             });
 
@@ -115,11 +138,25 @@ export default function document(store = initalState, action) {
                 checkList: {
                     $set: [],
                 },
+                countCheck: {
+                    $set: 0,
+                },
             });
         case DOCS_BULK_CREATE_SUCCESS:
             return update(store, {
                 checkList: {
                     $set: [],
+                },
+                countCheck: {
+                    $set: 0,
+                },
+            });
+        case DELETE_DOCS_SUCCESS:
+            console.log(action.payload.id, store.docList);
+            index = store.docList.indexOf(action.payload.id);
+            return update(store, {
+                docList: {
+                    $splice: [[index, 1]],
                 },
             });
         default:

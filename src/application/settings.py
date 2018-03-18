@@ -49,7 +49,10 @@ INSTALLED_APPS = [
     'rest_api.apps.RestApiConfig',
     'vk_api_wrapper.apps.VkApiWrapperConfig',
     'social_django',
-    'debug_toolbar'
+    'debug_toolbar',
+    'elasticsearch_dsl',
+    'rest_framework_elasticsearch',
+    'django_elasticsearch'
     # 'widget_tweaks'
 ]
 
@@ -190,3 +193,7 @@ CELERY_ACCEPT_CONTENT = ['json']
 CELERY_TASK_SERIALIZER = 'json'
 CELERY_RESULT_SERIALIZER = 'json'
 # CELERY_BEAT_SCHEDULER = 'django_celery_beat.schedulers.DatabaseScheduler'
+
+ELASTICSEARCH_URL='http://localhost:9200'
+ELASTICSEARCH_DEFAULT_INDEX = 'document'
+ELASTICSEARCH_AUTO_INDEX = True

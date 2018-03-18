@@ -3,11 +3,11 @@ import React from 'react';
 import Layout from './Layout';
 import RootFolder from './folder/RootFolder';
 import ChatFolder from './folder/ChatFolder';
+import FolderFolder from './folder/FolderFolder';
 
 export function scroll() {
-    const d = document.getElementsByClassName("content-flex")[0];
+    const d = document.getElementsByClassName('content-flex')[0];
     d.scrollTo(0, d.scrollHeight);
-    console.log(d);
 }
 
 class AppComponent extends React.Component {
@@ -17,7 +17,7 @@ class AppComponent extends React.Component {
                 <Layout>
                     <Switch>
                         <Route exact path="/root" component={ RootFolder } />
-                        <Route exact path="/root/:id" component={ RootFolder } />
+                        <Route exact path="/folder/:id" component={ FolderFolder } />
                         <Route exact path="/chat" component={ ChatFolder } />
                         <Route exact path="/chat/:id" component={ ChatFolder } />
                     </Switch>

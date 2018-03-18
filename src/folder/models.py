@@ -5,6 +5,8 @@ from django.db import models
 from core.models import Named, Authored, Dated, User
 from django.utils.translation import ugettext_lazy as _
 
+from vk_api_wrapper.models import VkDialog
+
 
 class Folder(Named, Authored):
     type = models.CharField(choices=((_(u'folder'), u'folder'), (_(u'chat'), u'chat'), (_(u'root'), u'root'),
@@ -21,3 +23,8 @@ class Folder(Named, Authored):
     class Meta:
         verbose_name = _(u'folder')
         verbose_name_plural = _(u'folders')
+
+
+class ChatFolder(Folder):
+    vk_dialog = models.OneToOneField(VkDialog, on_delete=models.CASCADE)
+

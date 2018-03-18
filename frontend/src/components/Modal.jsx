@@ -5,12 +5,12 @@ import PropTypes from 'prop-types';
 import { modalOpen } from '../actions/modal';
 import { createFolder } from '../actions/folder';
 import CreateFolder from './folder/CreateFolder';
-import { modalType } from '../constants';
+import {folderType, modalType} from '../constants';
 import TransferFolder from './folder/TransferFolder';
 
 class ModalComponent extends React.Component {
     static propTypes = {
-        id: PropTypes.number.isRequired,
+        id: PropTypes.number,
         modalOpen: PropTypes.func.isRequired,
         modal: PropTypes.string.isRequired,
     };
@@ -27,7 +27,10 @@ class ModalComponent extends React.Component {
         let modal = null;
         switch (this.props.modal) {
             case modalType.folderCreate:
-                modal = <CreateFolder id={ this.props.id } />;
+                modal = <CreateFolder id={ this.props.id } folder={ folderType.folder } />;
+                break;
+            case modalType.folderRootCreate:
+                modal = <CreateFolder folder={ folderType.root } />;
                 break;
             case modalType.folderTransfer:
                 modal = <TransferFolder />;

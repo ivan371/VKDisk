@@ -6,3 +6,4 @@ env/
 django.conf
 __pycache__/
 src/db.sqlite3
+collected_static

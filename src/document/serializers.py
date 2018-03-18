@@ -1,7 +1,10 @@
 from __future__ import absolute_import
 from folder.serializers import FolderSerializer
-from .models import Document
-from rest_framework import serializers
+
+from .search_indexes import DocumentIndex
+from .models import Document, DocumentData
+from rest_framework import serializers, fields
+from rest_framework_elasticsearch.es_serializer import ElasticModelSerializer
 
 
 class DocumentFilteredPrimaryKeyRelatedField(serializers.PrimaryKeyRelatedField):
@@ -15,12 +18,30 @@ class DocumentFilteredPrimaryKeyRelatedField(serializers.PrimaryKeyRelatedField)
 
 class DocumentSerializer(serializers.HyperlinkedModelSerializer):
     author = serializers.PrimaryKeyRelatedField(many=False, read_only=True)
+    vk_url = fields.SerializerMethodField('get_url')
     folder = FolderSerializer(many=False, read_only=True)
 
     class Meta:
         model = Document
-        fields = ('id', 'title', 'author', 'folder')
+        fields = ('id', 'title', 'author', 'folder', 'vk_url')
         read_only_fields = ('id_owner', 'id_source', 'type')
+
+    def get_url(self, obj):
+        base, query = obj.vk_doc.url.split("?")
+        query = query.split("&")
+        for i in range(len(query)):
+            if "no_preview" in query[i]:
+                query.pop(i)
+                break
+        query = "&".join(query)
+        return base + "?" + query
+
+
+class DocumentTransferSerializer(serializers.ModelSerializer):
+
+    class Meta:
+        model = Document
+        fields = ('id', 'folder')
 
 
 class DocumentBulkSerializer(serializers.ModelSerializer):
@@ -29,3 +50,10 @@ class DocumentBulkSerializer(serializers.ModelSerializer):
     class Meta:
         model = Document
         fields = ('id', 'docs')
+
+
+class DocumentDataSerializer(ElasticModelSerializer):
+    class Meta:
+        model = DocumentData
+        es_model = DocumentIndex
+        fields = ('id', 'title')
