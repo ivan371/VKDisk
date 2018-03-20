@@ -5,7 +5,7 @@ import _ from 'lodash';
 import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
 import { switchFolder, updateFolder } from '../../actions/folder';
-import { format, makeUrls, tileType, makeFormat, apps, folderType, dragSource } from '../../constants';
+import { format, makeUrls, tileType, makeFormat, apps, folderType, dragSource, view } from '../../constants';
 import { checkFile, updateDoc, updateDocRoot } from '../../actions/document';
 import { setLink } from '../../actions/page';
 import { dragEnd, dragStart, dropOver } from '../../actions/drag';
@@ -32,6 +32,7 @@ class TileComponent extends React.Component {
         dragId: PropTypes.number,
         allowDrag: PropTypes.bool.isRequired,
         updateDocRoot: PropTypes.func.isRequired,
+        view: PropTypes.string.isRequired,
     };
 
     state = {
@@ -130,7 +131,10 @@ class TileComponent extends React.Component {
     };
 
     renderClassName() {
-        const itemClass = 'content-flex-item';
+        let itemClass = 'content-flex-item';
+        if (this.props.view === view.col) {
+            itemClass = 'content-flex-item content-flex-item-column';
+        }
         if (this.props.isModal) {
             return `${itemClass} ${this.props.id !== this.props.checkedFolder ? '' : 'checked'}`;
         }
@@ -156,6 +160,7 @@ class TileComponent extends React.Component {
         if (this.props.type === tileType.file) {
             return (<img
                 className="icon"
+                style={ this.props.view === view.col ? { float: 'left' } : null }
                 onClick={ this.handleClick }
                 onDragStart={ this.handleDragStart }
                 src={ imageUrl }
@@ -165,6 +170,7 @@ class TileComponent extends React.Component {
         }
         if (this.props.type === tileType.folder) {
             return (<img
+                style={ this.props.view === view.col ? { float: 'left' } : null }
                 className="icon"
                 onClick={ this.handleClick }
                 src={ imageUrl }
@@ -180,7 +186,7 @@ class TileComponent extends React.Component {
             <div className={ this.renderClassName() }>
                 { this.renderItem() }
                 {!this.state.isClicked ?
-                    <div className="content-item__title" onClick={ this.handleChangeClick }>{this.props.title}</div>
+                    <div className={ this.props.view === view.col ? 'content-item__title content-item__title-col' : 'content-item__title' } onClick={ this.handleChangeClick }>{this.props.title}</div>
                     : <input
                         className="content-item__input"
                         value={ this.state.title }

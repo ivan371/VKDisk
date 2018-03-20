@@ -3,13 +3,14 @@ import {
     CHECK_ALL,
     CHECK_FILE, DELETE_DOCS_SUCCESS, DOCS_BULK_CREATE_SUCCESS, DOCS_BULK_UPDATE, DOCS_BULK_UPDATE_SUCCESS, DOCS_UNMOUNT,
     LOAD_DOCS,
-    LOAD_DOCS_MORE,
+    LOAD_DOCS_MORE, LOAD_DOCS_MORE_START,
     LOAD_DOCS_SUCCESS,
 } from '../actions/document';
 import _ from 'lodash';
 
 const initalState = {
     isLoading: false,
+    isLoadingMore: false,
     count: 0,
     page: 2,
     docs: {},
@@ -35,6 +36,12 @@ export default function document(store = initalState, action) {
     let index = null;
     const deleteList = [];
     switch (action.type) {
+        case LOAD_DOCS_MORE_START:
+            return update(store, {
+                isLoadingMore: {
+                    $set: true,
+                },
+            });
         case LOAD_DOCS:
             return update(store, {
                 isLoading: {
@@ -69,6 +76,9 @@ export default function document(store = initalState, action) {
                 },
                 page: {
                     $set: store.page + 1,
+                },
+                isLoadingMore: {
+                    $set: false,
                 },
             });
         case DOCS_UNMOUNT:

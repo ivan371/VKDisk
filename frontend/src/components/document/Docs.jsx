@@ -3,7 +3,7 @@ import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
 import { withRouter } from 'react-router-dom';
 import PropTypes from 'prop-types';
-import {folderType, makeUrls, urls, view} from '../../constants';
+import { folderType, makeUrls, urls, view } from '../../constants';
 import { checkAll, docsUnMount, loadDocs, loadDocsMore } from '../../actions/document';
 import { loadFilterFolders } from '../../actions/folder';
 import { modalOpen, setModal } from '../../actions/modal';
@@ -22,6 +22,7 @@ class DocsComponent extends React.Component {
         count: PropTypes.number.isRequired,
         page: PropTypes.number.isRequired,
         isLoading: PropTypes.bool.isRequired,
+        isLoadingMore: PropTypes.bool.isRequired,
         filter: PropTypes.string.isRequired,
         filterType: PropTypes.string.isRequired,
         checkAll: PropTypes.func.isRequired,
@@ -29,14 +30,18 @@ class DocsComponent extends React.Component {
         view: PropTypes.string.isRequired,
     };
 
+    state = {
+        scroll: null,
+    };
+
     componentDidMount() {
         if (this.props.params.hasOwnProperty('id')) {
             this.props.loadDocs(makeUrls.makeFilterDocsFolder(this.props.params.id));
-            this.props.loadFilterFolders(makeUrls.makeFilterFoldersFolder(this.props.params.id));
+            this.props.loadFilterFolders(makeUrls.makeFilterFoldersFolder(this.props.params.id)).then(this.scrollStart);
         }
         if (this.props.folder === folderType.root) {
             this.props.loadDocs(urls.docs.unsortedDocsUrl);
-            this.props.loadFilterFolders(makeUrls.makeRootFoldersFolder());
+            this.props.loadFilterFolders(makeUrls.makeRootFoldersFolder()).then(this.scrollStart);
         }
     }
     componentWillReceiveProps(nextProps) {
@@ -59,7 +64,11 @@ class DocsComponent extends React.Component {
     }
     componentDidUpdate(prevProps) {
         if (!this.props.params.hasOwnProperty('id') && prevProps.params.hasOwnProperty('id')) {
-            this.props.docsUnMount();
+            this.props.docsUnMount()
+            this.scrollStart();
+        }
+        if (this.props.params.hasOwnProperty('id') && !prevProps.params.hasOwnProperty('id')) {
+            this.scrollStart();
         }
     }
 
@@ -75,6 +84,19 @@ class DocsComponent extends React.Component {
         }
     };
 
+    handleScroll = () => {
+        if (!this.props.isLoadingMore && this.props.isLoading && this.props.count > (40 * (this.props.page - 1))) {
+            const { scroll } = this.state;
+            if (scroll.scrollHeight - scroll.scrollTop - scroll.offsetHeight < 10) {
+                this.handleLoadMore();
+            }
+        }
+    };
+
+    scrollStart = () => {
+        this.setState({ scroll: document.getElementsByClassName('content-flex')[0]} );
+    };
+
     renderView() {
         if (this.props.view === view.row) {
             return 'content-flex content-flex-row';
@@ -85,12 +107,9 @@ class DocsComponent extends React.Component {
         return (
             <div className="page-content-content-content">
                 <DocsHeader params={ this.props.params } folder={ this.props.folder } />
-                <div className={ this.renderView() }>
+                <div className={ this.renderView() } onScroll={ this.handleScroll }>
                     <FoldersTile isModal={ false } folder={ this.props.folder } />
                     <DocsTile folder={ this.props.folder } />
-                    { this.props.isLoading && this.props.count > (40 * (this.props.page - 1)) ? <div>
-                        <button onClick={ this.handleLoadMore }>Показать еще</button>
-                    </div> : null }
                 </div>
             </div>
         );
@@ -105,6 +124,7 @@ const mapStoreToProps = state => ({
     filterType: state.page.filterSelect.docs,
     checkList: state.document.checkList,
     view: state.page.view,
+    isLoadingMore: state.document.isLoadingMore,
 });
 
 const mapDispatchToProps = dispatch => ({

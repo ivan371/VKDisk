@@ -3,11 +3,13 @@ import {
     FOLDER_CREATE, FOLDER_UNMOUNT,
     LOAD_FILTER_FOLDERS, LOAD_FILTER_FOLDERS_SUCCESS, LOAD_FOLDER, LOAD_FOLDERS, LOAD_FOLDERS_MORE,
     LOAD_FOLDERS_SUCCESS, LOAD_FOLDERS_TRANSFER, LOAD_FOLDERS_TRANSFER_SUCCESS, SWITCH_FOLDER, TRANSFER_UNMOUNT,
+    LOAD_FOLDERS_MORE_START,
 } from '../actions/folder';
 import { DOCS_UNMOUNT } from '../actions/document';
 
 const initalState = {
     isLoading: false,
+    isLoadingMore: false,
     isTileLoading: false,
     isTransferLoading: false,
     isOwnFolderLoading: false,
@@ -56,6 +58,12 @@ export default function folder(store = initalState, action) {
                     $set: 2,
                 },
             });
+        case LOAD_FOLDERS_MORE_START:
+            return update(store, {
+                isLoadingMore: {
+                    $set: true,
+                },
+            });
         case LOAD_FOLDERS_MORE:
             return update(store, {
                 isLoading: {
@@ -69,6 +77,9 @@ export default function folder(store = initalState, action) {
                 },
                 page: {
                     $set: store.page + 1,
+                },
+                isLoadingMore: {
+                    $set: false,
                 },
             });
         case LOAD_FOLDERS_TRANSFER:
