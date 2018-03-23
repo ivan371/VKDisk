@@ -51274,9 +51274,9 @@ var DocsComponent = function (_React$Component) {
             scroll: null
         }, _this.handleLoadMore = function (e) {
             if (_this.props.folder === _constants.folderType.root) {
-                _this.props.loadDocsMore(_constants.makeUrls.makeDocsRootMore(_this.props.page, _this.props.filter, _this.props.filterType));
+                _this.props.loadDocsMore(_constants.makeUrls.makeDocsRootMore(_this.props.page, _this.props.filterType, _this.props.filter));
             } else {
-                _this.props.loadDocsMore(_constants.makeUrls.makeDocsMore(_this.props.params.id, _this.props.page, _this.props.filter, _this.props.filterType));
+                _this.props.loadDocsMore(_constants.makeUrls.makeDocsMore(_this.props.params.id, _this.props.page, _this.props.filterType, _this.props.filter));
             }
         }, _this.handleScroll = function () {
             if (!_this.props.isLoadingMore && _this.props.isLoading && _this.props.count > 40 * (_this.props.page - 1)) {
@@ -51313,6 +51313,7 @@ var DocsComponent = function (_React$Component) {
                     if (this.props.checkList.length) {
                         this.props.checkAll();
                     }
+                    this.props.clearFilter(_constants.apps.docs);
                 } else if (this.props.filterType !== nextProps.filterType || this.props.filter !== nextProps.filter) {
                     this.props.loadDocs(_constants.makeUrls.makeFilterDocs(nextProps.params.id, nextProps.filter, nextProps.filterType));
                 }
@@ -51371,6 +51372,7 @@ DocsComponent.propTypes = {
     loadDocs: _propTypes2.default.func.isRequired,
     loadFilterFolders: _propTypes2.default.func.isRequired,
     docsUnMount: _propTypes2.default.func.isRequired,
+    clearFilter: _propTypes2.default.func.isRequired,
     params: _propTypes2.default.object.isRequired,
     loadDocsMore: _propTypes2.default.func.isRequired,
     count: _propTypes2.default.number.isRequired,
@@ -51407,7 +51409,8 @@ var mapDispatchToProps = function mapDispatchToProps(dispatch) {
         modalOpen: _modal.modalOpen,
         setModal: _modal.setModal,
         checkAll: _document.checkAll,
-        changeView: _page.changeView
+        changeView: _page.changeView,
+        clearFilter: _page.clearFilter
     }, dispatch));
 };
 
@@ -51631,6 +51634,15 @@ var DocsHeaderComponent = function (_React$Component) {
     }
 
     _createClass(DocsHeaderComponent, [{
+        key: 'componentWillReceiveProps',
+        value: function componentWillReceiveProps(nextProps) {
+            if (nextProps.params.hasOwnProperty('id')) {
+                if (this.props.params.id !== nextProps.params.id) {
+                    this.setState({ isFilter: false, isDate: false });
+                }
+            }
+        }
+    }, {
         key: 'renderMenu',
         value: function renderMenu() {
             var type = null;
@@ -52189,8 +52201,10 @@ var DocsFilterHeader = function (_React$Component) {
             filterSelect: 'name'
         }, _this.handleFilterStart = function (e) {
             _this.props.setFilter(_this.state.filter, _this.state.filterSelect, _constants.apps.docs);
-        }, _this.handleSelectFilter = function (e) {
-            _this.setState({ filterSelect: e.target.value });
+        }, _this.handleFilterEnter = function (e) {
+            if (e.keyCode === 13) {
+                _this.props.setFilter(_this.state.filter, _this.state.filterSelect, _constants.apps.docs);
+            }
         }, _this.handleChange = function (e) {
             _this.setState(_defineProperty({}, e.target.name, e.target.value));
         }, _temp), _possibleConstructorReturn(_this, _ret);
@@ -52219,6 +52233,7 @@ var DocsFilterHeader = function (_React$Component) {
                     list: 'extension-list',
                     placeholder: 'Search',
                     onChange: this.handleChange,
+                    onKeyDown: this.handleFilterEnter,
                     name: 'filter',
                     value: this.state.filter
                 }),

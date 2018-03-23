@@ -26,8 +26,10 @@ export default class DocsFilterHeader extends React.Component {
         this.props.setFilter(this.state.filter, this.state.filterSelect, apps.docs);
     };
 
-    handleSelectFilter = (e) => {
-        this.setState({ filterSelect: e.target.value });
+    handleFilterEnter = (e) => {
+        if (e.keyCode === 13) {
+            this.props.setFilter(this.state.filter, this.state.filterSelect, apps.docs);
+        }
     };
 
     handleChange = (e) => {
@@ -45,6 +47,7 @@ export default class DocsFilterHeader extends React.Component {
                 list="extension-list"
                 placeholder="Search"
                 onChange={ this.handleChange }
+                onKeyDown={ this.handleFilterEnter }
                 name="filter"
                 value={ this.state.filter }
             /><datalist id="extension-list">

@@ -34,6 +34,14 @@ class DocsHeaderComponent extends React.Component {
         isFilter: false,
         isDate: false,
     };
+
+    componentWillReceiveProps(nextProps) {
+        if (nextProps.params.hasOwnProperty('id')) {
+            if (this.props.params.id !== nextProps.params.id) {
+                this.setState({ isFilter: false, isDate: false });
+            }
+        }
+    }
     handleChange = (e) => {
         this.setState({ [e.target.name]: e.target.value });
     };

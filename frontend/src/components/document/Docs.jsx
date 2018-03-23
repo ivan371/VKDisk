@@ -3,20 +3,21 @@ import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
 import { withRouter } from 'react-router-dom';
 import PropTypes from 'prop-types';
-import { folderType, makeUrls, urls, view } from '../../constants';
+import {apps, folderType, makeUrls, urls, view} from '../../constants';
 import { checkAll, docsUnMount, loadDocs, loadDocsMore } from '../../actions/document';
 import { loadFilterFolders } from '../../actions/folder';
 import { modalOpen, setModal } from '../../actions/modal';
 import FoldersTile from '../tile/FoldersTile';
 import DocsTile from '../tile/DocsTile';
 import DocsHeader from './DocsHeader';
-import { changeView } from '../../actions/page';
+import {changeView, clearFilter} from '../../actions/page';
 
 class DocsComponent extends React.Component {
     static propTypes = {
         loadDocs: PropTypes.func.isRequired,
         loadFilterFolders: PropTypes.func.isRequired,
         docsUnMount: PropTypes.func.isRequired,
+        clearFilter: PropTypes.func.isRequired,
         params: PropTypes.object.isRequired,
         loadDocsMore: PropTypes.func.isRequired,
         count: PropTypes.number.isRequired,
@@ -52,6 +53,7 @@ class DocsComponent extends React.Component {
                 if (this.props.checkList.length) {
                     this.props.checkAll();
                 }
+                this.props.clearFilter(apps.docs);
             } else if (this.props.filterType !== nextProps.filterType || this.props.filter !== nextProps.filter) {
                 this.props.loadDocs(makeUrls.makeFilterDocs(nextProps.params.id, nextProps.filter, nextProps.filterType));
             }
@@ -64,7 +66,7 @@ class DocsComponent extends React.Component {
     }
     componentDidUpdate(prevProps) {
         if (!this.props.params.hasOwnProperty('id') && prevProps.params.hasOwnProperty('id')) {
-            this.props.docsUnMount()
+            this.props.docsUnMount();
             this.scrollStart();
         }
         if (this.props.params.hasOwnProperty('id') && !prevProps.params.hasOwnProperty('id')) {
@@ -78,9 +80,9 @@ class DocsComponent extends React.Component {
 
     handleLoadMore = (e) => {
         if (this.props.folder === folderType.root) {
-            this.props.loadDocsMore(makeUrls.makeDocsRootMore(this.props.page, this.props.filter, this.props.filterType));
+            this.props.loadDocsMore(makeUrls.makeDocsRootMore(this.props.page, this.props.filterType, this.props.filter));
         } else {
-            this.props.loadDocsMore(makeUrls.makeDocsMore(this.props.params.id, this.props.page, this.props.filter, this.props.filterType));
+            this.props.loadDocsMore(makeUrls.makeDocsMore(this.props.params.id, this.props.page, this.props.filterType, this.props.filter));
         }
     };
 
@@ -137,6 +139,7 @@ const mapDispatchToProps = dispatch => ({
         setModal,
         checkAll,
         changeView,
+        clearFilter,
     }, dispatch),
 });
 
