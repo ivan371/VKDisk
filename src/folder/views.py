@@ -4,7 +4,7 @@ from rest_framework.response import Response
 from rest_framework.pagination import PageNumberPagination
 
 from .models import Folder
-from .serializers import FolderSerializer, FolderBulkSerializer
+from .serializers import FolderSerializer, FolderBulkSerializer, FolderTransferSerializer
 from django.db.models import Q
 from django.http import Http404
 
@@ -35,6 +35,8 @@ class FolderViewSet(viewsets.ModelViewSet):
         if self.request.method == 'POST' \
                 and ('bulk_create' in self.request.query_params or 'bulk_update' in self.request.query_params):
             return FolderBulkSerializer
+        if self.request.method == 'PUT' and 'replace' in self.request.query_params:
+            return FolderTransferSerializer
         return FolderSerializer
 
     def perform_create(self, serializer):

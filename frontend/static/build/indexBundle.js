@@ -457,7 +457,8 @@ function makeFormat(fileUrl) {
 
 var dragSource = exports.dragSource = {
     file: 'file',
-    favorite: 'favorite'
+    favorite: 'favorite',
+    folder: 'folder'
 };
 
 var view = exports.view = {
@@ -1104,9 +1105,10 @@ module.exports = function (it, key) {
 Object.defineProperty(exports, "__esModule", {
     value: true
 });
-exports.TRANSFER_UNMOUNT = exports.LOAD_FOLDERS_MORE_START = exports.LOAD_FOLDERS_MORE = exports.FOLDER_UNMOUNT = exports.SWITCH_FOLDER = exports.FOLDER_UPDATE = exports.FOLDER_CREATE = exports.LOAD_FOLDER_ERROR = exports.LOAD_FOLDER_SUCCESS = exports.LOAD_FOLDER = exports.LOAD_FILTER_FOLDERS_ERROR = exports.LOAD_FILTER_FOLDERS_SUCCESS = exports.LOAD_FILTER_FOLDERS = exports.LOAD_FOLDERS_ERROR = exports.LOAD_FOLDERS_TRANSFER_SUCCESS = exports.LOAD_FOLDERS_TRANSFER = exports.LOAD_FOLDERS_SUCCESS = exports.LOAD_FOLDERS = undefined;
+exports.DELETE_FOLDER_ERROR = exports.DELETE_FOLDER_SUCCESS = exports.DELETE_FOLDER = exports.TRANSFER_UNMOUNT = exports.LOAD_FOLDERS_MORE_START = exports.LOAD_FOLDERS_MORE = exports.FOLDER_UNMOUNT = exports.SWITCH_FOLDER = exports.FOLDER_UPDATE = exports.FOLDER_CREATE = exports.LOAD_FOLDER_ERROR = exports.LOAD_FOLDER_SUCCESS = exports.LOAD_FOLDER = exports.LOAD_FILTER_FOLDERS_ERROR = exports.LOAD_FILTER_FOLDERS_SUCCESS = exports.LOAD_FILTER_FOLDERS = exports.LOAD_FOLDERS_ERROR = exports.LOAD_FOLDERS_TRANSFER_SUCCESS = exports.LOAD_FOLDERS_TRANSFER = exports.LOAD_FOLDERS_SUCCESS = exports.LOAD_FOLDERS = undefined;
 exports.loadFolders = loadFolders;
 exports.loadFoldersMore = loadFoldersMore;
+exports.updateFolderRoot = updateFolderRoot;
 exports.loadTransferFolders = loadTransferFolders;
 exports.loadFilterFolders = loadFilterFolders;
 exports.createFolder = createFolder;
@@ -1137,6 +1139,9 @@ var FOLDER_UNMOUNT = exports.FOLDER_UNMOUNT = 'FOLDER_UNMOUNT';
 var LOAD_FOLDERS_MORE = exports.LOAD_FOLDERS_MORE = 'LOAD_FOLDERS_MORE';
 var LOAD_FOLDERS_MORE_START = exports.LOAD_FOLDERS_MORE_START = 'LOAD_FOLDERS_MORE_START';
 var TRANSFER_UNMOUNT = exports.TRANSFER_UNMOUNT = 'TRANSFER_UNMOUNT';
+var DELETE_FOLDER = exports.DELETE_FOLDER = 'DELETE_FOLDER';
+var DELETE_FOLDER_SUCCESS = exports.DELETE_FOLDER_SUCCESS = 'DELETE_FOLDER_SUCCESS';
+var DELETE_FOLDER_ERROR = exports.DELETE_FOLDER_ERROR = 'DELETE_FOLDER_ERROR';
 
 function loadFolders(url) {
     var types = [LOAD_FOLDERS, LOAD_FOLDERS_SUCCESS, LOAD_FOLDERS_ERROR];
@@ -1146,6 +1151,13 @@ function loadFolders(url) {
 function loadFoldersMore(url) {
     var types = [LOAD_FOLDERS_MORE_START, LOAD_FOLDERS_MORE, LOAD_FOLDERS_ERROR];
     return (0, _load.apiLoad)(url, 'GET', types, null, _folder.foldersNormalize, false);
+}
+
+function updateFolderRoot(url, root) {
+    var types = [DELETE_FOLDER, DELETE_FOLDER_SUCCESS, DELETE_FOLDER_ERROR];
+    return (0, _load.apiLoad)(url, 'PUT', types, JSON.stringify({ root: root }), function (a) {
+        return a;
+    }, true);
 }
 
 function loadTransferFolders(url) {
@@ -24927,7 +24939,7 @@ var TileComponent = function (_React$Component) {
                     _this.props.dragStart(_this.props.folder !== _constants.folderType.chat, _constants.dragSource.file, _this.props.id);
                     break;
                 case _constants.tileType.folder:
-                    _this.props.dragStart(_this.props.folder === _constants.folderType.folder, _constants.dragSource.favorite, _this.props.id);
+                    _this.props.dragStart(_this.props.folder !== _constants.folderType.chat, _constants.dragSource.folder, _this.props.id);
                     break;
                 default:
             }
@@ -25023,9 +25035,12 @@ var TileComponent = function (_React$Component) {
                     style: this.props.view === _constants.view.col ? { float: 'left' } : null,
                     className: 'icon',
                     onClick: this.handleClick,
+                    onDragStart: this.handleDragStart,
                     src: imageUrl,
                     onDragOver: this.handleDragOver,
-                    onDrop: this.handleDrop
+                    draggable: 'true',
+                    onDrop: this.handleDrop,
+                    onDragEnd: this.handleDragEnd
                 });
             }
             return null;

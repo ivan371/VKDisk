@@ -105,6 +105,7 @@ export function makeFormat(fileUrl) {
 export const dragSource = {
     file: 'file',
     favorite: 'favorite',
+    folder: 'folder',
 };
 
 export const view = {

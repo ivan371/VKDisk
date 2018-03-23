@@ -70,7 +70,7 @@ class TileComponent extends React.Component {
                 this.props.dragStart(this.props.folder !== folderType.chat, dragSource.file, this.props.id);
                 break;
             case tileType.folder:
-                this.props.dragStart(this.props.folder === folderType.folder, dragSource.favorite, this.props.id);
+                this.props.dragStart(this.props.folder !== folderType.chat, dragSource.folder, this.props.id);
                 break;
             default:
         }
@@ -173,9 +173,12 @@ class TileComponent extends React.Component {
                 style={ this.props.view === view.col ? { float: 'left' } : null }
                 className="icon"
                 onClick={ this.handleClick }
+                onDragStart={ this.handleDragStart }
                 src={ imageUrl }
                 onDragOver={ this.handleDragOver }
+                draggable="true"
                 onDrop={ this.handleDrop }
+                onDragEnd={ this.handleDragEnd }
             />);
         }
         return null;

@@ -21,6 +21,13 @@ class FolderSerializer(serializers.HyperlinkedModelSerializer):
         fields = ('id', 'author', 'title', 'root', 'type')
 
 
+class FolderTransferSerializer(serializers.ModelSerializer):
+
+    class Meta:
+        model = Folder
+        fields = ('id', 'root')
+
+
 class FolderBulkSerializer(serializers.ModelSerializer):
     folders = FolderFilteredPrimaryKeyRelatedField(many=True, queryset=Folder.objects.all(), write_only=True)
 
