@@ -91,6 +91,7 @@ export const items = {
     trashBad: '/static/img/trashBad.png',
     clear: '/static/img/clear.png',
     colRow: '/static/img/row-col.png',
+    calendar: '/static/img/calendar.png',
 };
 
 export function makeFormat(fileUrl) {

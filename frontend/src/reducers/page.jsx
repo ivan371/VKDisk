@@ -1,5 +1,5 @@
 import update from 'react-addons-update';
-import { SET_FILTER, SET_SORT, SET_LINK, CHANGE_VIEW } from '../actions/page';
+import {SET_FILTER, SET_SORT, SET_LINK, CHANGE_VIEW, CLEAR_FILTER} from '../actions/page';
 import { view } from '../constants';
 
 const initalStore = {
@@ -34,6 +34,19 @@ export default function page(store = initalStore, action) {
                 filterSelect: {
                     [action.app]: {
                         $set: action.filterSelect,
+                    },
+                },
+            });
+        case CLEAR_FILTER:
+            return update(store, {
+                filter: {
+                    [action.app]: {
+                        $set: '',
+                    },
+                },
+                filterSelect: {
+                    [action.app]: {
+                        $set: '',
                     },
                 },
             });

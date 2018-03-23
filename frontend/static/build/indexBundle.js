@@ -441,7 +441,8 @@ var items = exports.items = {
     trashGood: '/static/img/trashGood.png',
     trashBad: '/static/img/trashBad.png',
     clear: '/static/img/clear.png',
-    colRow: '/static/img/row-col.png'
+    colRow: '/static/img/row-col.png',
+    calendar: '/static/img/calendar.png'
 };
 
 function makeFormat(fileUrl) {
@@ -1197,12 +1198,14 @@ Object.defineProperty(exports, "__esModule", {
     value: true
 });
 exports.setFilter = setFilter;
+exports.clearFilter = clearFilter;
 exports.setSort = setSort;
 exports.setLink = setLink;
 exports.changeView = changeView;
 var SET_FILTER = exports.SET_FILTER = 'SET_FILTER';
 var SET_SORT = exports.SET_SORT = 'SET_SORT';
 var SET_LINK = exports.SET_LINK = 'SET_LINK';
+var CLEAR_FILTER = exports.CLEAR_FILTER = 'CLEAR_FILTER';
 var CHANGE_VIEW = exports.CHANGE_VIEW = 'CHANGE_VIEW';
 
 function setFilter(filter, filterSelect, app) {
@@ -1210,6 +1213,13 @@ function setFilter(filter, filterSelect, app) {
         type: SET_FILTER,
         filterSelect: filterSelect,
         filter: filter,
+        app: app
+    };
+}
+
+function clearFilter(app) {
+    return {
+        type: CLEAR_FILTER,
         app: app
     };
 }
@@ -50134,6 +50144,15 @@ function page() {
                     $set: action.filterSelect
                 })
             });
+        case _page.CLEAR_FILTER:
+            return (0, _reactAddonsUpdate2.default)(store, {
+                filter: _defineProperty({}, action.app, {
+                    $set: ''
+                }),
+                filterSelect: _defineProperty({}, action.app, {
+                    $set: ''
+                })
+            });
         case _page.SET_SORT:
             return (0, _reactAddonsUpdate2.default)(store, {
                 sort: _defineProperty({}, action.app, {
@@ -51548,6 +51567,10 @@ var _DocsCheckHeader = __webpack_require__(294);
 
 var _DocsCheckHeader2 = _interopRequireDefault(_DocsCheckHeader);
 
+var _DocsDateHeader = __webpack_require__(302);
+
+var _DocsDateHeader2 = _interopRequireDefault(_DocsDateHeader);
+
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 function _defineProperty(obj, key, value) { if (key in obj) { Object.defineProperty(obj, key, { value: value, enumerable: true, configurable: true, writable: true }); } else { obj[key] = value; } return obj; }
@@ -51574,13 +51597,24 @@ var DocsHeaderComponent = function (_React$Component) {
 
         return _ret = (_temp = (_this = _possibleConstructorReturn(this, (_ref = DocsHeaderComponent.__proto__ || Object.getPrototypeOf(DocsHeaderComponent)).call.apply(_ref, [this].concat(args))), _this), _this.state = {
             isSort: false,
-            isFilter: false
+            isFilter: false,
+            isDate: false
         }, _this.handleChange = function (e) {
             _this.setState(_defineProperty({}, e.target.name, e.target.value));
         }, _this.handleSort = function () {
             _this.setState({ isSort: !_this.state.isSort });
         }, _this.handleFilter = function () {
-            _this.setState({ isFilter: !_this.state.isFilter });
+            _this.setState({ isFilter: !_this.state.isFilter }, function () {
+                if (!_this.state.isFilter) {
+                    _this.props.clearFilter(_constants.apps.docs);
+                }
+            });
+        }, _this.handleDate = function () {
+            _this.setState({ isDate: !_this.state.isDate }, function () {
+                if (!_this.state.isDate) {
+                    _this.props.clearFilter(_constants.apps.docs);
+                }
+            });
         }, _this.handleOpenCopy = function () {
             _this.props.modalOpen();
             _this.props.setModal(_constants.modalType.folderTransfer);
@@ -51664,8 +51698,14 @@ var DocsHeaderComponent = function (_React$Component) {
                 return _react2.default.createElement(_DocsFilterHeader2.default, {
                     setFilter: this.props.setFilter,
                     onFilter: this.handleFilter,
-                    filter: this.props.filter,
-                    filterSelect: this.props.filterSelect
+                    filter: this.props.filter
+                });
+            }
+            if (this.state.isDate) {
+                return _react2.default.createElement(_DocsDateHeader2.default, {
+                    setFilter: this.props.setFilter,
+                    onFilter: this.handleDate,
+                    filter: this.props.filter
                 });
             }
             if (this.props.countCheck) {
@@ -51684,7 +51724,7 @@ var DocsHeaderComponent = function (_React$Component) {
                 title,
                 _react2.default.createElement('img', { className: 'item-right', src: _constants.items.colRow, onClick: this.handleChangeView }),
                 type === 'sorted' || type === 'folder' || type === 'root' ? _react2.default.createElement(_AddFolder2.default, { id: parseInt(this.props.params.id), folder: this.props.folder }) : null,
-                _react2.default.createElement('img', { className: 'item-right', onClick: this.handleSort, src: _constants.items.sort }),
+                _react2.default.createElement('img', { className: 'item-right', onClick: this.handleDate, src: _constants.items.calendar }),
                 _react2.default.createElement('img', { className: 'item-right', onClick: this.handleFilter, src: _constants.items.filter })
             );
         }
@@ -51726,7 +51766,8 @@ DocsHeaderComponent.propTypes = {
     filterSelect: _propTypes2.default.string.isRequired,
     countCheck: _propTypes2.default.number.isRequired,
     checkAll: _propTypes2.default.func.isRequired,
-    changeView: _propTypes2.default.func.isRequired
+    changeView: _propTypes2.default.func.isRequired,
+    clearFilter: _propTypes2.default.func.isRequired
 };
 
 
@@ -51753,7 +51794,8 @@ var mapDispatchToProps = function mapDispatchToProps(dispatch) {
         setFilter: _page.setFilter,
         setSort: _page.setSort,
         checkAll: _document.checkAll,
-        changeView: _page.changeView
+        changeView: _page.changeView,
+        clearFilter: _page.clearFilter
     }, dispatch));
 };
 
@@ -52144,19 +52186,11 @@ var DocsFilterHeader = function (_React$Component) {
 
         return _ret = (_temp = (_this = _possibleConstructorReturn(this, (_ref = DocsFilterHeader.__proto__ || Object.getPrototypeOf(DocsFilterHeader)).call.apply(_ref, [this].concat(args))), _this), _this.state = {
             filter: _this.props.filter,
-            filterSelect: _this.props.filterSelect,
-            isDate: false,
-            isExt: false
+            filterSelect: 'name'
         }, _this.handleFilterStart = function (e) {
             _this.props.setFilter(_this.state.filter, _this.state.filterSelect, _constants.apps.docs);
         }, _this.handleSelectFilter = function (e) {
-            if (e.target.value === 'date') {
-                _this.setState({ isDate: true, isExt: false, filterSelect: e.target.value });
-            } else if (e.target.value === 'extension') {
-                _this.setState({ isDate: false, isExt: true, filterSelect: e.target.value });
-            } else {
-                _this.setState({ isDate: false, isExt: false, filterSelect: e.target.value });
-            }
+            _this.setState({ filterSelect: e.target.value });
         }, _this.handleChange = function (e) {
             _this.setState(_defineProperty({}, e.target.name, e.target.value));
         }, _temp), _possibleConstructorReturn(_this, _ret);
@@ -52165,58 +52199,6 @@ var DocsFilterHeader = function (_React$Component) {
     _createClass(DocsFilterHeader, [{
         key: 'render',
         value: function render() {
-            var input = null;
-            if (this.state.isDate) {
-                input = _react2.default.createElement('input', {
-                    className: 'content-item__input',
-                    type: 'date',
-                    onChange: this.handleChange,
-                    name: 'filter',
-                    value: this.state.filter
-                });
-            } else if (this.state.isExt) {
-                input = _react2.default.createElement(
-                    _react2.default.Fragment,
-                    null,
-                    _react2.default.createElement('input', {
-                        className: 'content-item__input',
-                        type: 'list',
-                        list: 'extension-list',
-                        placeholder: 'Search',
-                        onChange: this.handleChange,
-                        name: 'filter',
-                        value: this.state.filter
-                    }),
-                    _react2.default.createElement(
-                        'datalist',
-                        { id: 'extension-list' },
-                        _react2.default.createElement('option', { value: 'pdf' }),
-                        _react2.default.createElement('option', { value: 'doc' }),
-                        _react2.default.createElement('option', { value: 'xls' }),
-                        _react2.default.createElement('option', { value: 'docx' }),
-                        _react2.default.createElement('option', { value: 'zip' }),
-                        _react2.default.createElement('option', { value: 'djvu' }),
-                        _react2.default.createElement('option', { value: 'xlsx' }),
-                        _react2.default.createElement('option', { value: 'gif' }),
-                        _react2.default.createElement('option', { value: 'png' }),
-                        _react2.default.createElement('option', { value: 'jpg' }),
-                        _react2.default.createElement('option', { value: 'gz' }),
-                        _react2.default.createElement('option', { value: 'txt' }),
-                        _react2.default.createElement('option', { value: 'tex' }),
-                        _react2.default.createElement('option', { value: 'py' })
-                    )
-                );
-            } else {
-                input = _react2.default.createElement('input', {
-                    className: 'content-item__input',
-                    type: 'text',
-                    placeholder: 'Search',
-                    onChange: this.handleChange,
-                    name: 'filter',
-                    value: this.state.filter
-                });
-            }
-
             return _react2.default.createElement(
                 _react2.default.Fragment,
                 null,
@@ -52231,26 +52213,33 @@ var DocsFilterHeader = function (_React$Component) {
                     { className: 'vk-button', onClick: this.handleFilterStart },
                     'Search'
                 ),
+                _react2.default.createElement('input', {
+                    className: 'content-item__input',
+                    type: 'list',
+                    list: 'extension-list',
+                    placeholder: 'Search',
+                    onChange: this.handleChange,
+                    name: 'filter',
+                    value: this.state.filter
+                }),
                 _react2.default.createElement(
-                    'select',
-                    { className: 'vk-button', onChange: this.handleSelectFilter, value: this.state.filterSelect },
-                    _react2.default.createElement(
-                        'option',
-                        { value: 'name' },
-                        'Name'
-                    ),
-                    _react2.default.createElement(
-                        'option',
-                        { value: 'date' },
-                        'Date'
-                    ),
-                    _react2.default.createElement(
-                        'option',
-                        { value: 'extension' },
-                        'Extension'
-                    )
-                ),
-                input
+                    'datalist',
+                    { id: 'extension-list' },
+                    _react2.default.createElement('option', { value: 'pdf' }),
+                    _react2.default.createElement('option', { value: 'doc' }),
+                    _react2.default.createElement('option', { value: 'xls' }),
+                    _react2.default.createElement('option', { value: 'docx' }),
+                    _react2.default.createElement('option', { value: 'zip' }),
+                    _react2.default.createElement('option', { value: 'djvu' }),
+                    _react2.default.createElement('option', { value: 'xlsx' }),
+                    _react2.default.createElement('option', { value: 'gif' }),
+                    _react2.default.createElement('option', { value: 'png' }),
+                    _react2.default.createElement('option', { value: 'jpg' }),
+                    _react2.default.createElement('option', { value: 'gz' }),
+                    _react2.default.createElement('option', { value: 'txt' }),
+                    _react2.default.createElement('option', { value: 'tex' }),
+                    _react2.default.createElement('option', { value: 'py' })
+                )
             );
         }
     }]);
@@ -52261,8 +52250,7 @@ var DocsFilterHeader = function (_React$Component) {
 DocsFilterHeader.propTypes = {
     setFilter: _propTypes2.default.func.isRequired,
     onFilter: _propTypes2.default.func.isRequired,
-    filter: _propTypes2.default.string.isRequired,
-    filterSelect: _propTypes2.default.string.isRequired
+    filter: _propTypes2.default.string.isRequired
 };
 exports.default = DocsFilterHeader;
 
@@ -53111,6 +53099,123 @@ module.exports = function (css) {
 	return fixedCss;
 };
 
+
+/***/ }),
+/* 302 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+Object.defineProperty(exports, "__esModule", {
+    value: true
+});
+
+var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+
+var _react = __webpack_require__(0);
+
+var _react2 = _interopRequireDefault(_react);
+
+var _redux = __webpack_require__(5);
+
+var _reactRedux = __webpack_require__(8);
+
+var _reactRouterDom = __webpack_require__(24);
+
+var _propTypes = __webpack_require__(1);
+
+var _propTypes2 = _interopRequireDefault(_propTypes);
+
+var _constants = __webpack_require__(3);
+
+var _AddFolder = __webpack_require__(144);
+
+var _AddFolder2 = _interopRequireDefault(_AddFolder);
+
+var _modal = __webpack_require__(17);
+
+var _document = __webpack_require__(16);
+
+var _page = __webpack_require__(23);
+
+var _Modal = __webpack_require__(82);
+
+var _Modal2 = _interopRequireDefault(_Modal);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+function _defineProperty(obj, key, value) { if (key in obj) { Object.defineProperty(obj, key, { value: value, enumerable: true, configurable: true, writable: true }); } else { obj[key] = value; } return obj; }
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
+
+function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
+
+var DocsDateHeader = function (_React$Component) {
+    _inherits(DocsDateHeader, _React$Component);
+
+    function DocsDateHeader() {
+        var _ref;
+
+        var _temp, _this, _ret;
+
+        _classCallCheck(this, DocsDateHeader);
+
+        for (var _len = arguments.length, args = Array(_len), _key = 0; _key < _len; _key++) {
+            args[_key] = arguments[_key];
+        }
+
+        return _ret = (_temp = (_this = _possibleConstructorReturn(this, (_ref = DocsDateHeader.__proto__ || Object.getPrototypeOf(DocsDateHeader)).call.apply(_ref, [this].concat(args))), _this), _this.state = {
+            filter: _this.props.filter,
+            filterSelect: 'date'
+        }, _this.handleFilterStart = function (e) {
+            _this.props.setFilter(_this.state.filter, _this.state.filterSelect, _constants.apps.docs);
+        }, _this.handleSelectFilter = function (e) {
+            _this.setState({ filterSelect: e.target.value });
+        }, _this.handleChange = function (e) {
+            _this.setState(_defineProperty({}, e.target.name, e.target.value));
+        }, _temp), _possibleConstructorReturn(_this, _ret);
+    }
+
+    _createClass(DocsDateHeader, [{
+        key: 'render',
+        value: function render() {
+            return _react2.default.createElement(
+                _react2.default.Fragment,
+                null,
+                _react2.default.createElement('img', { className: 'item-left', onClick: this.handleFilter, src: _constants.items.filter }),
+                _react2.default.createElement(
+                    'button',
+                    { className: 'vk-button button-secondary', onClick: this.props.onFilter },
+                    'Cancel'
+                ),
+                _react2.default.createElement(
+                    'button',
+                    { className: 'vk-button', onClick: this.handleFilterStart },
+                    'Search'
+                ),
+                _react2.default.createElement('input', {
+                    className: 'content-item__input',
+                    type: 'date',
+                    onChange: this.handleChange,
+                    name: 'filter',
+                    value: this.state.filter
+                })
+            );
+        }
+    }]);
+
+    return DocsDateHeader;
+}(_react2.default.Component);
+
+DocsDateHeader.propTypes = {
+    setFilter: _propTypes2.default.func.isRequired,
+    onFilter: _propTypes2.default.func.isRequired,
+    filter: _propTypes2.default.string.isRequired
+};
+exports.default = DocsDateHeader;
 
 /***/ })
 /******/ ]);

@@ -107,7 +107,7 @@ class DocumentViewSet(viewsets.ModelViewSet):
                     q = q.filter(title__endswith='.{}'.format(self.request.query_params['extension']))
             if 'name' in self.request.query_params:
                 if self.request.query_params['name']:
-                    q = q.filter(title__istartswith=self.request.query_params['name'])
+                    q = q.filter(title__icontains=self.request.query_params['name'])
         return q
 
 
