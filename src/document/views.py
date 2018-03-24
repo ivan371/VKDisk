@@ -47,7 +47,7 @@ class DocumentViewSet(viewsets.ModelViewSet):
         if self.request.method == 'POST' \
                 and ('bulk_create' in self.request.query_params or 'bulk_update' in self.request.query_params):
             return DocumentBulkSerializer
-        if self.request.method == 'PUT' and 'root' in self.request.query_params:
+        if self.request.method == 'PUT' and 'replace' in self.request.query_params:
             return DocumentTransferSerializer
         return DocumentSerializer
 

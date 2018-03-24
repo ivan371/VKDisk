@@ -3,7 +3,7 @@ import {
     FOLDER_CREATE, FOLDER_UNMOUNT,
     LOAD_FILTER_FOLDERS, LOAD_FILTER_FOLDERS_SUCCESS, LOAD_FOLDER, LOAD_FOLDERS, LOAD_FOLDERS_MORE,
     LOAD_FOLDERS_SUCCESS, LOAD_FOLDERS_TRANSFER, LOAD_FOLDERS_TRANSFER_SUCCESS, SWITCH_FOLDER, TRANSFER_UNMOUNT,
-    LOAD_FOLDERS_MORE_START,
+    LOAD_FOLDERS_MORE_START, DELETE_FOLDER_SUCCESS,
 } from '../actions/folder';
 import { DOCS_UNMOUNT } from '../actions/document';
 
@@ -36,6 +36,7 @@ export default function folder(store = initalState, action) {
             }
         }
     }
+    let index = null;
     switch (action.type) {
         case LOAD_FOLDERS:
             return update(store, {
@@ -155,6 +156,13 @@ export default function folder(store = initalState, action) {
             return update(store, {
                 checkedFolder: {
                     $set: null,
+                },
+            });
+        case DELETE_FOLDER_SUCCESS:
+            index = store.folderTileList.indexOf(action.payload.id);
+            return update(store, {
+                folderTileList: {
+                    $splice: [[index, 1]],
                 },
             });
         default:

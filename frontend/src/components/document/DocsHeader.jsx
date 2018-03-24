@@ -150,14 +150,9 @@ class DocsHeaderComponent extends React.Component {
 
     render() {
         let folderHeader = null;
-        let modal = null;
-        if (this.props.isOpen) {
-            modal = <Modal />;
-        }
         if (this.props.isLoading
             && ((this.props.params.hasOwnProperty('id')) || this.props.folder === folderType.root)) {
             folderHeader = (<React.Fragment>
-                { modal }
                 {this.renderMenu()}
             </React.Fragment>);
         }
@@ -174,7 +169,6 @@ const mapStoreToProps = state => ({
     checkList: state.document.checkList,
     count: state.document.count,
     page: state.document.page,
-    isOpen: state.modal.isOpen,
     filterSelect: state.page.filterSelect.docs,
     filter: state.page.filter.docs,
     countCheck: state.document.countCheck,

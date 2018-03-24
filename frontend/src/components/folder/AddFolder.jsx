@@ -15,7 +15,7 @@ class AddFolderComponent extends React.Component {
         folder: PropTypes.string.isRequired,
     };
 
-    onOpen = () => {
+    handleOpen = () => {
         this.props.modalOpen();
         if (this.props.folder === folderType.root) {
             this.props.setModal(modalType.folderRootCreate);
@@ -26,18 +26,17 @@ class AddFolderComponent extends React.Component {
 
     render() {
         let modal = null;
-        console.log(this.props.folder, folderType.root);
         if (this.props.isOpen) {
             if (this.props.folder === folderType.root) {
                 modal = <Modal />;
             } else {
-                modal = <Modal id={ this.props.id }/>;
+                modal = <Modal id={ this.props.id } />;
             }
         }
         return (
             <React.Fragment>
                 {modal}
-                <img className="item-right" onClick={ this.onOpen } src={ items.add } />
+                <img className="item-right" onClick={ this.handleOpen } src={ items.add } />
             </React.Fragment>
         );
     }

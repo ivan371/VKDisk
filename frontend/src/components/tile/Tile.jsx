@@ -4,7 +4,7 @@ import { withRouter } from 'react-router-dom';
 import _ from 'lodash';
 import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
-import { switchFolder, updateFolder } from '../../actions/folder';
+import {switchFolder, updateFolder, updateFolderRoot} from '../../actions/folder';
 import { format, makeUrls, tileType, makeFormat, apps, folderType, dragSource, view } from '../../constants';
 import { checkFile, updateDoc, updateDocRoot } from '../../actions/document';
 import { setLink } from '../../actions/page';
@@ -32,6 +32,7 @@ class TileComponent extends React.Component {
         dragId: PropTypes.number,
         allowDrag: PropTypes.bool.isRequired,
         updateDocRoot: PropTypes.func.isRequired,
+        updateFolderRoot: PropTypes.func.isRequired,
         view: PropTypes.string.isRequired,
     };
 
@@ -81,7 +82,7 @@ class TileComponent extends React.Component {
     };
 
     handleDragOver = (e) => {
-        if (this.props.source === dragSource.file && this.props.allowDrag) {
+        if ((this.props.source === dragSource.file || this.props.source === dragSource.folder) && this.props.allowDrag) {
             e.preventDefault();
         }
     };
@@ -89,6 +90,11 @@ class TileComponent extends React.Component {
     handleDrop = (e) => {
         if (this.props.source === dragSource.file && this.props.allowDrag) {
             this.props.updateDocRoot(makeUrls.makeTransferFile(this.props.dragId), this.props.id);
+            this.props.dropOver();
+        }
+
+        if (this.props.source === dragSource.folder && this.props.allowDrag) {
+            this.props.updateFolderRoot(makeUrls.makeTransferFolder(this.props.dragId), this.props.id);
             this.props.dropOver();
         }
     };
@@ -223,6 +229,7 @@ const mapDispatchToProps = dispatch => ({
         dragEnd,
         dropOver,
         updateDocRoot,
+        updateFolderRoot,
     }, dispatch),
 });
 

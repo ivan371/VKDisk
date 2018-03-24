@@ -18,7 +18,7 @@ export const makeUrls = {
     makeRootFoldersFolder: () => `${urls.folder.customFolderUrl}?root`,
     makeCustomFolder: id => `${urls.folder.customFolderUrl + id}/`,
     makeCustomFile: id => `${urls.docs.docsUrl + id}/`,
-    makeTransferFile: id => `${urls.docs.docsUrl + id}/?root`,
+    makeTransferFile: id => `${urls.docs.docsUrl + id}/?replace`,
     makeDocsMore: (id, page, filter, value) => `${urls.docs.docsUrl}?folder=${id}&&page=${page}&&filter&&${filter}=${value}`,
     makeDocsRootMore: (page, filter, value) => `${urls.docs.docsUrl}?root&&page=${page}&&filter&&${filter}=${value}`,
     makeDocsMoreDate: (id, page, year, month, day) => `${urls.docs.docsUrl}?folder=${id}&&page=${page}&&filter&&year=${year}&&month=${month}&&day=${day}`,
@@ -30,6 +30,7 @@ export const makeUrls = {
     makeChatsMore: page => `${urls.folder.chatFolderUrl}&&page=${page}`,
     makeFilterChats: name => `${urls.folder.chatFolderUrl}filter&&name=${name}`,
     makeFilterChatsMore: (name, page) => `${urls.folder.chatFolderUrl}filter&&name=${name}&&page=${page}`,
+    makeTransferFolder: id => `${urls.folder.customFolderUrl + id}/?replace`,
 };
 
 export const apps = {
