@@ -24,6 +24,7 @@ export const makeUrls = {
     makeDocsMoreDate: (id, page, year, month, day) => `${urls.docs.docsUrl}?folder=${id}&&page=${page}&&filter&&year=${year}&&month=${month}&&day=${day}`,
     makeCopyDocs: id => `${urls.docs.docsUrl}?folder=${id}&&bulk_create`,
     makeReplaceDocs: id => `${urls.docs.docsUrl}?folder=${id}&&bulk_update`,
+    makeDeleteDocs: () => `${urls.docs.docsUrl}?bulk_delete`,
     makeFilterDocs: (id, filter, value) => `${urls.docs.docsUrl}?folder=${id}&&filter&&${value}=${filter}`,
     makeFilterRootDocs: (filter, value) => `${urls.docs.docsUrl}?root&&filter&&${value}=${filter}`,
     makeFilterDocsDate: (id, year, month, day) => `${urls.docs.docsUrl}?folder=${id}&&filter&&year=${year}&&month=${month}&&day=${day}`,
@@ -58,6 +59,7 @@ export const modalType = {
     folderRootCreate: 'folderRootCreate',
     folderTransfer: 'folderTransfer',
     folderReplace: 'folderReplace',
+    documentDelete: 'documentDelete',
 };
 
 export const format = {

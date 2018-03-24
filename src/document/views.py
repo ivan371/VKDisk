@@ -45,20 +45,25 @@ class DocumentViewSet(viewsets.ModelViewSet):
 
     def get_serializer_class(self):
         if self.request.method == 'POST' \
-                and ('bulk_create' in self.request.query_params or 'bulk_update' in self.request.query_params):
+                and ('bulk_create' in self.request.query_params
+                or 'bulk_update' in self.request.query_params
+                or 'bulk_delete' in self.request.query_params):
             return DocumentBulkSerializer
         if self.request.method == 'PUT' and 'replace' in self.request.query_params:
             return DocumentTransferSerializer
         return DocumentSerializer
 
     def perform_create(self, serializer):
-        if 'folder' in self.request.query_params:
+        if 'bulk_delete' in self.request.query_params:
+            docs_ids = [doc.id for doc in serializer.validated_data.pop('docs')]
+            Document.objects.filter(id__in=docs_ids, author=self.request.user).delete()
+        elif 'folder' in self.request.query_params:
             if self.request.query_params['folder'].isdigit():
                 if 'bulk_create' in self.request.query_params:
                     self.add_docs(serializer.validated_data.pop('docs'))
                 elif 'bulk_update' in self.request.query_params:
                     docs_ids = [doc.id for doc in serializer.validated_data.pop('docs')]
-                    Document.objects.filter(id__in=docs_ids).update(folder_id=self.request.query_params['folder'])
+                    Document.objects.filter(id__in=docs_ids, author=self.request.user).update(folder_id=self.request.query_params['folder'])
                 else:
                     if 'file' in self.request.query_params:
                         if self.request.query_params['file'].isdigit():

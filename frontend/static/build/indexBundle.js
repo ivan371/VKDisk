@@ -363,6 +363,9 @@ var makeUrls = exports.makeUrls = {
     makeReplaceDocs: function makeReplaceDocs(id) {
         return urls.docs.docsUrl + '?folder=' + id + '&&bulk_update';
     },
+    makeDeleteDocs: function makeDeleteDocs() {
+        return urls.docs.docsUrl + '?bulk_delete';
+    },
     makeFilterDocs: function makeFilterDocs(id, filter, value) {
         return urls.docs.docsUrl + '?folder=' + id + '&&filter&&' + value + '=' + filter;
     },
@@ -410,7 +413,8 @@ var modalType = exports.modalType = {
     folderCreate: 'folderCreate',
     folderRootCreate: 'folderRootCreate',
     folderTransfer: 'folderTransfer',
-    folderReplace: 'folderReplace'
+    folderReplace: 'folderReplace',
+    documentDelete: 'documentDelete'
 };
 
 var format = exports.format = {
@@ -2380,6 +2384,10 @@ var _TransferFolder = __webpack_require__(292);
 
 var _TransferFolder2 = _interopRequireDefault(_TransferFolder);
 
+var _DocsDelete = __webpack_require__(303);
+
+var _DocsDelete2 = _interopRequireDefault(_DocsDelete);
+
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
@@ -2425,6 +2433,9 @@ var ModalComponent = function (_React$Component) {
                     break;
                 case _constants.modalType.folderReplace:
                     modal = _react2.default.createElement(_TransferFolder2.default, null);
+                    break;
+                case _constants.modalType.documentDelete:
+                    modal = _react2.default.createElement(_DocsDelete2.default, null);
                     break;
                 default:
             }
@@ -51775,6 +51786,10 @@ var DocsHeaderComponent = function (_React$Component) {
         key: 'render',
         value: function render() {
             var folderHeader = null;
+            var modal = null;
+            if (this.props.isOpen) {
+                modal = _react2.default.createElement(_Modal2.default, null);
+            }
             if (this.props.isLoading && (this.props.params.hasOwnProperty('id') || this.props.folder === _constants.folderType.root)) {
                 folderHeader = _react2.default.createElement(
                     _react2.default.Fragment,
@@ -51785,6 +51800,7 @@ var DocsHeaderComponent = function (_React$Component) {
             return _react2.default.createElement(
                 'div',
                 { className: 'content-item' },
+                modal,
                 folderHeader
             );
         }
@@ -51819,7 +51835,8 @@ var mapStoreToProps = function mapStoreToProps(state) {
         page: state.document.page,
         filterSelect: state.page.filterSelect.docs,
         filter: state.page.filter.docs,
-        countCheck: state.document.countCheck
+        countCheck: state.document.countCheck,
+        isOpen: state.modal.isOpen
     };
 };
 
@@ -52345,6 +52362,9 @@ var DocsCheckHeader = function (_React$Component) {
         }, _this.handleOpenReplace = function () {
             _this.props.modalOpen();
             _this.props.setModal(_constants.modalType.folderReplace);
+        }, _this.handleOpenDelete = function () {
+            _this.props.modalOpen();
+            _this.props.setModal(_constants.modalType.documentDelete);
         }, _this.handleClearAll = function () {
             _this.props.checkAll();
         }, _temp), _possibleConstructorReturn(_this, _ret);
@@ -52367,17 +52387,17 @@ var DocsCheckHeader = function (_React$Component) {
                     _react2.default.createElement(
                         'button',
                         { className: 'vk-button', onClick: this.handleOpenCopy },
-                        '\u041A\u043E\u043F\u0438\u0440\u043E\u0432\u0430\u0442\u044C'
+                        'Copy'
                     ),
                     _react2.default.createElement(
                         'button',
                         { className: 'vk-button', onClick: this.handleOpenReplace },
-                        '\u041F\u0435\u0440\u0435\u043C\u0435\u0441\u0442\u0438\u0442\u044C'
+                        'Replace'
                     ),
                     _react2.default.createElement(
                         'button',
-                        { className: 'vk-button' },
-                        '\u0423\u0434\u0430\u043B\u0438\u0442\u044C'
+                        { className: 'vk-button', onClick: this.handleOpenDelete },
+                        'Delete'
                     )
                 );
             }
@@ -52395,7 +52415,7 @@ var DocsCheckHeader = function (_React$Component) {
                 _react2.default.createElement(
                     'button',
                     { className: 'vk-button', onClick: this.handleOpenCopy },
-                    '\u041A\u043E\u043F\u0438\u0440\u043E\u0432\u0430\u0442\u044C'
+                    'Copy'
                 )
             );
         }
@@ -53256,6 +53276,144 @@ module.exports = function (css) {
 	return fixedCss;
 };
 
+
+/***/ }),
+/* 303 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+Object.defineProperty(exports, "__esModule", {
+    value: true
+});
+
+var _extends = Object.assign || function (target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i]; for (var key in source) { if (Object.prototype.hasOwnProperty.call(source, key)) { target[key] = source[key]; } } } return target; };
+
+var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+
+var _react = __webpack_require__(0);
+
+var _react2 = _interopRequireDefault(_react);
+
+var _reactRedux = __webpack_require__(7);
+
+var _redux = __webpack_require__(4);
+
+var _propTypes = __webpack_require__(1);
+
+var _propTypes2 = _interopRequireDefault(_propTypes);
+
+var _modal = __webpack_require__(14);
+
+var _document = __webpack_require__(13);
+
+var _constants = __webpack_require__(3);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
+
+function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
+
+var DocsDeleteComponent = function (_React$Component) {
+    _inherits(DocsDeleteComponent, _React$Component);
+
+    function DocsDeleteComponent() {
+        var _ref;
+
+        var _temp, _this, _ret;
+
+        _classCallCheck(this, DocsDeleteComponent);
+
+        for (var _len = arguments.length, args = Array(_len), _key = 0; _key < _len; _key++) {
+            args[_key] = arguments[_key];
+        }
+
+        return _ret = (_temp = (_this = _possibleConstructorReturn(this, (_ref = DocsDeleteComponent.__proto__ || Object.getPrototypeOf(DocsDeleteComponent)).call.apply(_ref, [this].concat(args))), _this), _this.handleClose = function () {
+            _this.props.modalOpen();
+        }, _this.handleBulkDelete = function () {
+            _this.props.bulkUpdateDocs(_constants.makeUrls.makeDeleteDocs(), _this.props.checkList);
+            _this.props.modalOpen();
+        }, _temp), _possibleConstructorReturn(_this, _ret);
+    }
+
+    _createClass(DocsDeleteComponent, [{
+        key: 'render',
+        value: function render() {
+            return _react2.default.createElement(
+                _react2.default.Fragment,
+                null,
+                _react2.default.createElement(
+                    'div',
+                    { className: 'modal-header' },
+                    _react2.default.createElement(
+                        'div',
+                        { className: 'modal-header-title' },
+                        _react2.default.createElement(
+                            'p',
+                            null,
+                            'Delete files'
+                        )
+                    )
+                ),
+                _react2.default.createElement(
+                    'div',
+                    { className: 'modal-content' },
+                    _react2.default.createElement(
+                        'div',
+                        { className: 'content-flex-modal' },
+                        _react2.default.createElement(
+                            'p',
+                            null,
+                            'Are you realy want to delete ',
+                            this.props.count,
+                            ' files?'
+                        )
+                    ),
+                    _react2.default.createElement(
+                        'button',
+                        { className: 'vk-button', onClick: this.handleBulkDelete },
+                        'Delete'
+                    ),
+                    _react2.default.createElement(
+                        'button',
+                        { className: 'vk-button', onClick: this.handleClose },
+                        'Cancel'
+                    )
+                )
+            );
+        }
+    }]);
+
+    return DocsDeleteComponent;
+}(_react2.default.Component);
+
+DocsDeleteComponent.propTypes = {
+    count: _propTypes2.default.number.isRequired,
+    modalOpen: _propTypes2.default.func.isRequired,
+    bulkUpdateDocs: _propTypes2.default.func.isRequired,
+    checkList: _propTypes2.default.array.isRequired
+};
+
+
+var mapStoreToProps = function mapStoreToProps(state) {
+    return {
+        count: state.document.countCheck,
+        checkList: state.document.checkList
+    };
+};
+
+var mapDispatchToProps = function mapDispatchToProps(dispatch) {
+    return _extends({}, (0, _redux.bindActionCreators)({
+        modalOpen: _modal.modalOpen,
+        bulkUpdateDocs: _document.bulkUpdateDocs
+    }, dispatch));
+};
+
+exports.default = (0, _reactRedux.connect)(mapStoreToProps, mapDispatchToProps)(DocsDeleteComponent);
 
 /***/ })
 /******/ ]);

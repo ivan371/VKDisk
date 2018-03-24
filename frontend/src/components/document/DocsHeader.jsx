@@ -76,6 +76,7 @@ class DocsHeaderComponent extends React.Component {
         this.props.setModal(modalType.folderReplace);
     };
 
+
     handleGoBack = (e) => {
         this.props.history.goBack(e);
     };
@@ -150,6 +151,10 @@ class DocsHeaderComponent extends React.Component {
 
     render() {
         let folderHeader = null;
+        let modal = null;
+        if (this.props.isOpen) {
+            modal = <Modal />;
+        }
         if (this.props.isLoading
             && ((this.props.params.hasOwnProperty('id')) || this.props.folder === folderType.root)) {
             folderHeader = (<React.Fragment>
@@ -157,6 +162,7 @@ class DocsHeaderComponent extends React.Component {
             </React.Fragment>);
         }
         return (<div className="content-item">
+            {modal}
             {folderHeader}
         </div>);
     }
@@ -172,6 +178,7 @@ const mapStoreToProps = state => ({
     filterSelect: state.page.filterSelect.docs,
     filter: state.page.filter.docs,
     countCheck: state.document.countCheck,
+    isOpen: state.modal.isOpen,
 });
 
 const mapDispatchToProps = dispatch => ({

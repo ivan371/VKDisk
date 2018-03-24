@@ -21,6 +21,10 @@ export default class DocsCheckHeader extends React.Component {
         this.props.setModal(modalType.folderReplace);
     };
 
+    handleOpenDelete = () => {
+        this.props.modalOpen();
+        this.props.setModal(modalType.documentDelete);
+    }
 
     handleClearAll = () => {
         this.props.checkAll();
@@ -32,16 +36,16 @@ export default class DocsCheckHeader extends React.Component {
             return (<React.Fragment>
                 <div className="item-name">{this.props.countCheck} files</div>
                 <img src={ items.clear } className="item-left" onClick={ this.handleClearAll } />
-                <button className="vk-button" onClick={ this.handleOpenCopy }>Копировать</button>
-                <button className="vk-button" onClick={ this.handleOpenReplace }>Переместить</button>
-                <button className="vk-button">Удалить</button>
+                <button className="vk-button" onClick={ this.handleOpenCopy }>Copy</button>
+                <button className="vk-button" onClick={ this.handleOpenReplace }>Replace</button>
+                <button className="vk-button" onClick={ this.handleOpenDelete }>Delete</button>
             </React.Fragment>);
         }
         return <React.Fragment>
             <div className="item-name">{this.props.countCheck} files</div>
             <img src={ items.clear } className="item-left" onClick={ this.handleClearAll } />
             <img src={ items.clear } className="item-left" />
-            <button className="vk-button" onClick={ this.handleOpenCopy }>Копировать</button>
+            <button className="vk-button" onClick={ this.handleOpenCopy }>Copy</button>
         </React.Fragment>;
     }
 }
