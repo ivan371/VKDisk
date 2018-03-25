@@ -2384,7 +2384,7 @@ var _TransferFolder = __webpack_require__(292);
 
 var _TransferFolder2 = _interopRequireDefault(_TransferFolder);
 
-var _DocsDelete = __webpack_require__(303);
+var _DocsDelete = __webpack_require__(293);
 
 var _DocsDelete2 = _interopRequireDefault(_DocsDelete);
 
@@ -25288,7 +25288,7 @@ var _App = __webpack_require__(273);
 
 var _App2 = _interopRequireDefault(_App);
 
-__webpack_require__(298);
+__webpack_require__(299);
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
@@ -50311,11 +50311,11 @@ var _RootFolder = __webpack_require__(286);
 
 var _RootFolder2 = _interopRequireDefault(_RootFolder);
 
-var _ChatFolder = __webpack_require__(296);
+var _ChatFolder = __webpack_require__(297);
 
 var _ChatFolder2 = _interopRequireDefault(_ChatFolder);
 
-var _FolderFolder = __webpack_require__(297);
+var _FolderFolder = __webpack_require__(298);
 
 var _FolderFolder2 = _interopRequireDefault(_FolderFolder);
 
@@ -51604,15 +51604,15 @@ var _Modal = __webpack_require__(51);
 
 var _Modal2 = _interopRequireDefault(_Modal);
 
-var _DocsFilterHeader = __webpack_require__(293);
+var _DocsFilterHeader = __webpack_require__(294);
 
 var _DocsFilterHeader2 = _interopRequireDefault(_DocsFilterHeader);
 
-var _DocsCheckHeader = __webpack_require__(294);
+var _DocsCheckHeader = __webpack_require__(295);
 
 var _DocsCheckHeader2 = _interopRequireDefault(_DocsCheckHeader);
 
-var _DocsDateHeader = __webpack_require__(295);
+var _DocsDateHeader = __webpack_require__(296);
 
 var _DocsDateHeader2 = _interopRequireDefault(_DocsDateHeader);
 
@@ -52182,6 +52182,144 @@ Object.defineProperty(exports, "__esModule", {
     value: true
 });
 
+var _extends = Object.assign || function (target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i]; for (var key in source) { if (Object.prototype.hasOwnProperty.call(source, key)) { target[key] = source[key]; } } } return target; };
+
+var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+
+var _react = __webpack_require__(0);
+
+var _react2 = _interopRequireDefault(_react);
+
+var _reactRedux = __webpack_require__(7);
+
+var _redux = __webpack_require__(4);
+
+var _propTypes = __webpack_require__(1);
+
+var _propTypes2 = _interopRequireDefault(_propTypes);
+
+var _modal = __webpack_require__(14);
+
+var _document = __webpack_require__(13);
+
+var _constants = __webpack_require__(3);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
+
+function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
+
+var DocsDeleteComponent = function (_React$Component) {
+    _inherits(DocsDeleteComponent, _React$Component);
+
+    function DocsDeleteComponent() {
+        var _ref;
+
+        var _temp, _this, _ret;
+
+        _classCallCheck(this, DocsDeleteComponent);
+
+        for (var _len = arguments.length, args = Array(_len), _key = 0; _key < _len; _key++) {
+            args[_key] = arguments[_key];
+        }
+
+        return _ret = (_temp = (_this = _possibleConstructorReturn(this, (_ref = DocsDeleteComponent.__proto__ || Object.getPrototypeOf(DocsDeleteComponent)).call.apply(_ref, [this].concat(args))), _this), _this.handleClose = function () {
+            _this.props.modalOpen();
+        }, _this.handleBulkDelete = function () {
+            _this.props.bulkUpdateDocs(_constants.makeUrls.makeDeleteDocs(), _this.props.checkList);
+            _this.props.modalOpen();
+        }, _temp), _possibleConstructorReturn(_this, _ret);
+    }
+
+    _createClass(DocsDeleteComponent, [{
+        key: 'render',
+        value: function render() {
+            return _react2.default.createElement(
+                _react2.default.Fragment,
+                null,
+                _react2.default.createElement(
+                    'div',
+                    { className: 'modal-header' },
+                    _react2.default.createElement(
+                        'div',
+                        { className: 'modal-header-title' },
+                        _react2.default.createElement(
+                            'p',
+                            null,
+                            'Delete files'
+                        )
+                    )
+                ),
+                _react2.default.createElement(
+                    'div',
+                    { className: 'modal-content' },
+                    _react2.default.createElement(
+                        'div',
+                        { className: 'content-flex-modal' },
+                        _react2.default.createElement(
+                            'p',
+                            null,
+                            'Are you realy want to delete ',
+                            this.props.count,
+                            ' files?'
+                        )
+                    ),
+                    _react2.default.createElement(
+                        'button',
+                        { className: 'vk-button', onClick: this.handleBulkDelete },
+                        'Delete'
+                    ),
+                    _react2.default.createElement(
+                        'button',
+                        { className: 'vk-button', onClick: this.handleClose },
+                        'Cancel'
+                    )
+                )
+            );
+        }
+    }]);
+
+    return DocsDeleteComponent;
+}(_react2.default.Component);
+
+DocsDeleteComponent.propTypes = {
+    count: _propTypes2.default.number.isRequired,
+    modalOpen: _propTypes2.default.func.isRequired,
+    bulkUpdateDocs: _propTypes2.default.func.isRequired,
+    checkList: _propTypes2.default.array.isRequired
+};
+
+
+var mapStoreToProps = function mapStoreToProps(state) {
+    return {
+        count: state.document.countCheck,
+        checkList: state.document.checkList
+    };
+};
+
+var mapDispatchToProps = function mapDispatchToProps(dispatch) {
+    return _extends({}, (0, _redux.bindActionCreators)({
+        modalOpen: _modal.modalOpen,
+        bulkUpdateDocs: _document.bulkUpdateDocs
+    }, dispatch));
+};
+
+exports.default = (0, _reactRedux.connect)(mapStoreToProps, mapDispatchToProps)(DocsDeleteComponent);
+
+/***/ }),
+/* 294 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+Object.defineProperty(exports, "__esModule", {
+    value: true
+});
+
 var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
 
 var _react = __webpack_require__(0);
@@ -52312,7 +52450,7 @@ DocsFilterHeader.propTypes = {
 exports.default = DocsFilterHeader;
 
 /***/ }),
-/* 294 */
+/* 295 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -52434,7 +52572,7 @@ DocsCheckHeader.propTypes = {
 exports.default = DocsCheckHeader;
 
 /***/ }),
-/* 295 */
+/* 296 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -52551,7 +52689,7 @@ DocsDateHeader.propTypes = {
 exports.default = DocsDateHeader;
 
 /***/ }),
-/* 296 */
+/* 297 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -52603,7 +52741,7 @@ var ChatFolderComponent = function (_React$Component) {
 exports.default = ChatFolderComponent;
 
 /***/ }),
-/* 297 */
+/* 298 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -52655,11 +52793,11 @@ var FolderFolderComponent = function (_React$Component) {
 exports.default = FolderFolderComponent;
 
 /***/ }),
-/* 298 */
+/* 299 */
 /***/ (function(module, exports, __webpack_require__) {
 
 
-var content = __webpack_require__(299);
+var content = __webpack_require__(300);
 
 if(typeof content === 'string') content = [[module.i, content, '']];
 
@@ -52673,7 +52811,7 @@ var options = {"hmr":true}
 options.transform = transform
 options.insertInto = undefined;
 
-var update = __webpack_require__(301)(content, options);
+var update = __webpack_require__(302)(content, options);
 
 if(content.locals) module.exports = content.locals;
 
@@ -52705,10 +52843,10 @@ if(false) {
 }
 
 /***/ }),
-/* 299 */
+/* 300 */
 /***/ (function(module, exports, __webpack_require__) {
 
-exports = module.exports = __webpack_require__(300)(false);
+exports = module.exports = __webpack_require__(301)(false);
 // imports
 
 
@@ -52719,7 +52857,7 @@ exports.push([module.i, "body {\n  background-color: #EDEEF0;\n  margin: 0;\n  f
 
 
 /***/ }),
-/* 300 */
+/* 301 */
 /***/ (function(module, exports) {
 
 /*
@@ -52801,7 +52939,7 @@ function toComment(sourceMap) {
 
 
 /***/ }),
-/* 301 */
+/* 302 */
 /***/ (function(module, exports, __webpack_require__) {
 
 /*
@@ -52867,7 +53005,7 @@ var singleton = null;
 var	singletonCounter = 0;
 var	stylesInsertedAtTop = [];
 
-var	fixUrls = __webpack_require__(302);
+var	fixUrls = __webpack_require__(303);
 
 module.exports = function(list, options) {
 	if (typeof DEBUG !== "undefined" && DEBUG) {
@@ -53183,7 +53321,7 @@ function updateLink (link, options, obj) {
 
 
 /***/ }),
-/* 302 */
+/* 303 */
 /***/ (function(module, exports) {
 
 
@@ -53276,144 +53414,6 @@ module.exports = function (css) {
 	return fixedCss;
 };
 
-
-/***/ }),
-/* 303 */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-
-
-Object.defineProperty(exports, "__esModule", {
-    value: true
-});
-
-var _extends = Object.assign || function (target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i]; for (var key in source) { if (Object.prototype.hasOwnProperty.call(source, key)) { target[key] = source[key]; } } } return target; };
-
-var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
-
-var _react = __webpack_require__(0);
-
-var _react2 = _interopRequireDefault(_react);
-
-var _reactRedux = __webpack_require__(7);
-
-var _redux = __webpack_require__(4);
-
-var _propTypes = __webpack_require__(1);
-
-var _propTypes2 = _interopRequireDefault(_propTypes);
-
-var _modal = __webpack_require__(14);
-
-var _document = __webpack_require__(13);
-
-var _constants = __webpack_require__(3);
-
-function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-
-function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
-
-function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
-
-function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
-
-var DocsDeleteComponent = function (_React$Component) {
-    _inherits(DocsDeleteComponent, _React$Component);
-
-    function DocsDeleteComponent() {
-        var _ref;
-
-        var _temp, _this, _ret;
-
-        _classCallCheck(this, DocsDeleteComponent);
-
-        for (var _len = arguments.length, args = Array(_len), _key = 0; _key < _len; _key++) {
-            args[_key] = arguments[_key];
-        }
-
-        return _ret = (_temp = (_this = _possibleConstructorReturn(this, (_ref = DocsDeleteComponent.__proto__ || Object.getPrototypeOf(DocsDeleteComponent)).call.apply(_ref, [this].concat(args))), _this), _this.handleClose = function () {
-            _this.props.modalOpen();
-        }, _this.handleBulkDelete = function () {
-            _this.props.bulkUpdateDocs(_constants.makeUrls.makeDeleteDocs(), _this.props.checkList);
-            _this.props.modalOpen();
-        }, _temp), _possibleConstructorReturn(_this, _ret);
-    }
-
-    _createClass(DocsDeleteComponent, [{
-        key: 'render',
-        value: function render() {
-            return _react2.default.createElement(
-                _react2.default.Fragment,
-                null,
-                _react2.default.createElement(
-                    'div',
-                    { className: 'modal-header' },
-                    _react2.default.createElement(
-                        'div',
-                        { className: 'modal-header-title' },
-                        _react2.default.createElement(
-                            'p',
-                            null,
-                            'Delete files'
-                        )
-                    )
-                ),
-                _react2.default.createElement(
-                    'div',
-                    { className: 'modal-content' },
-                    _react2.default.createElement(
-                        'div',
-                        { className: 'content-flex-modal' },
-                        _react2.default.createElement(
-                            'p',
-                            null,
-                            'Are you realy want to delete ',
-                            this.props.count,
-                            ' files?'
-                        )
-                    ),
-                    _react2.default.createElement(
-                        'button',
-                        { className: 'vk-button', onClick: this.handleBulkDelete },
-                        'Delete'
-                    ),
-                    _react2.default.createElement(
-                        'button',
-                        { className: 'vk-button', onClick: this.handleClose },
-                        'Cancel'
-                    )
-                )
-            );
-        }
-    }]);
-
-    return DocsDeleteComponent;
-}(_react2.default.Component);
-
-DocsDeleteComponent.propTypes = {
-    count: _propTypes2.default.number.isRequired,
-    modalOpen: _propTypes2.default.func.isRequired,
-    bulkUpdateDocs: _propTypes2.default.func.isRequired,
-    checkList: _propTypes2.default.array.isRequired
-};
-
-
-var mapStoreToProps = function mapStoreToProps(state) {
-    return {
-        count: state.document.countCheck,
-        checkList: state.document.checkList
-    };
-};
-
-var mapDispatchToProps = function mapDispatchToProps(dispatch) {
-    return _extends({}, (0, _redux.bindActionCreators)({
-        modalOpen: _modal.modalOpen,
-        bulkUpdateDocs: _document.bulkUpdateDocs
-    }, dispatch));
-};
-
-exports.default = (0, _reactRedux.connect)(mapStoreToProps, mapDispatchToProps)(DocsDeleteComponent);
 
 /***/ })
 /******/ ]);
