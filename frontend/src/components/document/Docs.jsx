@@ -41,8 +41,8 @@ class DocsComponent extends React.Component {
             this.props.loadFilterFolders(makeUrls.makeFilterFoldersFolder(this.props.params.id)).then(this.scrollStart);
         }
         if (this.props.folder === folderType.root) {
-            this.props.loadDocs(urls.docs.unsortedDocsUrl);
-            this.props.loadFilterFolders(makeUrls.makeRootFoldersFolder()).then(this.scrollStart);
+            this.props.loadDocs(urls.docs.unsortedDocsUrl).then(
+                () => this.props.loadFilterFolders(makeUrls.makeRootFoldersFolder()).then(this.scrollStart));
         }
     }
     componentWillReceiveProps(nextProps) {

@@ -16,7 +16,7 @@ class LargeResultsSetPagination(PageNumberPagination):
 
 
 class FolderViewSet(viewsets.ModelViewSet):
-    queryset = Folder.objects.all().prefetch_related('author', 'folder_set', 'folder_set__root')
+    queryset = Folder.objects.all().prefetch_related('author', 'folder_set', 'folder_set__root').get_descendants(include_self=True)
     serializer_class = FolderSerializer
     pagination_class = LargeResultsSetPagination
 

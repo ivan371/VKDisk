@@ -25,6 +25,8 @@ class NodeChatComponent extends React.Component {
             nodeList = this.props.folderList.map(nodeId => (<Node
                 id={ nodeId }
                 key={ nodeId }
+                folders={ this.props.folders }
+                title={ this.props.folders[nodeId].title }
                 folder={ this.props.folder }
             />));
         }
@@ -49,6 +51,7 @@ class NodeChatComponent extends React.Component {
 const mapStoreToProps = (state, props) => ({
     isLoading: state.folder.isLoading,
     folderList: state.folder.folderList,
+    folders: state.folder.folders,
 });
 
 const mapDispatchToProps = dispatch => ({

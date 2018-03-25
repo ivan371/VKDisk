@@ -110,7 +110,7 @@ class CustomRowComponent extends React.Component {
 
     renderNodeList() {
         return [
-            <NodeRoot key="1" folder={ this.props.folder } />,
+            <NodeRoot key="1" folder={ this.props.folder } folderList={ this.props.folderTileList } />,
             <NodeChat key="2" folder={ this.props.folder } />,
         ];
     }
@@ -142,6 +142,7 @@ class CustomRowComponent extends React.Component {
 const mapStoreToProps = state => ({
     isLoading: state.folder.isLoading,
     folderList: state.folder.folderList,
+    folderTileList: state.folder.folderTileList,
     page: state.folder.page,
     count: state.folder.count,
     allowDrag: state.drag.allowDrag,

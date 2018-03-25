@@ -20,7 +20,16 @@ class FolderSerializer(serializers.HyperlinkedModelSerializer):
 
     class Meta:
         model = Folder
-        fields = ('id', 'author', 'title', 'root', 'type', 'folder_set')
+        fields = ('id', 'author', 'title', 'root', 'type', 'folder_set', 'root')
+
+
+class FolderRootRecursiveSimpleSerializer(serializers.HyperlinkedModelSerializer):
+    author = serializers.PrimaryKeyRelatedField(many=False, read_only=True)
+    root = RecursiveField('FolderSerializer', required=False)
+
+    class Meta:
+        model = Folder
+        fields = ('id', 'author', 'title', 'root', 'type')
 
 
 class FolderSimpleSerializer(serializers.HyperlinkedModelSerializer):
@@ -30,6 +39,16 @@ class FolderSimpleSerializer(serializers.HyperlinkedModelSerializer):
     class Meta:
         model = Folder
         fields = ('id', 'author', 'title', 'root', 'type')
+
+
+class FolderRecursiveSerializer(serializers.HyperlinkedModelSerializer):
+    author = serializers.PrimaryKeyRelatedField(many=False, read_only=True)
+    folder_set = FolderSimpleSerializer(many=True)
+    root = RecursiveField('FolderSerializer', required=False)
+
+    class Meta:
+        model = Folder
+        fields = ('id', 'author', 'title', 'root', 'type', 'folder_set', 'root')
 
 
 class FolderTransferSerializer(serializers.ModelSerializer):
