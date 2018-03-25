@@ -1,4 +1,5 @@
 import update from 'react-addons-update';
+import _ from 'lodash';
 import {
     FOLDER_CREATE, FOLDER_UNMOUNT,
     LOAD_FILTER_FOLDERS, LOAD_FILTER_FOLDERS_SUCCESS, LOAD_FOLDER, LOAD_FOLDERS, LOAD_FOLDERS_MORE,
@@ -7,7 +8,7 @@ import {
     LOAD_RECURSIVE_FOLDERS_SUCCESS,
 } from '../actions/folder';
 import { DOCS_UNMOUNT } from '../actions/document';
-import _ from 'lodash';
+import { folderType } from "../constants";
 
 const initalState = {
     isLoading: false,
@@ -30,11 +31,20 @@ const initalState = {
 function filter(folders, id) {
     const keys = [];
     for (const i in folders) {
-        if (folders[i].root != id) {
+        if (folders[i].root != id || folders[i].type === folderType.chat) {
             keys.push(folders[i].id);
         }
     }
-    console.log(keys);
+    return keys;
+}
+
+function filterRoot(folders) {
+    const keys = [];
+    for (const i in folders) {
+        if (folders[i].root != null || folders[i].type === folderType.chat) {
+            keys.push(folders[i].id);
+        }
+    }
     return keys;
 }
 
@@ -75,7 +85,12 @@ export default function folder(store = initalState, action) {
         case FILTER_FOLDERS:
             return update(store, {
                 folderTileList: {
-                    $set: _.difference(Object.keys(store.folders).map(id => parseInt(id)) || {}, filter(store.folders, action.id)),
+                    $set: _.difference(Object.keys(store.folders)
+                        .map(id => parseInt(id)) || {}, filter(store.folders, action.id)),
+                },
+                folderList: {
+                    $set: _.difference(Object.keys(store.folders)
+                        .map(id => parseInt(id)) || {}, filterRoot(store.folders, action.id)),
                 },
             });
         case LOAD_FOLDERS:

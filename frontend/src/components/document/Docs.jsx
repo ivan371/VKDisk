@@ -3,14 +3,14 @@ import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
 import { withRouter } from 'react-router-dom';
 import PropTypes from 'prop-types';
-import {apps, folderType, makeUrls, urls, view} from '../../constants';
+import { apps, folderType, makeUrls, urls, view } from '../../constants';
 import { checkAll, docsUnMount, loadDocs, loadDocsMore } from '../../actions/document';
-import {filterFolders, loadFilterFolders, loadRecursiveFolders} from '../../actions/folder';
+import { filterFolders, loadFilterFolders, loadRecursiveFolders } from '../../actions/folder';
 import { modalOpen, setModal } from '../../actions/modal';
 import FoldersTile from '../tile/FoldersTile';
 import DocsTile from '../tile/DocsTile';
 import DocsHeader from './DocsHeader';
-import {changeView, clearFilter} from '../../actions/page';
+import { changeView, clearFilter } from '../../actions/page';
 
 class DocsComponent extends React.Component {
     static propTypes = {
@@ -39,10 +39,12 @@ class DocsComponent extends React.Component {
 
     componentDidMount() {
         if (this.props.params.hasOwnProperty('id')) {
-            this.props.loadDocs(makeUrls.makeFilterDocsFolder(this.props.params.id));
+            this.props.loadDocs(makeUrls.makeFilterDocsFolder(this.props.params.id))
+                .then(() => this.props.loadFilterFolders(makeUrls.makeRootFoldersFolder())
+                    .then(this.scrollStart))
+                .then(() => this.props.filterFolders(parseInt(this.props.params.id)));
             // this.props.loadFilterFolders(makeUrls.makeFilterFoldersFolder(this.props.params.id))
             //     .then(this.scrollStart).then(() => this.props.filterFolders(this.props.params.id));
-            this.props.filterFolders(parseInt(this.props.params.id));
             this.props.loadRecursiveFolders(makeUrls.makeFolderRecursive(this.props.params.id));
         }
         if (this.props.folder === folderType.root) {
@@ -106,7 +108,7 @@ class DocsComponent extends React.Component {
     };
 
     scrollStart = () => {
-        this.setState({ scroll: document.getElementsByClassName('content-flex')[0]} );
+        this.setState({ scroll: document.getElementsByClassName('content-flex')[0] });
     };
 
     renderView() {

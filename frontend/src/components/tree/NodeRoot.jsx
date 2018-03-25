@@ -25,7 +25,7 @@ class NodeRootComponent extends React.Component {
         const link = '/root';
         let nodeList = [];
         if (this.props.isLoading &&
-            (this.props.folder === folderType.root)) {
+            (this.props.folder !== folderType.chat)) {
             nodeList = this.props.folderList.map(nodeId => (<Node
                 id={ nodeId }
                 key={ nodeId }
@@ -33,7 +33,9 @@ class NodeRootComponent extends React.Component {
                 folders={ this.props.folders }
                 title={ this.props.folders[nodeId].title }
                 foldersRecursiveList={ this.props.foldersRecursiveList }
-                nodeList={ this.props.folders[nodeId].hasOwnProperty('folder_set') ? this.props.folders[nodeId].folder_set : [] }
+                nodeList={ this.props.folders[nodeId].hasOwnProperty('folder_set')
+                && this.props.foldersRecursiveList.indexOf(nodeId) !== -1
+                    ? this.props.folders[nodeId].folder_set : [] }
             />));
         }
         return (

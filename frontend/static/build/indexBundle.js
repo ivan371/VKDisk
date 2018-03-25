@@ -3858,7 +3858,7 @@ var CustomRowComponent = function (_React$Component) {
     }, {
         key: 'renderNodeList',
         value: function renderNodeList() {
-            return [_react2.default.createElement(_NodeRoot2.default, { key: '1', folder: this.props.folder, folderList: this.props.folderTileList }), _react2.default.createElement(_NodeChat2.default, { key: '2', folder: this.props.folder })];
+            return [_react2.default.createElement(_NodeRoot2.default, { key: '1', folder: this.props.folder, folderList: this.props.folderList }), _react2.default.createElement(_NodeChat2.default, { key: '2', folder: this.props.folder })];
         }
     }, {
         key: 'render',
@@ -4101,7 +4101,7 @@ var NodeComponent = function (_React$Component) {
     _createClass(NodeComponent, [{
         key: 'renderImage',
         value: function renderImage() {
-            if (this.props.folder === _constants.folderType.folder && this.props.foldersRecursiveList.hasOwnProperty(this.props.id)) {
+            if (this.props.folder === _constants.folderType.folder && this.props.foldersRecursiveList.indexOf(this.props.id) !== -1) {
                 return _constants.items.arrow;
             }
             return _constants.format.folder;
@@ -4114,6 +4114,9 @@ var NodeComponent = function (_React$Component) {
             var link = null;
             switch (this.props.folder) {
                 case _constants.folderType.root:
+                    link = '/folder/' + this.props.id;
+                    break;
+                case _constants.folderType.folder:
                     link = '/folder/' + this.props.id;
                     break;
                 case _constants.folderType.chat:
@@ -4131,7 +4134,7 @@ var NodeComponent = function (_React$Component) {
                         folders: _this2.props.folders,
                         title: _this2.props.folders[nodeId].title,
                         foldersRecursiveList: _this2.props.foldersRecursiveList,
-                        nodeList: _this2.props.folders[nodeId].hasOwnProperty('folder_set') ? _this2.props.folders[nodeId].folder_set : []
+                        nodeList: _this2.props.folders[nodeId].hasOwnProperty('folder_set') && _this2.props.foldersRecursiveList.indexOf(nodeId) !== -1 ? _this2.props.folders[nodeId].folder_set : []
                     });
                 });
             }
@@ -48949,13 +48952,15 @@ var _reactAddonsUpdate = __webpack_require__(35);
 
 var _reactAddonsUpdate2 = _interopRequireDefault(_reactAddonsUpdate);
 
+var _lodash = __webpack_require__(141);
+
+var _lodash2 = _interopRequireDefault(_lodash);
+
 var _folder = __webpack_require__(24);
 
 var _document = __webpack_require__(13);
 
-var _lodash = __webpack_require__(141);
-
-var _lodash2 = _interopRequireDefault(_lodash);
+var _constants = __webpack_require__(3);
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
@@ -48980,11 +48985,20 @@ var initalState = {
 function filter(folders, id) {
     var keys = [];
     for (var i in folders) {
-        if (folders[i].root != id) {
+        if (folders[i].root != id || folders[i].type === _constants.folderType.chat) {
             keys.push(folders[i].id);
         }
     }
-    console.log(keys);
+    return keys;
+}
+
+function filterRoot(folders) {
+    var keys = [];
+    for (var i in folders) {
+        if (folders[i].root != null || folders[i].type === _constants.folderType.chat) {
+            keys.push(folders[i].id);
+        }
+    }
     return keys;
 }
 
@@ -49033,6 +49047,11 @@ function folder() {
                     $set: _lodash2.default.difference(Object.keys(store.folders).map(function (id) {
                         return parseInt(id);
                     }) || {}, filter(store.folders, action.id))
+                },
+                folderList: {
+                    $set: _lodash2.default.difference(Object.keys(store.folders).map(function (id) {
+                        return parseInt(id);
+                    }) || {}, filterRoot(store.folders, action.id))
                 }
             });
         case _folder.LOAD_FOLDERS:
@@ -51424,10 +51443,13 @@ var DocsComponent = function (_React$Component) {
             var _this2 = this;
 
             if (this.props.params.hasOwnProperty('id')) {
-                this.props.loadDocs(_constants.makeUrls.makeFilterDocsFolder(this.props.params.id));
+                this.props.loadDocs(_constants.makeUrls.makeFilterDocsFolder(this.props.params.id)).then(function () {
+                    return _this2.props.loadFilterFolders(_constants.makeUrls.makeRootFoldersFolder()).then(_this2.scrollStart);
+                }).then(function () {
+                    return _this2.props.filterFolders(parseInt(_this2.props.params.id));
+                });
                 // this.props.loadFilterFolders(makeUrls.makeFilterFoldersFolder(this.props.params.id))
                 //     .then(this.scrollStart).then(() => this.props.filterFolders(this.props.params.id));
-                this.props.filterFolders(parseInt(this.props.params.id));
                 this.props.loadRecursiveFolders(_constants.makeUrls.makeFolderRecursive(this.props.params.id));
             }
             if (this.props.folder === _constants.folderType.root) {
@@ -52986,7 +53008,7 @@ var NodeRootComponent = function (_React$Component) {
 
             var link = '/root';
             var nodeList = [];
-            if (this.props.isLoading && this.props.folder === _constants.folderType.root) {
+            if (this.props.isLoading && this.props.folder !== _constants.folderType.chat) {
                 nodeList = this.props.folderList.map(function (nodeId) {
                     return _react2.default.createElement(_Node2.default, {
                         id: nodeId,
@@ -52995,7 +53017,7 @@ var NodeRootComponent = function (_React$Component) {
                         folders: _this2.props.folders,
                         title: _this2.props.folders[nodeId].title,
                         foldersRecursiveList: _this2.props.foldersRecursiveList,
-                        nodeList: _this2.props.folders[nodeId].hasOwnProperty('folder_set') ? _this2.props.folders[nodeId].folder_set : []
+                        nodeList: _this2.props.folders[nodeId].hasOwnProperty('folder_set') && _this2.props.foldersRecursiveList.indexOf(nodeId) !== -1 ? _this2.props.folders[nodeId].folder_set : []
                     });
                 });
             }

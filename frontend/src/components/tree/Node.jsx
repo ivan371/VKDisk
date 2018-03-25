@@ -15,7 +15,7 @@ export default class NodeComponent extends React.Component {
 
     renderImage() {
         if (this.props.folder === folderType.folder
-            && this.props.foldersRecursiveList.hasOwnProperty(this.props.id)) {
+            && this.props.foldersRecursiveList.indexOf(this.props.id) !== -1) {
             return items.arrow;
         }
         return format.folder;
@@ -25,6 +25,9 @@ export default class NodeComponent extends React.Component {
         let link = null;
         switch (this.props.folder) {
             case folderType.root:
+                link = `/folder/${this.props.id}`;
+                break;
+            case folderType.folder:
                 link = `/folder/${this.props.id}`;
                 break;
             case folderType.chat:
@@ -41,7 +44,9 @@ export default class NodeComponent extends React.Component {
                 folders={ this.props.folders }
                 title={ this.props.folders[nodeId].title }
                 foldersRecursiveList={ this.props.foldersRecursiveList }
-                nodeList={ this.props.folders[nodeId].hasOwnProperty('folder_set') ? this.props.folders[nodeId].folder_set : [] }
+                nodeList={ this.props.folders[nodeId].hasOwnProperty('folder_set')
+                && this.props.foldersRecursiveList.indexOf(nodeId) !== -1
+                    ? this.props.folders[nodeId].folder_set : [] }
             />));
         }
         return (

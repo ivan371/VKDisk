@@ -110,7 +110,7 @@ class CustomRowComponent extends React.Component {
 
     renderNodeList() {
         return [
-            <NodeRoot key="1" folder={ this.props.folder } folderList={ this.props.folderTileList } />,
+            <NodeRoot key="1" folder={ this.props.folder } folderList={ this.props.folderList } />,
             <NodeChat key="2" folder={ this.props.folder } />,
         ];
     }
