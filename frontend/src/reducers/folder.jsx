@@ -3,9 +3,11 @@ import {
     FOLDER_CREATE, FOLDER_UNMOUNT,
     LOAD_FILTER_FOLDERS, LOAD_FILTER_FOLDERS_SUCCESS, LOAD_FOLDER, LOAD_FOLDERS, LOAD_FOLDERS_MORE,
     LOAD_FOLDERS_SUCCESS, LOAD_FOLDERS_TRANSFER, LOAD_FOLDERS_TRANSFER_SUCCESS, SWITCH_FOLDER, TRANSFER_UNMOUNT,
-    LOAD_FOLDERS_MORE_START, DELETE_FOLDER_SUCCESS,
+    LOAD_FOLDERS_MORE_START, DELETE_FOLDER_SUCCESS, FILTER_FOLDERS, LOAD_RECURSIVE_FOLDERS,
+    LOAD_RECURSIVE_FOLDERS_SUCCESS,
 } from '../actions/folder';
 import { DOCS_UNMOUNT } from '../actions/document';
+import _ from 'lodash';
 
 const initalState = {
     isLoading: false,
@@ -13,20 +15,34 @@ const initalState = {
     isTileLoading: false,
     isTransferLoading: false,
     isOwnFolderLoading: false,
+    isRecursiveLoading: false,
     count: 0,
     page: 2,
     folders: {},
+    foldersRecursiveList: [],
     folderList: [],
     folderTileList: [],
     folderTransferList: [],
     checkedFolder: null,
+    recursiveFolder: null,
 };
+
+function filter(folders, id) {
+    const keys = [];
+    for (const i in folders) {
+        if (folders[i].root != id) {
+            keys.push(folders[i].id);
+        }
+    }
+    console.log(keys);
+    return keys;
+}
 
 export default function folder(store = initalState, action) {
     if (action.hasOwnProperty('payload')) {
         if (action.payload !== undefined) {
             if (action.payload.hasOwnProperty('entities')) {
-                if (action.payload.entities.hasOwnProperty('folder')) {
+                if (action.payload.entities.hasOwnProperty('folder') && action.type !== LOAD_RECURSIVE_FOLDERS_SUCCESS) {
                     store = update(store, {
                         folders: {
                             $merge: action.payload.entities.folder,
@@ -38,6 +54,30 @@ export default function folder(store = initalState, action) {
     }
     let index = null;
     switch (action.type) {
+        case LOAD_RECURSIVE_FOLDERS:
+            return update(store, {
+                isRecursiveLoading: {
+                    $set: false,
+                },
+            });
+        case LOAD_RECURSIVE_FOLDERS_SUCCESS:
+            return update(store, {
+                isRecursiveLoading: {
+                    $set: true,
+                },
+                foldersRecursiveList: {
+                    $set: Object.keys(action.payload.entities.folder).map(id => parseInt(id)),
+                },
+                recursiveFolder: {
+                    $set: action.payload.result,
+                },
+            });
+        case FILTER_FOLDERS:
+            return update(store, {
+                folderTileList: {
+                    $set: _.difference(Object.keys(store.folders).map(id => parseInt(id)) || {}, filter(store.folders, action.id)),
+                },
+            });
         case LOAD_FOLDERS:
             return update(store, {
                 isLoading: {
@@ -130,12 +170,12 @@ export default function folder(store = initalState, action) {
             });
         case DOCS_UNMOUNT:
             return update(store, {
-                isTileLoading: {
-                    $set: false,
-                },
-                folderTileList: {
-                    $set: [],
-                },
+                // isTileLoading: {
+                //     $set: false,
+                // },
+                // folderTileList: {
+                //     $set: [],
+                // },
             });
         case SWITCH_FOLDER:
             return update(store, {
@@ -145,12 +185,12 @@ export default function folder(store = initalState, action) {
             });
         case FOLDER_UNMOUNT:
             return update(store, {
-                isLoading: {
-                    $set: false,
-                },
-                folderList: {
-                    $set: [],
-                },
+                // isLoading: {
+                //     $set: false,
+                // },
+                // folderList: {
+                //     $set: [],
+                // },
             });
         case TRANSFER_UNMOUNT:
             return update(store, {

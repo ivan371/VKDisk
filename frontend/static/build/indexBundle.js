@@ -386,6 +386,9 @@ var makeUrls = exports.makeUrls = {
     },
     makeTransferFolder: function makeTransferFolder(id) {
         return urls.folder.customFolderUrl + id + '/?replace';
+    },
+    makeFolderRecursive: function makeFolderRecursive(id) {
+        return urls.folder.customFolderUrl + id + '/?recursive';
     }
 };
 
@@ -1232,8 +1235,10 @@ module.exports = function (it, key) {
 Object.defineProperty(exports, "__esModule", {
     value: true
 });
-exports.DELETE_FOLDER_ERROR = exports.DELETE_FOLDER_SUCCESS = exports.DELETE_FOLDER = exports.TRANSFER_UNMOUNT = exports.LOAD_FOLDERS_MORE_START = exports.LOAD_FOLDERS_MORE = exports.FOLDER_UNMOUNT = exports.SWITCH_FOLDER = exports.FOLDER_UPDATE = exports.FOLDER_CREATE = exports.LOAD_FOLDER_ERROR = exports.LOAD_FOLDER_SUCCESS = exports.LOAD_FOLDER = exports.LOAD_FILTER_FOLDERS_ERROR = exports.LOAD_FILTER_FOLDERS_SUCCESS = exports.LOAD_FILTER_FOLDERS = exports.LOAD_FOLDERS_ERROR = exports.LOAD_FOLDERS_TRANSFER_SUCCESS = exports.LOAD_FOLDERS_TRANSFER = exports.LOAD_FOLDERS_SUCCESS = exports.LOAD_FOLDERS = undefined;
+exports.FILTER_FOLDERS = exports.DELETE_FOLDER_ERROR = exports.DELETE_FOLDER_SUCCESS = exports.DELETE_FOLDER = exports.TRANSFER_UNMOUNT = exports.LOAD_FOLDERS_MORE_START = exports.LOAD_FOLDERS_MORE = exports.FOLDER_UNMOUNT = exports.SWITCH_FOLDER = exports.FOLDER_UPDATE = exports.FOLDER_CREATE = exports.LOAD_FOLDER_ERROR = exports.LOAD_FOLDER_SUCCESS = exports.LOAD_FOLDER = exports.LOAD_FILTER_FOLDERS_ERROR = exports.LOAD_FILTER_FOLDERS_SUCCESS = exports.LOAD_FILTER_FOLDERS = exports.LOAD_FOLDERS_ERROR = exports.LOAD_FOLDERS_TRANSFER_SUCCESS = exports.LOAD_FOLDERS_TRANSFER = exports.LOAD_RECURSIVE_FOLDERS_SUCCESS = exports.LOAD_RECURSIVE_FOLDERS = exports.LOAD_FOLDERS_SUCCESS = exports.LOAD_FOLDERS = undefined;
 exports.loadFolders = loadFolders;
+exports.filterFolders = filterFolders;
+exports.loadRecursiveFolders = loadRecursiveFolders;
 exports.loadFoldersMore = loadFoldersMore;
 exports.updateFolderRoot = updateFolderRoot;
 exports.loadTransferFolders = loadTransferFolders;
@@ -1250,6 +1255,8 @@ var _folder = __webpack_require__(262);
 
 var LOAD_FOLDERS = exports.LOAD_FOLDERS = 'LOAD_FOLDERS';
 var LOAD_FOLDERS_SUCCESS = exports.LOAD_FOLDERS_SUCCESS = 'LOAD_FOLDERS_SUCCESS';
+var LOAD_RECURSIVE_FOLDERS = exports.LOAD_RECURSIVE_FOLDERS = 'LOAD_RECURSIVE_FOLDERS';
+var LOAD_RECURSIVE_FOLDERS_SUCCESS = exports.LOAD_RECURSIVE_FOLDERS_SUCCESS = 'LOAD_RECURSIVE_FOLDERS_SUCCESS';
 var LOAD_FOLDERS_TRANSFER = exports.LOAD_FOLDERS_TRANSFER = 'LOAD_FOLDERS_TRANSFER';
 var LOAD_FOLDERS_TRANSFER_SUCCESS = exports.LOAD_FOLDERS_TRANSFER_SUCCESS = 'LOAD_FOLDERS_TRANSFER_SUCCESS';
 var LOAD_FOLDERS_ERROR = exports.LOAD_FOLDERS_ERROR = 'LOAD_FOLDERS_ERROR';
@@ -1269,10 +1276,23 @@ var TRANSFER_UNMOUNT = exports.TRANSFER_UNMOUNT = 'TRANSFER_UNMOUNT';
 var DELETE_FOLDER = exports.DELETE_FOLDER = 'DELETE_FOLDER';
 var DELETE_FOLDER_SUCCESS = exports.DELETE_FOLDER_SUCCESS = 'DELETE_FOLDER_SUCCESS';
 var DELETE_FOLDER_ERROR = exports.DELETE_FOLDER_ERROR = 'DELETE_FOLDER_ERROR';
+var FILTER_FOLDERS = exports.FILTER_FOLDERS = 'FILTER_FOLDERS';
 
 function loadFolders(url) {
     var types = [LOAD_FOLDERS, LOAD_FOLDERS_SUCCESS, LOAD_FOLDERS_ERROR];
     return (0, _load.apiLoad)(url, 'GET', types, null, _folder.foldersNormalize, false);
+}
+
+function filterFolders(id) {
+    return {
+        type: FILTER_FOLDERS,
+        id: id
+    };
+}
+
+function loadRecursiveFolders(url) {
+    var types = [LOAD_RECURSIVE_FOLDERS, LOAD_RECURSIVE_FOLDERS_SUCCESS, LOAD_FOLDER_ERROR];
+    return (0, _load.apiLoad)(url, 'GET', types, null, _folder.folderRecursiveNormalize, true);
 }
 
 function loadFoldersMore(url) {
@@ -4053,10 +4073,6 @@ var _react = __webpack_require__(0);
 
 var _react2 = _interopRequireDefault(_react);
 
-var _reactRedux = __webpack_require__(5);
-
-var _redux = __webpack_require__(4);
-
 var _propTypes = __webpack_require__(1);
 
 var _propTypes2 = _interopRequireDefault(_propTypes);
@@ -4083,6 +4099,14 @@ var NodeComponent = function (_React$Component) {
     }
 
     _createClass(NodeComponent, [{
+        key: 'renderImage',
+        value: function renderImage() {
+            if (this.props.folder === _constants.folderType.folder && this.props.foldersRecursiveList.hasOwnProperty(this.props.id)) {
+                return _constants.items.arrow;
+            }
+            return _constants.format.folder;
+        }
+    }, {
         key: 'render',
         value: function render() {
             var _this2 = this;
@@ -4106,6 +4130,7 @@ var NodeComponent = function (_React$Component) {
                         folder: _this2.props.folder,
                         folders: _this2.props.folders,
                         title: _this2.props.folders[nodeId].title,
+                        foldersRecursiveList: _this2.props.foldersRecursiveList,
                         nodeList: _this2.props.folders[nodeId].hasOwnProperty('folder_set') ? _this2.props.folders[nodeId].folder_set : []
                     });
                 });
@@ -4122,7 +4147,7 @@ var NodeComponent = function (_React$Component) {
                         _react2.default.createElement(
                             'div',
                             null,
-                            _react2.default.createElement('img', { className: 'item', src: _constants.format.folder })
+                            _react2.default.createElement('img', { className: 'item', src: this.renderImage() })
                         ),
                         _react2.default.createElement(
                             'div',
@@ -4148,7 +4173,8 @@ NodeComponent.propTypes = {
     folder: _propTypes2.default.string.isRequired,
     title: _propTypes2.default.string.isRequired,
     nodeList: _propTypes2.default.array,
-    folders: _propTypes2.default.object
+    folders: _propTypes2.default.object,
+    foldersRecursiveList: _propTypes2.default.array
 };
 exports.default = NodeComponent;
 
@@ -48927,6 +48953,10 @@ var _folder = __webpack_require__(24);
 
 var _document = __webpack_require__(13);
 
+var _lodash = __webpack_require__(141);
+
+var _lodash2 = _interopRequireDefault(_lodash);
+
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 var initalState = {
@@ -48935,14 +48965,28 @@ var initalState = {
     isTileLoading: false,
     isTransferLoading: false,
     isOwnFolderLoading: false,
+    isRecursiveLoading: false,
     count: 0,
     page: 2,
     folders: {},
+    foldersRecursiveList: [],
     folderList: [],
     folderTileList: [],
     folderTransferList: [],
-    checkedFolder: null
+    checkedFolder: null,
+    recursiveFolder: null
 };
+
+function filter(folders, id) {
+    var keys = [];
+    for (var i in folders) {
+        if (folders[i].root != id) {
+            keys.push(folders[i].id);
+        }
+    }
+    console.log(keys);
+    return keys;
+}
 
 function folder() {
     var store = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : initalState;
@@ -48951,7 +48995,7 @@ function folder() {
     if (action.hasOwnProperty('payload')) {
         if (action.payload !== undefined) {
             if (action.payload.hasOwnProperty('entities')) {
-                if (action.payload.entities.hasOwnProperty('folder')) {
+                if (action.payload.entities.hasOwnProperty('folder') && action.type !== _folder.LOAD_RECURSIVE_FOLDERS_SUCCESS) {
                     store = (0, _reactAddonsUpdate2.default)(store, {
                         folders: {
                             $merge: action.payload.entities.folder
@@ -48963,6 +49007,34 @@ function folder() {
     }
     var index = null;
     switch (action.type) {
+        case _folder.LOAD_RECURSIVE_FOLDERS:
+            return (0, _reactAddonsUpdate2.default)(store, {
+                isRecursiveLoading: {
+                    $set: false
+                }
+            });
+        case _folder.LOAD_RECURSIVE_FOLDERS_SUCCESS:
+            return (0, _reactAddonsUpdate2.default)(store, {
+                isRecursiveLoading: {
+                    $set: true
+                },
+                foldersRecursiveList: {
+                    $set: Object.keys(action.payload.entities.folder).map(function (id) {
+                        return parseInt(id);
+                    })
+                },
+                recursiveFolder: {
+                    $set: action.payload.result
+                }
+            });
+        case _folder.FILTER_FOLDERS:
+            return (0, _reactAddonsUpdate2.default)(store, {
+                folderTileList: {
+                    $set: _lodash2.default.difference(Object.keys(store.folders).map(function (id) {
+                        return parseInt(id);
+                    }) || {}, filter(store.folders, action.id))
+                }
+            });
         case _folder.LOAD_FOLDERS:
             return (0, _reactAddonsUpdate2.default)(store, {
                 isLoading: {
@@ -49055,12 +49127,12 @@ function folder() {
             });
         case _document.DOCS_UNMOUNT:
             return (0, _reactAddonsUpdate2.default)(store, {
-                isTileLoading: {
-                    $set: false
-                },
-                folderTileList: {
-                    $set: []
-                }
+                // isTileLoading: {
+                //     $set: false,
+                // },
+                // folderTileList: {
+                //     $set: [],
+                // },
             });
         case _folder.SWITCH_FOLDER:
             return (0, _reactAddonsUpdate2.default)(store, {
@@ -49070,12 +49142,12 @@ function folder() {
             });
         case _folder.FOLDER_UNMOUNT:
             return (0, _reactAddonsUpdate2.default)(store, {
-                isLoading: {
-                    $set: false
-                },
-                folderList: {
-                    $set: []
-                }
+                // isLoading: {
+                //     $set: false,
+                // },
+                // folderList: {
+                //     $set: [],
+                // },
             });
         case _folder.TRANSFER_UNMOUNT:
             return (0, _reactAddonsUpdate2.default)(store, {
@@ -49488,6 +49560,7 @@ Object.defineProperty(exports, "__esModule", {
 });
 exports.foldersNormalize = foldersNormalize;
 exports.folderNormalize = folderNormalize;
+exports.folderRecursiveNormalize = folderRecursiveNormalize;
 
 var _normalizr = __webpack_require__(140);
 
@@ -49502,6 +49575,12 @@ function folderNormalize(folders) {
     var user = new _normalizr.schema.Entity('user');
     var folder = new _normalizr.schema.Entity('folder', { author: user });
     folder.define({ folder_set: [folder] });
+    return (0, _normalizr.normalize)(folders, folder);
+}
+
+function folderRecursiveNormalize(folders) {
+    var folder = new _normalizr.schema.Entity('folder');
+    folder.define({ root: folder });
     return (0, _normalizr.normalize)(folders, folder);
 }
 
@@ -50031,7 +50110,6 @@ function document() {
         }
     }
     var index = null;
-    var deleteList = [];
     switch (action.type) {
         case _document.LOAD_DOCS_MORE_START:
             return (0, _reactAddonsUpdate2.default)(store, {
@@ -51347,11 +51425,16 @@ var DocsComponent = function (_React$Component) {
 
             if (this.props.params.hasOwnProperty('id')) {
                 this.props.loadDocs(_constants.makeUrls.makeFilterDocsFolder(this.props.params.id));
-                this.props.loadFilterFolders(_constants.makeUrls.makeFilterFoldersFolder(this.props.params.id)).then(this.scrollStart);
+                // this.props.loadFilterFolders(makeUrls.makeFilterFoldersFolder(this.props.params.id))
+                //     .then(this.scrollStart).then(() => this.props.filterFolders(this.props.params.id));
+                this.props.filterFolders(parseInt(this.props.params.id));
+                this.props.loadRecursiveFolders(_constants.makeUrls.makeFolderRecursive(this.props.params.id));
             }
             if (this.props.folder === _constants.folderType.root) {
                 this.props.loadDocs(_constants.urls.docs.unsortedDocsUrl).then(function () {
                     return _this2.props.loadFilterFolders(_constants.makeUrls.makeRootFoldersFolder()).then(_this2.scrollStart);
+                }).then(function () {
+                    return _this2.props.filterFolders(null);
                 });
             }
         }
@@ -51361,7 +51444,10 @@ var DocsComponent = function (_React$Component) {
             if (nextProps.params.hasOwnProperty('id')) {
                 if (this.props.params.id !== nextProps.params.id) {
                     this.props.loadDocs(_constants.makeUrls.makeFilterDocsFolder(nextProps.params.id));
-                    this.props.loadFilterFolders(_constants.makeUrls.makeFilterFoldersFolder(nextProps.params.id));
+                    // this.props.loadFilterFolders(makeUrls.makeFilterFoldersFolder(nextProps.params.id))
+                    //     .then(() => this.props.filterFolders(this.props.params.id));
+                    this.props.filterFolders(parseInt(nextProps.params.id));
+                    this.props.loadRecursiveFolders(_constants.makeUrls.makeFolderRecursive(nextProps.params.id));
                     if (this.props.checkList.length) {
                         this.props.checkAll();
                     }
@@ -51423,6 +51509,8 @@ var DocsComponent = function (_React$Component) {
 DocsComponent.propTypes = {
     loadDocs: _propTypes2.default.func.isRequired,
     loadFilterFolders: _propTypes2.default.func.isRequired,
+    loadRecursiveFolders: _propTypes2.default.func.isRequired,
+    filterFolders: _propTypes2.default.func.isRequired,
     docsUnMount: _propTypes2.default.func.isRequired,
     clearFilter: _propTypes2.default.func.isRequired,
     params: _propTypes2.default.object.isRequired,
@@ -51458,11 +51546,13 @@ var mapDispatchToProps = function mapDispatchToProps(dispatch) {
         loadDocsMore: _document.loadDocsMore,
         docsUnMount: _document.docsUnMount,
         loadFilterFolders: _folder.loadFilterFolders,
+        loadRecursiveFolders: _folder.loadRecursiveFolders,
         modalOpen: _modal.modalOpen,
         setModal: _modal.setModal,
         checkAll: _document.checkAll,
         changeView: _page.changeView,
-        clearFilter: _page.clearFilter
+        clearFilter: _page.clearFilter,
+        filterFolders: _folder.filterFolders
     }, dispatch));
 };
 
@@ -52904,6 +52994,7 @@ var NodeRootComponent = function (_React$Component) {
                         folder: _this2.props.folder,
                         folders: _this2.props.folders,
                         title: _this2.props.folders[nodeId].title,
+                        foldersRecursiveList: _this2.props.foldersRecursiveList,
                         nodeList: _this2.props.folders[nodeId].hasOwnProperty('folder_set') ? _this2.props.folders[nodeId].folder_set : []
                     });
                 });
@@ -52944,14 +53035,16 @@ var NodeRootComponent = function (_React$Component) {
 NodeRootComponent.propTypes = {
     isLoading: _propTypes2.default.bool.isRequired,
     folder: _propTypes2.default.string.isRequired,
-    folderList: _propTypes2.default.array
+    folderList: _propTypes2.default.array,
+    foldersRecursiveList: _propTypes2.default.array
 };
 
 
 var mapStoreToProps = function mapStoreToProps(state, props) {
     return {
         isLoading: state.folder.isTileLoading,
-        folders: state.folder.folders
+        folders: state.folder.folders,
+        foldersRecursiveList: state.folder.foldersRecursiveList
     };
 };
 

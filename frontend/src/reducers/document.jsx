@@ -34,7 +34,6 @@ export default function document(store = initalState, action) {
         }
     }
     let index = null;
-    const deleteList = [];
     switch (action.type) {
         case LOAD_DOCS_MORE_START:
             return update(store, {

@@ -1,8 +1,10 @@
 import { apiLoad } from './load';
-import { folderNormalize, foldersNormalize } from '../normalizers/folder';
+import { folderNormalize, folderRecursiveNormalize, foldersNormalize } from '../normalizers/folder';
 
 export const LOAD_FOLDERS = 'LOAD_FOLDERS';
 export const LOAD_FOLDERS_SUCCESS = 'LOAD_FOLDERS_SUCCESS';
+export const LOAD_RECURSIVE_FOLDERS = 'LOAD_RECURSIVE_FOLDERS';
+export const LOAD_RECURSIVE_FOLDERS_SUCCESS = 'LOAD_RECURSIVE_FOLDERS_SUCCESS';
 export const LOAD_FOLDERS_TRANSFER = 'LOAD_FOLDERS_TRANSFER';
 export const LOAD_FOLDERS_TRANSFER_SUCCESS = 'LOAD_FOLDERS_TRANSFER_SUCCESS';
 export const LOAD_FOLDERS_ERROR = 'LOAD_FOLDERS_ERROR';
@@ -22,10 +24,23 @@ export const TRANSFER_UNMOUNT = 'TRANSFER_UNMOUNT';
 export const DELETE_FOLDER = 'DELETE_FOLDER';
 export const DELETE_FOLDER_SUCCESS = 'DELETE_FOLDER_SUCCESS';
 export const DELETE_FOLDER_ERROR = 'DELETE_FOLDER_ERROR';
+export const FILTER_FOLDERS = 'FILTER_FOLDERS';
 
 export function loadFolders(url) {
     const types = [LOAD_FOLDERS, LOAD_FOLDERS_SUCCESS, LOAD_FOLDERS_ERROR];
     return apiLoad(url, 'GET', types, null, foldersNormalize, false);
+}
+
+export function filterFolders(id) {
+    return {
+        type: FILTER_FOLDERS,
+        id,
+    };
+}
+
+export function loadRecursiveFolders(url) {
+    const types = [LOAD_RECURSIVE_FOLDERS, LOAD_RECURSIVE_FOLDERS_SUCCESS, LOAD_FOLDER_ERROR];
+    return apiLoad(url, 'GET', types, null, folderRecursiveNormalize, true);
 }
 
 export function loadFoldersMore(url) {

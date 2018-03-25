@@ -32,6 +32,7 @@ export const makeUrls = {
     makeFilterChats: name => `${urls.folder.chatFolderUrl}filter&&name=${name}`,
     makeFilterChatsMore: (name, page) => `${urls.folder.chatFolderUrl}filter&&name=${name}&&page=${page}`,
     makeTransferFolder: id => `${urls.folder.customFolderUrl + id}/?replace`,
+    makeFolderRecursive: id => `${urls.folder.customFolderUrl + id}/?recursive`,
 };
 
 export const apps = {

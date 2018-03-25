@@ -13,3 +13,9 @@ export function folderNormalize(folders) {
     folder.define({ folder_set: [folder] });
     return normalize(folders, folder);
 }
+
+export function folderRecursiveNormalize(folders) {
+    const folder = new schema.Entity('folder');
+    folder.define({ root: folder });
+    return normalize(folders, folder);
+}

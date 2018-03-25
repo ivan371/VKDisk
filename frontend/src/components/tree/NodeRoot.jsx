@@ -11,6 +11,7 @@ class NodeRootComponent extends React.Component {
         isLoading: PropTypes.bool.isRequired,
         folder: PropTypes.string.isRequired,
         folderList: PropTypes.array,
+        foldersRecursiveList: PropTypes.array,
     };
 
     renderImage() {
@@ -31,6 +32,7 @@ class NodeRootComponent extends React.Component {
                 folder={ this.props.folder }
                 folders={ this.props.folders }
                 title={ this.props.folders[nodeId].title }
+                foldersRecursiveList={ this.props.foldersRecursiveList }
                 nodeList={ this.props.folders[nodeId].hasOwnProperty('folder_set') ? this.props.folders[nodeId].folder_set : [] }
             />));
         }
@@ -53,6 +55,7 @@ class NodeRootComponent extends React.Component {
 const mapStoreToProps = (state, props) => ({
     isLoading: state.folder.isTileLoading,
     folders: state.folder.folders,
+    foldersRecursiveList: state.folder.foldersRecursiveList,
 });
 
 const mapDispatchToProps = dispatch => ({

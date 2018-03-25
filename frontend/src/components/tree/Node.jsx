@@ -1,9 +1,7 @@
 import React from 'react';
-import { connect } from 'react-redux';
-import { bindActionCreators } from 'redux';
 import PropTypes from 'prop-types';
 import { Link } from 'react-router-dom';
-import { folderType, format } from '../../constants';
+import { folderType, format, items } from '../../constants';
 
 export default class NodeComponent extends React.Component {
     static propTypes = {
@@ -12,7 +10,16 @@ export default class NodeComponent extends React.Component {
         title: PropTypes.string.isRequired,
         nodeList: PropTypes.array,
         folders: PropTypes.object,
+        foldersRecursiveList: PropTypes.array,
     };
+
+    renderImage() {
+        if (this.props.folder === folderType.folder
+            && this.props.foldersRecursiveList.hasOwnProperty(this.props.id)) {
+            return items.arrow;
+        }
+        return format.folder;
+    }
 
     render() {
         let link = null;
@@ -33,6 +40,7 @@ export default class NodeComponent extends React.Component {
                 folder={ this.props.folder }
                 folders={ this.props.folders }
                 title={ this.props.folders[nodeId].title }
+                foldersRecursiveList={ this.props.foldersRecursiveList }
                 nodeList={ this.props.folders[nodeId].hasOwnProperty('folder_set') ? this.props.folders[nodeId].folder_set : [] }
             />));
         }
@@ -40,7 +48,7 @@ export default class NodeComponent extends React.Component {
             <React.Fragment>
                 <Link to={ link }>
                     <div className="content-item page-content-link-item">
-                        <div><img className="item" src={ format.folder } /></div>
+                        <div><img className="item" src={ this.renderImage() } /></div>
                         <div>{this.props.title}</div>
                     </div>
                 </Link>

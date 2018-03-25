@@ -5,7 +5,7 @@ import { withRouter } from 'react-router-dom';
 import PropTypes from 'prop-types';
 import {apps, folderType, makeUrls, urls, view} from '../../constants';
 import { checkAll, docsUnMount, loadDocs, loadDocsMore } from '../../actions/document';
-import { loadFilterFolders } from '../../actions/folder';
+import {filterFolders, loadFilterFolders, loadRecursiveFolders} from '../../actions/folder';
 import { modalOpen, setModal } from '../../actions/modal';
 import FoldersTile from '../tile/FoldersTile';
 import DocsTile from '../tile/DocsTile';
@@ -16,6 +16,8 @@ class DocsComponent extends React.Component {
     static propTypes = {
         loadDocs: PropTypes.func.isRequired,
         loadFilterFolders: PropTypes.func.isRequired,
+        loadRecursiveFolders: PropTypes.func.isRequired,
+        filterFolders: PropTypes.func.isRequired,
         docsUnMount: PropTypes.func.isRequired,
         clearFilter: PropTypes.func.isRequired,
         params: PropTypes.object.isRequired,
@@ -38,18 +40,26 @@ class DocsComponent extends React.Component {
     componentDidMount() {
         if (this.props.params.hasOwnProperty('id')) {
             this.props.loadDocs(makeUrls.makeFilterDocsFolder(this.props.params.id));
-            this.props.loadFilterFolders(makeUrls.makeFilterFoldersFolder(this.props.params.id)).then(this.scrollStart);
+            // this.props.loadFilterFolders(makeUrls.makeFilterFoldersFolder(this.props.params.id))
+            //     .then(this.scrollStart).then(() => this.props.filterFolders(this.props.params.id));
+            this.props.filterFolders(parseInt(this.props.params.id));
+            this.props.loadRecursiveFolders(makeUrls.makeFolderRecursive(this.props.params.id));
         }
         if (this.props.folder === folderType.root) {
-            this.props.loadDocs(urls.docs.unsortedDocsUrl).then(
-                () => this.props.loadFilterFolders(makeUrls.makeRootFoldersFolder()).then(this.scrollStart));
+            this.props.loadDocs(urls.docs.unsortedDocsUrl)
+                .then(() => this.props.loadFilterFolders(makeUrls.makeRootFoldersFolder())
+                    .then(this.scrollStart))
+                .then(() => this.props.filterFolders(null));
         }
     }
     componentWillReceiveProps(nextProps) {
         if (nextProps.params.hasOwnProperty('id')) {
             if (this.props.params.id !== nextProps.params.id) {
                 this.props.loadDocs(makeUrls.makeFilterDocsFolder(nextProps.params.id));
-                this.props.loadFilterFolders(makeUrls.makeFilterFoldersFolder(nextProps.params.id));
+                // this.props.loadFilterFolders(makeUrls.makeFilterFoldersFolder(nextProps.params.id))
+                //     .then(() => this.props.filterFolders(this.props.params.id));
+                this.props.filterFolders(parseInt(nextProps.params.id));
+                this.props.loadRecursiveFolders(makeUrls.makeFolderRecursive(nextProps.params.id));
                 if (this.props.checkList.length) {
                     this.props.checkAll();
                 }
@@ -135,11 +145,13 @@ const mapDispatchToProps = dispatch => ({
         loadDocsMore,
         docsUnMount,
         loadFilterFolders,
+        loadRecursiveFolders,
         modalOpen,
         setModal,
         checkAll,
         changeView,
         clearFilter,
+        filterFolders,
     }, dispatch),
 });
 
