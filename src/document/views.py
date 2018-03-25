@@ -1,5 +1,8 @@
 from django.shortcuts import render
-from rest_framework import viewsets, permissions
+from rest_framework import viewsets, permissions, views
+from rest_framework.parsers import FileUploadParser
+from rest_framework.response import Response
+
 from .serializers import DocumentSerializer, DocumentBulkSerializer, DocumentTransferSerializer
 from .models import Document, DocumentData
 from django.http import Http404
@@ -9,6 +12,7 @@ from rest_framework.pagination import PageNumberPagination
 from elasticsearch import Elasticsearch, RequestsHttpConnection
 from rest_framework_elasticsearch import es_views, es_filters
 from .search_indexes import DocumentIndex
+from . import utils
 
 
 class MediumResultsSetPagination(PageNumberPagination):
@@ -131,3 +135,12 @@ class DocumentView(es_views.ListElasticAPIView):
         'text',
         'title',
     )
+
+
+class FileUploadView(views.APIView):
+    parser_classes = (FileUploadParser,)
+
+    def put(self, request, filename, format=None):
+        file_obj = request.data['file']
+        utils.upload_file_handler(request.user, file_obj)
+        return Response(status=204)

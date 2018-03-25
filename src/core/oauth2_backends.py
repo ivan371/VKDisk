@@ -1,3 +1,4 @@
+from social_core.backends.google import GoogleOAuth2 as BaseGoogleOAuth2
 from social_core.backends.vk import VKOAuth2 as BaseVKOAuth2
 from social_core.utils import url_add_parameters, handle_http_errors
 
@@ -32,10 +33,7 @@ class VKOAuth2(BaseVKOAuth2):
         return args
 
 
-
-
-
-
-
+class GoogleOAuth2(BaseGoogleOAuth2):
+    DEFAULT_SCOPE = ['openid', 'email']
 
 

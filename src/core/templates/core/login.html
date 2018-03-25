@@ -17,6 +17,9 @@
 <a href="{% url 'social:begin' 'vk-oauth2' %}" target="_blank">
     <button type="button" class="zocial vk btn btn-block">Использовать VK</button>
 </a>
+<a href="{% url 'social:begin' 'google-oauth2' %}" target="_blank">
+    <button type="button" class="zocial vk btn btn-block">Использовать Google</button>
+</a>
 
 <form class="form-signin" method="POST" action="{% url 'social:complete' 'vk-oauth2' %}">{% csrf_token %}
     <input type="text" name="code">

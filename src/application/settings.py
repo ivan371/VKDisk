@@ -70,6 +70,7 @@ MIDDLEWARE = [
 
 AUTHENTICATION_BACKENDS = (
     'core.oauth2_backends.VKOAuth2',
+    'core.oauth2_backends.GoogleOAuth2',
     'social_core.backends.open_id.OpenIdAuth',
     'django.contrib.auth.backends.ModelBackend',
 )
@@ -92,6 +93,12 @@ SOCIAL_AUTH_VK_OAUTH2_KEY = config.get('VK', 'APP_ID')
 SOCIAL_AUTH_VK_OAUTH2_SECRET = config.get('VK', 'SECRET_KEY')
 SOCIAL_AUTH_VK_OAUTH2_SCOPE = ['email', 'status', 'docs', 'messages']
 SOCIAL_AUTH_VK_APP_USER_MODE = 2
+SOCIAL_AUTH_GOOGLE_OAUTH2_KEY = config.get('GOOGLE', 'APP_ID', raw=True)
+SOCIAL_AUTH_GOOGLE_OAUTH2_SECRET = config.get('GOOGLE', 'SECRET_KEY')
+SOCIAL_AUTH_GOOGLE_OAUTH2_SCOPE = [
+    'https://www.googleapis.com/auth/drive.appfolder',
+    'https://www.googleapis.com/auth/drive.file',
+]
 
 # User settings
 AUTH_USER_MODEL = 'core.User'

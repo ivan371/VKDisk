@@ -20,7 +20,7 @@ from django.urls import path, include, re_path
 from django.conf.urls import url, include
 from rest_api.routers import router
 from django.conf import settings
-from document.views import DocumentView
+from document.views import DocumentView, FileUploadView
 
 ## TODO: CHANGE URLS
 
@@ -38,6 +38,7 @@ urlpatterns += [
     url(r'^social/', include('social_django.urls', namespace='social')),
     url(r'^api/v1/', include(router.urls)),
     url(r'^api/v1/list$', view=DocumentView.as_view(), name='document-list'),
+    url(r'^api/v1/upload/(?P<filename>[^/]+)$', view=FileUploadView.as_view(), name='document-upload')
 ]
 
 urlpatterns += [
