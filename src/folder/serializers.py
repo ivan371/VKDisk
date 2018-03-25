@@ -1,6 +1,7 @@
 from .models import Folder
 from rest_framework import serializers, viewsets
 from core.serializers import UserSerializer
+from rest_framework_recursive.fields import RecursiveField
 
 
 class FolderFilteredPrimaryKeyRelatedField(serializers.PrimaryKeyRelatedField):
@@ -13,6 +14,16 @@ class FolderFilteredPrimaryKeyRelatedField(serializers.PrimaryKeyRelatedField):
 
 
 class FolderSerializer(serializers.HyperlinkedModelSerializer):
+    author = serializers.PrimaryKeyRelatedField(many=False, read_only=True)
+    root = serializers.PrimaryKeyRelatedField(many=False, read_only=True)
+    folder_set = RecursiveField(many=True)
+
+    class Meta:
+        model = Folder
+        fields = ('id', 'author', 'title', 'root', 'type', 'folder_set')
+
+
+class FolderSimpleSerializer(serializers.HyperlinkedModelSerializer):
     author = serializers.PrimaryKeyRelatedField(many=False, read_only=True)
     root = serializers.PrimaryKeyRelatedField(many=False, read_only=True)
 

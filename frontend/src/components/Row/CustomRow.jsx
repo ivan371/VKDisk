@@ -4,11 +4,13 @@ import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
 import { folderUnMount, loadFolders, loadFoldersMore } from '../../actions/folder';
 import { apps, dragSource, folderType, items, makeUrls, urls } from '../../constants';
-import Folder from '../folder/Folder';
 import Docs from '../document/Docs';
 import { dropOver } from '../../actions/drag';
 import { deleteDocs } from '../../actions/document';
 import { setFilter } from '../../actions/page';
+import Node from "../tree/Node";
+import NodeChat from "../tree/NodeChat";
+import NodeRoot from "../tree/NodeRoot";
 
 
 class CustomRowComponent extends React.Component {
@@ -106,16 +108,14 @@ class CustomRowComponent extends React.Component {
         return items.trash;
     }
 
+    renderNodeList() {
+        return [
+            <NodeRoot key="1" folder={ this.props.folder } />,
+            <NodeChat key="2" folder={ this.props.folder } />,
+        ];
+    }
+
     render() {
-        let folderList = [];
-        if (this.props.isLoading || this.props.folder === folderType.root) {
-            folderList = this.props.folderList.map(folderId => (<Folder
-                id={ folderId }
-                key={ folderId }
-                folder={ this.props.folder }
-            >Папка
-            </Folder>));
-        }
         return (
             <div className="page-content-content">
                 <div className="page-content-content-wrap" onScroll={ this.handleScroll }>
@@ -131,7 +131,7 @@ class CustomRowComponent extends React.Component {
                         />
                         <img className="item-right" src={ this.renderTrash() } onDragOver={ this.handleDragOver } onDrop={ this.handleDrop } />
                     </div>
-                    {folderList}
+                    {this.renderNodeList()}
                 </div>
                 <Docs params={ this.props.params } history={ this.props.history } folder={ this.props.folder } />
             </div>
