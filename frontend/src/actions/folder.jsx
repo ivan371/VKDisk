@@ -19,6 +19,9 @@ export const FOLDER_UNMOUNT = 'FOLDER_UNMOUNT';
 export const LOAD_FOLDERS_MORE = 'LOAD_FOLDERS_MORE';
 export const LOAD_FOLDERS_MORE_START = 'LOAD_FOLDERS_MORE_START';
 export const TRANSFER_UNMOUNT = 'TRANSFER_UNMOUNT';
+export const DELETE_FOLDER = 'DELETE_FOLDER';
+export const DELETE_FOLDER_SUCCESS = 'DELETE_FOLDER_SUCCESS';
+export const DELETE_FOLDER_ERROR = 'DELETE_FOLDER_ERROR';
 
 export function loadFolders(url) {
     const types = [LOAD_FOLDERS, LOAD_FOLDERS_SUCCESS, LOAD_FOLDERS_ERROR];
@@ -28,6 +31,11 @@ export function loadFolders(url) {
 export function loadFoldersMore(url) {
     const types = [LOAD_FOLDERS_MORE_START, LOAD_FOLDERS_MORE, LOAD_FOLDERS_ERROR];
     return apiLoad(url, 'GET', types, null, foldersNormalize, false);
+}
+
+export function updateFolderRoot(url, root) {
+    const types = [DELETE_FOLDER, DELETE_FOLDER_SUCCESS, DELETE_FOLDER_ERROR];
+    return apiLoad(url, 'PUT', types, JSON.stringify({ root }), a => a, true);
 }
 
 export function loadTransferFolders(url) {

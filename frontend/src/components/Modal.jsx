@@ -5,8 +5,9 @@ import PropTypes from 'prop-types';
 import { modalOpen } from '../actions/modal';
 import { createFolder } from '../actions/folder';
 import CreateFolder from './folder/CreateFolder';
-import {folderType, modalType} from '../constants';
+import { folderType, modalType } from '../constants';
 import TransferFolder from './folder/TransferFolder';
+import DocsDelete from './document/DocsDelete';
 
 class ModalComponent extends React.Component {
     static propTypes = {
@@ -37,6 +38,9 @@ class ModalComponent extends React.Component {
                 break;
             case modalType.folderReplace:
                 modal = <TransferFolder />;
+                break;
+            case modalType.documentDelete:
+                modal = <DocsDelete />
                 break;
             default:
         }

@@ -18,18 +18,20 @@ export const makeUrls = {
     makeRootFoldersFolder: () => `${urls.folder.customFolderUrl}?root`,
     makeCustomFolder: id => `${urls.folder.customFolderUrl + id}/`,
     makeCustomFile: id => `${urls.docs.docsUrl + id}/`,
-    makeTransferFile: id => `${urls.docs.docsUrl + id}/?root`,
+    makeTransferFile: id => `${urls.docs.docsUrl + id}/?replace`,
     makeDocsMore: (id, page, filter, value) => `${urls.docs.docsUrl}?folder=${id}&&page=${page}&&filter&&${filter}=${value}`,
     makeDocsRootMore: (page, filter, value) => `${urls.docs.docsUrl}?root&&page=${page}&&filter&&${filter}=${value}`,
     makeDocsMoreDate: (id, page, year, month, day) => `${urls.docs.docsUrl}?folder=${id}&&page=${page}&&filter&&year=${year}&&month=${month}&&day=${day}`,
     makeCopyDocs: id => `${urls.docs.docsUrl}?folder=${id}&&bulk_create`,
     makeReplaceDocs: id => `${urls.docs.docsUrl}?folder=${id}&&bulk_update`,
+    makeDeleteDocs: () => `${urls.docs.docsUrl}?bulk_delete`,
     makeFilterDocs: (id, filter, value) => `${urls.docs.docsUrl}?folder=${id}&&filter&&${value}=${filter}`,
     makeFilterRootDocs: (filter, value) => `${urls.docs.docsUrl}?root&&filter&&${value}=${filter}`,
     makeFilterDocsDate: (id, year, month, day) => `${urls.docs.docsUrl}?folder=${id}&&filter&&year=${year}&&month=${month}&&day=${day}`,
     makeChatsMore: page => `${urls.folder.chatFolderUrl}&&page=${page}`,
     makeFilterChats: name => `${urls.folder.chatFolderUrl}filter&&name=${name}`,
     makeFilterChatsMore: (name, page) => `${urls.folder.chatFolderUrl}filter&&name=${name}&&page=${page}`,
+    makeTransferFolder: id => `${urls.folder.customFolderUrl + id}/?replace`,
 };
 
 export const apps = {
@@ -57,6 +59,7 @@ export const modalType = {
     folderRootCreate: 'folderRootCreate',
     folderTransfer: 'folderTransfer',
     folderReplace: 'folderReplace',
+    documentDelete: 'documentDelete',
 };
 
 export const format = {
@@ -91,6 +94,7 @@ export const items = {
     trashBad: '/static/img/trashBad.png',
     clear: '/static/img/clear.png',
     colRow: '/static/img/row-col.png',
+    calendar: '/static/img/calendar.png',
 };
 
 export function makeFormat(fileUrl) {
@@ -104,6 +108,7 @@ export function makeFormat(fileUrl) {
 export const dragSource = {
     file: 'file',
     favorite: 'favorite',
+    folder: 'folder',
 };
 
 export const view = {

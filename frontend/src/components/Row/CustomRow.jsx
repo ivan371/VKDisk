@@ -15,6 +15,7 @@ class CustomRowComponent extends React.Component {
     static propTypes = {
         folder: PropTypes.string.isRequired,
         isLoading: PropTypes.bool.isRequired,
+        isLoadingMore: PropTypes.bool.isRequired,
         loadFolders: PropTypes.func.isRequired,
         folderUnMount: PropTypes.func.isRequired,
         count: PropTypes.number.isRequired,
@@ -33,12 +34,13 @@ class CustomRowComponent extends React.Component {
     state = {
         filter: this.props.filter,
         filterSelect: this.props.filterSelect,
+        scroll: null,
     };
 
     componentDidMount() {
         switch (this.props.folder) {
             case folderType.chat:
-                this.props.loadFolders(urls.folder.chatFolderUrl);
+                this.props.loadFolders(urls.folder.chatFolderUrl).then(this.scrollStart);
                 break;
             default:
         }
@@ -81,6 +83,19 @@ class CustomRowComponent extends React.Component {
         }
     };
 
+    handleScroll = () => {
+        if (!this.props.isLoadingMore && this.props.isLoading && this.props.count > (15 * (this.props.page - 1))) {
+            const { scroll } = this.state;
+            if (scroll.scrollHeight - scroll.scrollTop - scroll.offsetHeight < 10) {
+                this.handleLoadMore();
+            }
+        }
+    };
+
+    scrollStart = () => {
+        this.setState({ scroll: document.getElementsByClassName('page-content-content-wrap')[0] });
+    };
+
     renderTrash() {
         if (this.props.source === dragSource.file) {
             if (this.props.allowDrag) {
@@ -103,7 +118,7 @@ class CustomRowComponent extends React.Component {
         }
         return (
             <div className="page-content-content">
-                <div className="page-content-content-wrap">
+                <div className="page-content-content-wrap" onScroll={ this.handleScroll }>
                     <div className="content-item">
                         <input
                             className="content-item__input"
@@ -117,9 +132,6 @@ class CustomRowComponent extends React.Component {
                         <img className="item-right" src={ this.renderTrash() } onDragOver={ this.handleDragOver } onDrop={ this.handleDrop } />
                     </div>
                     {folderList}
-                    { this.props.isLoading && this.props.count > (10 * (this.props.page - 1)) ? <div>
-                        <button onClick={ this.handleLoadMore }>Показать еще</button>
-                    </div> : null }
                 </div>
                 <Docs params={ this.props.params } history={ this.props.history } folder={ this.props.folder } />
             </div>
@@ -137,6 +149,7 @@ const mapStoreToProps = state => ({
     id: state.drag.id,
     filter: state.page.filter.folder,
     filterSelect: state.page.filterSelect.folder,
+    isLoadingMore: state.folder.isLoadingMore,
 });
 
 const mapDispatchToProps = dispatch => ({

@@ -4,8 +4,8 @@ import { withRouter } from 'react-router-dom';
 import _ from 'lodash';
 import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
-import { switchFolder, updateFolder } from '../../actions/folder';
-import { format, makeUrls, tileType, makeFormat, apps, folderType, dragSource } from '../../constants';
+import {switchFolder, updateFolder, updateFolderRoot} from '../../actions/folder';
+import { format, makeUrls, tileType, makeFormat, apps, folderType, dragSource, view } from '../../constants';
 import { checkFile, updateDoc, updateDocRoot } from '../../actions/document';
 import { setLink } from '../../actions/page';
 import { dragEnd, dragStart, dropOver } from '../../actions/drag';
@@ -32,6 +32,8 @@ class TileComponent extends React.Component {
         dragId: PropTypes.number,
         allowDrag: PropTypes.bool.isRequired,
         updateDocRoot: PropTypes.func.isRequired,
+        updateFolderRoot: PropTypes.func.isRequired,
+        view: PropTypes.string.isRequired,
     };
 
     state = {
@@ -69,7 +71,7 @@ class TileComponent extends React.Component {
                 this.props.dragStart(this.props.folder !== folderType.chat, dragSource.file, this.props.id);
                 break;
             case tileType.folder:
-                this.props.dragStart(this.props.folder === folderType.folder, dragSource.favorite, this.props.id);
+                this.props.dragStart(this.props.folder !== folderType.chat, dragSource.folder, this.props.id);
                 break;
             default:
         }
@@ -80,7 +82,7 @@ class TileComponent extends React.Component {
     };
 
     handleDragOver = (e) => {
-        if (this.props.source === dragSource.file && this.props.allowDrag) {
+        if ((this.props.source === dragSource.file || this.props.source === dragSource.folder) && this.props.allowDrag) {
             e.preventDefault();
         }
     };
@@ -88,6 +90,11 @@ class TileComponent extends React.Component {
     handleDrop = (e) => {
         if (this.props.source === dragSource.file && this.props.allowDrag) {
             this.props.updateDocRoot(makeUrls.makeTransferFile(this.props.dragId), this.props.id);
+            this.props.dropOver();
+        }
+
+        if (this.props.source === dragSource.folder && this.props.allowDrag) {
+            this.props.updateFolderRoot(makeUrls.makeTransferFolder(this.props.dragId), this.props.id);
             this.props.dropOver();
         }
     };
@@ -130,7 +137,10 @@ class TileComponent extends React.Component {
     };
 
     renderClassName() {
-        const itemClass = 'content-flex-item';
+        let itemClass = 'content-flex-item';
+        if (this.props.view === view.col) {
+            itemClass = 'content-flex-item content-flex-item-column';
+        }
         if (this.props.isModal) {
             return `${itemClass} ${this.props.id !== this.props.checkedFolder ? '' : 'checked'}`;
         }
@@ -156,6 +166,7 @@ class TileComponent extends React.Component {
         if (this.props.type === tileType.file) {
             return (<img
                 className="icon"
+                style={ this.props.view === view.col ? { float: 'left' } : null }
                 onClick={ this.handleClick }
                 onDragStart={ this.handleDragStart }
                 src={ imageUrl }
@@ -165,11 +176,15 @@ class TileComponent extends React.Component {
         }
         if (this.props.type === tileType.folder) {
             return (<img
+                style={ this.props.view === view.col ? { float: 'left' } : null }
                 className="icon"
                 onClick={ this.handleClick }
+                onDragStart={ this.handleDragStart }
                 src={ imageUrl }
                 onDragOver={ this.handleDragOver }
+                draggable="true"
                 onDrop={ this.handleDrop }
+                onDragEnd={ this.handleDragEnd }
             />);
         }
         return null;
@@ -180,7 +195,7 @@ class TileComponent extends React.Component {
             <div className={ this.renderClassName() }>
                 { this.renderItem() }
                 {!this.state.isClicked ?
-                    <div className="content-item__title" onClick={ this.handleChangeClick }>{this.props.title}</div>
+                    <div className={ this.props.view === view.col ? 'content-item__title content-item__title-col' : 'content-item__title' } onClick={ this.handleChangeClick }>{this.props.title}</div>
                     : <input
                         className="content-item__input"
                         value={ this.state.title }
@@ -214,6 +229,7 @@ const mapDispatchToProps = dispatch => ({
         dragEnd,
         dropOver,
         updateDocRoot,
+        updateFolderRoot,
     }, dispatch),
 });
 

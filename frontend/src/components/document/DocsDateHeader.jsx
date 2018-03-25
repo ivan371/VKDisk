@@ -3,14 +3,14 @@ import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
 import { withRouter } from 'react-router-dom';
 import PropTypes from 'prop-types';
-import { modalType, items, makeUrls, folderType, apps } from '../../constants';
+import {modalType, items, makeUrls, folderType, apps} from '../../constants';
 import AddFolder from '../folder/AddFolder';
 import { modalOpen, setModal } from '../../actions/modal';
 import { loadDocs } from '../../actions/document';
 import { setFilter, setSort } from '../../actions/page';
 import Modal from '../Modal';
 
-export default class DocsFilterHeader extends React.Component {
+export default class DocsDateHeader extends React.Component {
     static propTypes = {
         setFilter: PropTypes.func.isRequired,
         onFilter: PropTypes.func.isRequired,
@@ -19,17 +19,15 @@ export default class DocsFilterHeader extends React.Component {
 
     state = {
         filter: this.props.filter,
-        filterSelect: 'name',
+        filterSelect: 'date',
     };
 
     handleFilterStart = (e) => {
         this.props.setFilter(this.state.filter, this.state.filterSelect, apps.docs);
     };
 
-    handleFilterEnter = (e) => {
-        if (e.keyCode === 13) {
-            this.props.setFilter(this.state.filter, this.state.filterSelect, apps.docs);
-        }
+    handleSelectFilter = (e) => {
+        this.setState({ filterSelect: e.target.value });
     };
 
     handleChange = (e) => {
@@ -43,29 +41,11 @@ export default class DocsFilterHeader extends React.Component {
             <button className="vk-button" onClick={ this.handleFilterStart }>Search</button>
             <input
                 className="content-item__input"
-                type="list"
-                list="extension-list"
-                placeholder="Search"
+                type="date"
                 onChange={ this.handleChange }
-                onKeyDown={ this.handleFilterEnter }
                 name="filter"
                 value={ this.state.filter }
-            /><datalist id="extension-list">
-                <option value="pdf" />
-                <option value="doc" />
-                <option value="xls" />
-                <option value="docx" />
-                <option value="zip" />
-                <option value="djvu" />
-                <option value="xlsx" />
-                <option value="gif" />
-                <option value="png" />
-                <option value="jpg" />
-                <option value="gz" />
-                <option value="txt" />
-                <option value="tex" />
-                <option value="py" />
-            </datalist>
+            />
         </React.Fragment>);
     }
 }

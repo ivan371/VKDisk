@@ -8,7 +8,7 @@ import {folderType, format, makeUrls} from '../../constants';
 
 class CreateFolderComponent extends React.Component {
     static propTypes = {
-        id: PropTypes.number.isRequired,
+        id: PropTypes.number,
         modalOpen: PropTypes.func.isRequired,
         createFolder: PropTypes.func.isRequired,
         folder: PropTypes.string.isRequired,
@@ -38,7 +38,7 @@ class CreateFolderComponent extends React.Component {
             <React.Fragment>
                 <div className="modal-header">
                     <div className="modal-header-title">
-                        <p>Новая папка</p>
+                        <p>New folder</p>
                     </div>
                 </div>
                 <div className="modal-content">
