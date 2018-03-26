@@ -54,8 +54,6 @@ INSTALLED_APPS = [
     'rest_framework_elasticsearch',
     'django_elasticsearch',
     'rest_framework_recursive',
-    'mptt'
-    # 'widget_tweaks'
 ]
 
 MIDDLEWARE = [

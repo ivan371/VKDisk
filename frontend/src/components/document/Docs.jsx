@@ -39,13 +39,16 @@ class DocsComponent extends React.Component {
 
     componentDidMount() {
         if (this.props.params.hasOwnProperty('id')) {
-            this.props.loadDocs(makeUrls.makeFilterDocsFolder(this.props.params.id))
-                .then(() => this.props.loadFilterFolders(makeUrls.makeRootFoldersFolder())
-                    .then(this.scrollStart))
-                .then(() => this.props.filterFolders(parseInt(this.props.params.id)));
-            // this.props.loadFilterFolders(makeUrls.makeFilterFoldersFolder(this.props.params.id))
-            //     .then(this.scrollStart).then(() => this.props.filterFolders(this.props.params.id));
-            this.props.loadRecursiveFolders(makeUrls.makeFolderRecursive(this.props.params.id));
+            if(this.props.folder === folderType.folder) {
+                this.props.loadDocs(makeUrls.makeFilterDocsFolder(this.props.params.id))
+                    .then(() => this.props.loadFilterFolders(makeUrls.makeRootFoldersFolder())
+                        .then(this.scrollStart))
+                    .then(() => this.props.filterFolders(parseInt(this.props.params.id)))
+                    .then(() => this.props.loadRecursiveFolders(makeUrls.makeFolderRecursive(this.props.params.id)));
+            } else {
+                this.props.loadDocs(makeUrls.makeFilterDocsFolder(this.props.params.id)).then(this.scrollStart);
+                this.props.filterFolders(parseInt(this.props.params.id));
+            }
         }
         if (this.props.folder === folderType.root) {
             this.props.loadDocs(urls.docs.unsortedDocsUrl)
@@ -58,8 +61,6 @@ class DocsComponent extends React.Component {
         if (nextProps.params.hasOwnProperty('id')) {
             if (this.props.params.id !== nextProps.params.id) {
                 this.props.loadDocs(makeUrls.makeFilterDocsFolder(nextProps.params.id));
-                // this.props.loadFilterFolders(makeUrls.makeFilterFoldersFolder(nextProps.params.id))
-                //     .then(() => this.props.filterFolders(this.props.params.id));
                 this.props.filterFolders(parseInt(nextProps.params.id));
                 this.props.loadRecursiveFolders(makeUrls.makeFolderRecursive(nextProps.params.id));
                 if (this.props.checkList.length) {
@@ -72,7 +73,8 @@ class DocsComponent extends React.Component {
         }
         if (this.props.filterType !== nextProps.filterType || this.props.filter !== nextProps.filter) {
             if (this.props.folder === folderType.root) {
-                this.props.loadDocs(makeUrls.makeFilterRootDocs(nextProps.filter, nextProps.filterType));
+                this.props.loadDocs(makeUrls.makeFilterRootDocs(nextProps.filter, nextProps.filterType))
+                    .then(() => this.props.filterFolders(null));
             }
         }
     }

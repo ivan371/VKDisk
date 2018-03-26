@@ -50,7 +50,7 @@ class NodeChatComponent extends React.Component {
 
 const mapStoreToProps = (state, props) => ({
     isLoading: state.folder.isLoading,
-    folderList: state.folder.folderList,
+    folderList: state.folder.folderUnTreeList,
     folders: state.folder.folders,
 });
 

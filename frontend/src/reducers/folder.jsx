@@ -5,7 +5,7 @@ import {
     LOAD_FILTER_FOLDERS, LOAD_FILTER_FOLDERS_SUCCESS, LOAD_FOLDER, LOAD_FOLDERS, LOAD_FOLDERS_MORE,
     LOAD_FOLDERS_SUCCESS, LOAD_FOLDERS_TRANSFER, LOAD_FOLDERS_TRANSFER_SUCCESS, SWITCH_FOLDER, TRANSFER_UNMOUNT,
     LOAD_FOLDERS_MORE_START, DELETE_FOLDER_SUCCESS, FILTER_FOLDERS, LOAD_RECURSIVE_FOLDERS,
-    LOAD_RECURSIVE_FOLDERS_SUCCESS,
+    LOAD_RECURSIVE_FOLDERS_SUCCESS, LOAD_UNTREE_FOLDERS_SUCCESS,
 } from '../actions/folder';
 import { DOCS_UNMOUNT } from '../actions/document';
 import { folderType } from "../constants";
@@ -24,6 +24,7 @@ const initalState = {
     folderList: [],
     folderTileList: [],
     folderTransferList: [],
+    folderUnTreeList: [],
     checkedFolder: null,
     recursiveFolder: null,
 };
@@ -69,10 +70,16 @@ export default function folder(store = initalState, action) {
                 isRecursiveLoading: {
                     $set: false,
                 },
+                isLoading: {
+                    $set: false,
+                },
             });
         case LOAD_RECURSIVE_FOLDERS_SUCCESS:
             return update(store, {
                 isRecursiveLoading: {
+                    $set: true,
+                },
+                isLoading: {
                     $set: true,
                 },
                 foldersRecursiveList: {
@@ -97,6 +104,21 @@ export default function folder(store = initalState, action) {
             return update(store, {
                 isLoading: {
                     $set: false,
+                },
+            });
+        case LOAD_UNTREE_FOLDERS_SUCCESS:
+            return update(store, {
+                isLoading: {
+                    $set: true,
+                },
+                folderUnTreeList: {
+                    $set: action.payload.result,
+                },
+                count: {
+                    $set: action.payload.count,
+                },
+                page: {
+                    $set: 2,
                 },
             });
         case LOAD_FOLDERS_SUCCESS:
@@ -125,7 +147,7 @@ export default function folder(store = initalState, action) {
                 isLoading: {
                     $set: true,
                 },
-                folderList: {
+                folderUnTreeList: {
                     $push: action.payload.result,
                 },
                 count: {

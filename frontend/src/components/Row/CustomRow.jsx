@@ -2,7 +2,7 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
-import { folderUnMount, loadFolders, loadFoldersMore } from '../../actions/folder';
+import {folderUnMount, loadFolders, loadFoldersMore, loadUnTreeFolders} from '../../actions/folder';
 import { apps, dragSource, folderType, items, makeUrls, urls } from '../../constants';
 import Docs from '../document/Docs';
 import { dropOver } from '../../actions/drag';
@@ -18,7 +18,7 @@ class CustomRowComponent extends React.Component {
         folder: PropTypes.string.isRequired,
         isLoading: PropTypes.bool.isRequired,
         isLoadingMore: PropTypes.bool.isRequired,
-        loadFolders: PropTypes.func.isRequired,
+        loadUnTreeFolders: PropTypes.func.isRequired,
         folderUnMount: PropTypes.func.isRequired,
         count: PropTypes.number.isRequired,
         page: PropTypes.number.isRequired,
@@ -42,7 +42,7 @@ class CustomRowComponent extends React.Component {
     componentDidMount() {
         switch (this.props.folder) {
             case folderType.chat:
-                this.props.loadFolders(urls.folder.chatFolderUrl).then(this.scrollStart);
+                this.props.loadUnTreeFolders(urls.folder.chatFolderUrl).then(this.scrollStart);
                 break;
             default:
         }
@@ -50,7 +50,7 @@ class CustomRowComponent extends React.Component {
 
     componentWillReceiveProps(nextProps) {
         if (this.props.filter !== nextProps.filter && this.props.folder === folderType.chat) {
-            this.props.loadFolders(makeUrls.makeFilterChats(nextProps.filter));
+            this.props.loadUnTreeFolders(makeUrls.makeFilterChats(nextProps.filter));
         }
     }
 
@@ -155,7 +155,7 @@ const mapStoreToProps = state => ({
 
 const mapDispatchToProps = dispatch => ({
     ...bindActionCreators({
-        loadFolders,
+        loadUnTreeFolders,
         folderUnMount,
         loadFoldersMore,
         dropOver,

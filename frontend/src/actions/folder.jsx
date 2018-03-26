@@ -25,9 +25,15 @@ export const DELETE_FOLDER = 'DELETE_FOLDER';
 export const DELETE_FOLDER_SUCCESS = 'DELETE_FOLDER_SUCCESS';
 export const DELETE_FOLDER_ERROR = 'DELETE_FOLDER_ERROR';
 export const FILTER_FOLDERS = 'FILTER_FOLDERS';
+export const LOAD_UNTREE_FOLDERS_SUCCESS = 'LOAD_UNTREE_FOLDERS_SUCCESS';
 
 export function loadFolders(url) {
     const types = [LOAD_FOLDERS, LOAD_FOLDERS_SUCCESS, LOAD_FOLDERS_ERROR];
+    return apiLoad(url, 'GET', types, null, foldersNormalize, false);
+}
+
+export function loadUnTreeFolders(url) {
+    const types = [LOAD_FOLDERS, LOAD_UNTREE_FOLDERS_SUCCESS, LOAD_FOLDERS_ERROR];
     return apiLoad(url, 'GET', types, null, foldersNormalize, false);
 }
 

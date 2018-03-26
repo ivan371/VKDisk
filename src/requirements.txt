@@ -9,9 +9,12 @@ dj-database-url==0.4.2
 Django==2.0.2
 django-debug-toolbar==1.9.1
 django-elasticsearch==0.5
+django-js-asset==1.0.0
+django-mptt==0.9.0
 django-rest-elasticsearch==0.4
 django-sphinxql==1.1.0
 djangorestframework==3.7.7
+djangorestframework-recursive==0.1.2
 elasticsearch==6.1.1
 elasticsearch-dsl==6.1.0
 enum34==1.1.6

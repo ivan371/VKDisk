@@ -19,6 +19,7 @@ class DocsHeaderComponent extends React.Component {
         modalOpen: PropTypes.func.isRequired,
         setModal: PropTypes.func.isRequired,
         isLoading: PropTypes.bool.isRequired,
+        isFoldersLoading: PropTypes.bool.isRequired,
         setFilter: PropTypes.func.isRequired,
         folder: PropTypes.string.isRequired,
         filter: PropTypes.string.isRequired,
@@ -155,7 +156,7 @@ class DocsHeaderComponent extends React.Component {
         if (this.props.isOpen) {
             modal = <Modal />;
         }
-        if (this.props.isLoading
+        if (this.props.isLoading && this.props.isFoldersLoading
             && ((this.props.params.hasOwnProperty('id')) || this.props.folder === folderType.root)) {
             folderHeader = (<React.Fragment>
                 {this.renderMenu()}
