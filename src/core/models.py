@@ -46,3 +46,8 @@ class Authored(models.Model):
         abstract = True
         verbose_name = _(u'authored')
         verbose_name_plural = _(u'authored')
+
+
+class UserRequestLog(models.Model):
+    user = models.ForeignKey(User, on_delete=models.CASCADE, verbose_name=_(u'user'))
+    request_time = models.DateTimeField(auto_now_add=True, editable=False, blank=True)
