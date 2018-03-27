@@ -26,10 +26,40 @@ export const DELETE_FOLDER_SUCCESS = 'DELETE_FOLDER_SUCCESS';
 export const DELETE_FOLDER_ERROR = 'DELETE_FOLDER_ERROR';
 export const FILTER_FOLDERS = 'FILTER_FOLDERS';
 export const LOAD_UNTREE_FOLDERS_SUCCESS = 'LOAD_UNTREE_FOLDERS_SUCCESS';
+export const LOAD_ROOT = 'LOAD_ROOT';
+export const CHECK_FOLDER = 'CHECK_FOLDER';
+export const CHECK_ALL_FOLDERS = 'CHECK_ALL_FOLDERS';
+export const RENAME_FOLDER = 'RENAME_FOLDER';
+
+export function renameFolder() {
+    return {
+        type: RENAME_FOLDER,
+    };
+}
+
+export function checkFolder(id) {
+    return {
+        type: CHECK_FOLDER,
+        id,
+    };
+}
+
+export function checkAllFolders() {
+    return {
+        type: CHECK_ALL_FOLDERS,
+    };
+}
+
 
 export function loadFolders(url) {
     const types = [LOAD_FOLDERS, LOAD_FOLDERS_SUCCESS, LOAD_FOLDERS_ERROR];
     return apiLoad(url, 'GET', types, null, foldersNormalize, false);
+}
+
+export function loadRoot() {
+    return {
+        type: LOAD_ROOT,
+    };
 }
 
 export function loadUnTreeFolders(url) {

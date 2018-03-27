@@ -3,15 +3,16 @@ import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
 import { withRouter } from 'react-router-dom';
 import PropTypes from 'prop-types';
-import { modalType, items, folderType, apps } from '../../constants';
+import {modalType, items, folderType, apps, view} from '../../constants';
 import AddFolder from '../folder/AddFolder';
 import { modalOpen, setModal } from '../../actions/modal';
-import { checkAll, loadDocs } from '../../actions/document';
+import {checkAll, loadDocs, renameDoc} from '../../actions/document';
 import { changeView, clearFilter, setFilter, setSort } from '../../actions/page';
 import Modal from '../Modal';
 import DocsFilterHeader from './DocsFilterHeader';
 import DocsCheckHeader from './DocsCheckHeader';
 import DocsDateHeader from './DocsDateHeader';
+import {checkAllFolders, renameFolder} from "../../actions/folder";
 
 class DocsHeaderComponent extends React.Component {
     static propTypes = {
@@ -25,9 +26,14 @@ class DocsHeaderComponent extends React.Component {
         filter: PropTypes.string.isRequired,
         filterSelect: PropTypes.string.isRequired,
         countCheck: PropTypes.number.isRequired,
+        countCheckFolder: PropTypes.number.isRequired,
         checkAll: PropTypes.func.isRequired,
+        checkAllFolders: PropTypes.func.isRequired,
         changeView: PropTypes.func.isRequired,
         clearFilter: PropTypes.func.isRequired,
+        view: PropTypes.string.isRequired,
+        renameDoc: PropTypes.func.isRequired,
+        renameFolder: PropTypes.func.isRequired,
     };
 
     state = {
@@ -82,10 +88,6 @@ class DocsHeaderComponent extends React.Component {
         this.props.history.goBack(e);
     };
 
-    handleClearAll = () => {
-        this.props.checkAll();
-    };
-
     handleChangeView = () => {
         this.props.changeView();
     };
@@ -129,19 +131,23 @@ class DocsHeaderComponent extends React.Component {
                 filter={ this.props.filter }
             />);
         }
-        if (this.props.countCheck) {
+        if (this.props.countCheck || this.props.countCheckFolder) {
             return (<DocsCheckHeader
                 type={ type }
                 setModal={ this.props.setModal }
                 modalOpen={ this.props.modalOpen }
-                countCheck={ this.props.countCheck }
-                checkAll={ this.props.checkAll }
+                countCheckFile={ this.props.countCheck }
+                countCheckFolder={ this.props.countCheckFolder }
+                checkAllFiles={ this.props.checkAll }
+                checkAllFolders={ this.props.checkAllFolders }
+                renameDoc={ this.props.renameDoc }
+                renameFolder={ this.props.renameFolder }
             />);
         }
 
         return (<React.Fragment>
             { title }
-            <img className="item-right" src={ items.colRow } onClick={ this.handleChangeView } />
+            <img className="item-right" src={ this.props.view === view.row ? items.colRow : items.colTable } onClick={ this.handleChangeView } />
             {type === 'sorted' || type === 'folder' || type === 'root' ?
                 <AddFolder id={ parseInt(this.props.params.id) } folder={ this.props.folder } />
                 : null}
@@ -179,7 +185,9 @@ const mapStoreToProps = state => ({
     filterSelect: state.page.filterSelect.docs,
     filter: state.page.filter.docs,
     countCheck: state.document.countCheck,
+    countCheckFolder: state.folder.countCheck,
     isOpen: state.modal.isOpen,
+    view: state.page.view,
 });
 
 const mapDispatchToProps = dispatch => ({
@@ -190,8 +198,11 @@ const mapDispatchToProps = dispatch => ({
         setFilter,
         setSort,
         checkAll,
+        checkAllFolders,
         changeView,
         clearFilter,
+        renameDoc,
+        renameFolder,
     }, dispatch),
 });
 

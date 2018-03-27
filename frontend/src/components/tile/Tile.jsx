@@ -4,9 +4,9 @@ import { withRouter } from 'react-router-dom';
 import _ from 'lodash';
 import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
-import {switchFolder, updateFolder, updateFolderRoot} from '../../actions/folder';
+import {checkFolder, renameFolder, switchFolder, updateFolder, updateFolderRoot} from '../../actions/folder';
 import { format, makeUrls, tileType, makeFormat, apps, folderType, dragSource, view } from '../../constants';
-import { checkFile, updateDoc, updateDocRoot } from '../../actions/document';
+import { checkFile, renameDoc, updateDoc, updateDocRoot } from '../../actions/document';
 import { setLink } from '../../actions/page';
 import { dragEnd, dragStart, dropOver } from '../../actions/drag';
 
@@ -28,22 +28,23 @@ class TileComponent extends React.Component {
         dropOver: PropTypes.func.isRequired,
         folder: PropTypes.string,
         checkList: PropTypes.array.isRequired,
+        checkListFolder: PropTypes.array.isRequired,
         source: PropTypes.string,
         dragId: PropTypes.number,
         allowDrag: PropTypes.bool.isRequired,
         updateDocRoot: PropTypes.func.isRequired,
         updateFolderRoot: PropTypes.func.isRequired,
         view: PropTypes.string.isRequired,
+        renamedIdFile: PropTypes.number,
+        renamedIdFolder: PropTypes.number,
+        renameDoc: PropTypes.func.isRequired,
+        renameFolder: PropTypes.func.isRequired,
+        checkFolder: PropTypes.func.isRequired,
     };
 
     state = {
-        isClicked: false,
         title: this.props.title,
         isChecked: true,
-    };
-
-    handleChangeClick = (e) => {
-        this.setState({ isClicked: !this.state.isClicked });
     };
 
     handleChange = (e) => {
@@ -55,13 +56,15 @@ class TileComponent extends React.Component {
             switch (this.props.type) {
                 case tileType.folder:
                     this.props.updateFolder(makeUrls.makeCustomFolder(this.props.id), this.state.title);
+                    this.props.renameFolder();
                     break;
                 case tileType.file:
                     this.props.updateDoc(makeUrls.makeCustomFile(this.props.id), this.state.title);
+                    this.props.renameDoc();
                     break;
                 default:
             }
-            this.onHandleChange(e);
+            this.handleChange(e);
         }
     };
 
@@ -129,12 +132,25 @@ class TileComponent extends React.Component {
     doClick = (e) => {
         this.clickedOnce = undefined;
         if (!this.props.isModal) {
-            // this.setState({ isChecked: !this.state.isChecked });
-            this.props.checkFile(this.props.id);
+            if (this.props.type === tileType.file) {
+                this.props.checkFile(this.props.id);
+            } else if (this.props.type === tileType.folder) {
+                this.props.checkFolder(this.props.id);
+            }
         } else {
             this.props.switchFolder(this.props.id);
         }
     };
+
+    isRenamed() {
+        if (this.props.type === tileType.file) {
+            return this.props.id === this.props.renamedIdFile;
+        }
+        if (this.props.type === tileType.folder) {
+            return this.props.id === this.props.renamedIdFolder;
+        }
+        return false;
+    }
 
     renderClassName() {
         let itemClass = 'content-flex-item';
@@ -146,6 +162,11 @@ class TileComponent extends React.Component {
         }
         if (this.props.type === tileType.file) {
             if (this.props.checkList.indexOf(this.props.id) !== -1) {
+                return `${itemClass} checked`;
+            }
+        }
+        if (this.props.type === tileType.folder) {
+            if (this.props.checkListFolder.indexOf(this.props.id) !== -1) {
                 return `${itemClass} checked`;
             }
         }
@@ -165,7 +186,7 @@ class TileComponent extends React.Component {
         }
         if (this.props.type === tileType.file) {
             return (<img
-                className="icon"
+                className={ this.props.view === view.col ? 'item' : 'icon' }
                 style={ this.props.view === view.col ? { float: 'left' } : null }
                 onClick={ this.handleClick }
                 onDragStart={ this.handleDragStart }
@@ -177,7 +198,7 @@ class TileComponent extends React.Component {
         if (this.props.type === tileType.folder) {
             return (<img
                 style={ this.props.view === view.col ? { float: 'left' } : null }
-                className="icon"
+                className={ this.props.view === view.col ? 'item' : 'icon' }
                 onClick={ this.handleClick }
                 onDragStart={ this.handleDragStart }
                 src={ imageUrl }
@@ -194,8 +215,11 @@ class TileComponent extends React.Component {
         return (
             <div className={ this.renderClassName() }>
                 { this.renderItem() }
-                {!this.state.isClicked ?
-                    <div className={ this.props.view === view.col ? 'content-item__title content-item__title-col' : 'content-item__title' } onClick={ this.handleChangeClick }>{this.props.title}</div>
+                {!this.isRenamed() ?
+                    <div
+                        className={ this.props.view === view.col ? 'content-item__title content-item__title-col' : 'content-item__title' }
+                    >{this.props.title}
+                    </div>
                     : <input
                         className="content-item__input"
                         value={ this.state.title }
@@ -212,10 +236,13 @@ class TileComponent extends React.Component {
 const mapStoreToProps = (state, props) => ({
     checkedFolder: state.folder.checkedFolder,
     checkList: state.document.checkList,
+    checkListFolder: state.folder.checkList,
     allowDrag: state.drag.allowDrag,
     source: state.drag.source,
     dragId: state.drag.id,
     view: state.page.view,
+    renamedIdFile: state.document.renamedId,
+    renamedIdFolder: state.folder.renamedId,
 });
 
 const mapDispatchToProps = dispatch => ({
@@ -223,6 +250,7 @@ const mapDispatchToProps = dispatch => ({
         updateFolder,
         updateDoc,
         checkFile,
+        checkFolder,
         switchFolder,
         setLink,
         dragStart,
@@ -230,6 +258,8 @@ const mapDispatchToProps = dispatch => ({
         dropOver,
         updateDocRoot,
         updateFolderRoot,
+        renameDoc,
+        renameFolder,
     }, dispatch),
 });
 

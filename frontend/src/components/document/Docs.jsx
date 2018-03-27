@@ -5,7 +5,7 @@ import { withRouter } from 'react-router-dom';
 import PropTypes from 'prop-types';
 import { apps, folderType, makeUrls, urls, view } from '../../constants';
 import { checkAll, docsUnMount, loadDocs, loadDocsMore } from '../../actions/document';
-import { filterFolders, loadFilterFolders, loadRecursiveFolders } from '../../actions/folder';
+import {filterFolders, loadFilterFolders, loadRecursiveFolders, loadRoot} from '../../actions/folder';
 import { modalOpen, setModal } from '../../actions/modal';
 import FoldersTile from '../tile/FoldersTile';
 import DocsTile from '../tile/DocsTile';
@@ -31,6 +31,7 @@ class DocsComponent extends React.Component {
         checkAll: PropTypes.func.isRequired,
         folder: PropTypes.string.isRequired,
         view: PropTypes.string.isRequired,
+        loadRoot: PropTypes.func.isRequired,
     };
 
     state = {
@@ -75,6 +76,7 @@ class DocsComponent extends React.Component {
             if (this.props.folder === folderType.root) {
                 this.props.loadDocs(makeUrls.makeFilterRootDocs(nextProps.filter, nextProps.filterType))
                     .then(() => this.props.filterFolders(null));
+                this.props.loadRoot();
             }
         }
     }
@@ -156,6 +158,7 @@ const mapDispatchToProps = dispatch => ({
         changeView,
         clearFilter,
         filterFolders,
+        loadRoot,
     }, dispatch),
 });
 

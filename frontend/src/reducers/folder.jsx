@@ -5,7 +5,8 @@ import {
     LOAD_FILTER_FOLDERS, LOAD_FILTER_FOLDERS_SUCCESS, LOAD_FOLDER, LOAD_FOLDERS, LOAD_FOLDERS_MORE,
     LOAD_FOLDERS_SUCCESS, LOAD_FOLDERS_TRANSFER, LOAD_FOLDERS_TRANSFER_SUCCESS, SWITCH_FOLDER, TRANSFER_UNMOUNT,
     LOAD_FOLDERS_MORE_START, DELETE_FOLDER_SUCCESS, FILTER_FOLDERS, LOAD_RECURSIVE_FOLDERS,
-    LOAD_RECURSIVE_FOLDERS_SUCCESS, LOAD_UNTREE_FOLDERS_SUCCESS,
+    LOAD_RECURSIVE_FOLDERS_SUCCESS, LOAD_UNTREE_FOLDERS_SUCCESS, LOAD_ROOT, CHECK_FOLDER, CHECK_ALL_FOLDERS,
+    RENAME_FOLDER,
 } from '../actions/folder';
 import { DOCS_UNMOUNT } from '../actions/document';
 import { folderType } from "../constants";
@@ -27,6 +28,9 @@ const initalState = {
     folderUnTreeList: [],
     checkedFolder: null,
     recursiveFolder: null,
+    checkList: [],
+    countCheck: 0,
+    renamedId: null,
 };
 
 function filter(folders, id) {
@@ -65,6 +69,26 @@ export default function folder(store = initalState, action) {
     }
     let index = null;
     switch (action.type) {
+        case RENAME_FOLDER:
+            if (store.renamedId) {
+                return update(store, {
+                    renamedId: {
+                        $set: null,
+                    },
+                });
+            }
+            return update(store, {
+                renamedId: {
+                    $set: store.checkList[0],
+                },
+            });
+        case LOAD_ROOT:
+            return update(store, {
+                folderList: {
+                    $set: _.difference(Object.keys(store.folders)
+                        .map(id => parseInt(id)) || {}, filterRoot(store.folders, action.id)),
+                },
+            });
         case LOAD_RECURSIVE_FOLDERS:
             return update(store, {
                 isRecursiveLoading: {
@@ -98,6 +122,9 @@ export default function folder(store = initalState, action) {
                 folderList: {
                     $set: _.difference(Object.keys(store.folders)
                         .map(id => parseInt(id)) || {}, filterRoot(store.folders, action.id)),
+                },
+                isLoading: {
+                    $set: true,
                 },
             });
         case LOAD_FOLDERS:
@@ -189,6 +216,13 @@ export default function folder(store = initalState, action) {
                 folderTileList: {
                     $unshift: [action.payload.result],
                 },
+                folders: {
+                    [action.payload.entities.folder[action.payload.result].root]: {
+                        folder_set: {
+                            $unshift: [action.payload.result],
+                        },
+                    },
+                },
             });
         case LOAD_FILTER_FOLDERS:
             return update(store, {
@@ -240,6 +274,55 @@ export default function folder(store = initalState, action) {
             return update(store, {
                 folderTileList: {
                     $splice: [[index, 1]],
+                },
+            });
+        case CHECK_FOLDER:
+            index = store.checkList.indexOf(action.id);
+            if (index === -1) {
+                return update(store, {
+                    checkList: {
+                        $push: [action.id],
+                    },
+                    countCheck: {
+                        $set: store.countCheck + 1,
+                    },
+                });
+            }
+            if (store.countCheck === 1) {
+                return update(store, {
+                    checkList: {
+                        $set: [],
+                    },
+                    countCheck: {
+                        $set: 0,
+                    },
+                });
+            }
+            return update(store, {
+                checkList: {
+                    $splice: [[index, 1]],
+                },
+                countCheck: {
+                    $set: store.countCheck - 1,
+                },
+            });
+        case CHECK_ALL_FOLDERS:
+            if (!store.checkList.length) {
+                return update(store, {
+                    checkList: {
+                        $set: store.docList,
+                    },
+                    countCheck: {
+                        $set: store.count,
+                    },
+                });
+            }
+            return update(store, {
+                checkList: {
+                    $set: [],
+                },
+                countCheck: {
+                    $set: 0,
                 },
             });
         default:

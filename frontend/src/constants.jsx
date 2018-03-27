@@ -95,6 +95,7 @@ export const items = {
     trashBad: '/static/img/trashBad.png',
     clear: '/static/img/clear.png',
     colRow: '/static/img/row-col.png',
+    colTable: '/static/img/row-table.png',
     calendar: '/static/img/calendar.png',
     arrow: '/static/img/arrow.png',
 };
