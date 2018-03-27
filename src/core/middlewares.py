@@ -10,6 +10,7 @@ class RequestLoggerMiddleware:
 
         response = self.get_response(request)
 
-        UserRequestLog.objects.create(user=request.user)
+        if request.user.is_authenticated:
+            UserRequestLog.objects.create(user=request.user)
 
         return response
