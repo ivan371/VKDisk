@@ -8,3 +8,4 @@ __pycache__/
 src/db.sqlite3
 collected_static
 *.rdb
+/src/celerybeat-schedule
