@@ -104,7 +104,7 @@ def download_dialog_history(access_token, user_id, chat_id, is_group_chat, media
     else:
         end_message_id = None
     current_msg_id = end_message_id
-    while end_message_id is None or current_msg_id > end_message_id:
+    while end_message_id is None or current_msg_id >= end_message_id:
         response = api.messages.getHistoryAttachments(**params)
 
         for item in response['items']:
