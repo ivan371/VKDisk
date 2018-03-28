@@ -8,9 +8,9 @@ defusedxml==0.5.0
 dj-database-url==0.4.2
 Django==2.0.2
 django-debug-toolbar==1.9.1
-django-elasticsearch==0.5
 django-js-asset==1.0.0
 django-mptt==0.9.0
+-e git://github.com/liberation/django-elasticsearch#egg=django_elasticsearch
 django-rest-elasticsearch==0.4
 django-sphinxql==1.1.0
 djangorestframework==3.7.7
@@ -31,7 +31,6 @@ parso==0.1.1
 pexpect==4.4.0
 pickleshare==0.7.4
 Pillow==5.0.0
-pkg-resources==0.0.0
 prompt-toolkit==1.0.15
 psycopg2==2.7.4
 psycopg2-binary==2.7.4

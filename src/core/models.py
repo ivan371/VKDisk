@@ -1,6 +1,9 @@
 # coding: utf-8
 
 from __future__ import unicode_literals
+
+from datetime import datetime, timedelta
+from django.utils import timezone
 from django.contrib.auth.models import AbstractUser
 from django.db import models
 from django.utils.translation import ugettext_lazy as _
@@ -46,3 +49,16 @@ class Authored(models.Model):
         abstract = True
         verbose_name = _(u'authored')
         verbose_name_plural = _(u'authored')
+
+
+class UserRequstLogQuerySet(models.QuerySet):
+    def online_users(self, period):
+        time_from = timezone.now() - timedelta(seconds=period)
+        return self.filter(request_time__gt=time_from).distinct('user_id')
+
+
+class UserRequestLog(models.Model):
+    user = models.ForeignKey(User, on_delete=models.CASCADE, verbose_name=_(u'user'))
+    request_time = models.DateTimeField(auto_now_add=True, editable=False, blank=True)
+
+    objects = UserRequstLogQuerySet.as_manager()
