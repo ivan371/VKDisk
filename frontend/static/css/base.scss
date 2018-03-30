@@ -133,8 +133,8 @@ input[type="text"]:focus {
     height: 220px;
 }
 .content-flex-item{
-    padding-top: 15px;
-    padding-botton: 15px;
+    padding-top: 10px;
+    padding-bottom: 10px;
     height: 80px;
     width: 100px;
     text-align: center;
@@ -266,6 +266,7 @@ img.item{
     border: 1px solid #c0cad5;
     cursor: text;
     margin-top: 4px;
+    width: 100%;
     outline: 0;
     line-height: 150%;
 }
@@ -312,4 +313,7 @@ img.item{
     margin-left: 10px;
 }
 .calendar{
+}
+.search{
+    width: 100px;
 }

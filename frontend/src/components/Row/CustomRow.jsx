@@ -121,7 +121,7 @@ class CustomRowComponent extends React.Component {
                 <div className="page-content-content-wrap" onScroll={ this.handleScroll }>
                     <div className="content-item">
                         <input
-                            className="content-item__input"
+                            className="content-item__input search"
                             type="text"
                             placeholder="Search"
                             name="filter"

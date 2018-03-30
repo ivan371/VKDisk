@@ -40,12 +40,23 @@ class TileComponent extends React.Component {
         renameDoc: PropTypes.func.isRequired,
         renameFolder: PropTypes.func.isRequired,
         checkFolder: PropTypes.func.isRequired,
+        countCheckFolder: PropTypes.number.isRequired,
+        countCheckFile: PropTypes.number.isRequired,
     };
 
     state = {
         title: this.props.title,
         isChecked: true,
     };
+
+    componentDidUpdate(lastProps) {
+        if (this.props.countCheckFile !== lastProps.countCheckFile ||
+            this.props.countCheckFolder !== lastProps.countCheckFolder) {
+            if (this.isEmptyCheck()) {
+                this.setState({ isChecked: true });
+            }
+        }
+    }
 
     handleChange = (e) => {
         this.setState({ [e.target.name]: e.target.value });
@@ -143,6 +154,16 @@ class TileComponent extends React.Component {
         }
     };
 
+    isEmptyCheck() {
+        if (this.props.type === tileType.file) {
+            return !this.props.countCheckFile;
+        }
+        if (this.props.type === tileType.file) {
+            return !this.props.countCheckFile;
+        }
+        return 0;
+    }
+
     isRenamed() {
         if (this.props.type === tileType.file) {
             return this.props.id === this.props.renamedIdFile;
@@ -228,6 +249,8 @@ const mapStoreToProps = (state, props) => ({
     checkedFolder: state.folder.checkedFolder,
     checkList: state.document.checkList,
     checkListFolder: state.folder.checkList,
+    countCheckFolder: state.folder.countCheck,
+    countCheckFile: state.document.countCheck,
     allowDrag: state.drag.allowDrag,
     source: state.drag.source,
     dragId: state.drag.id,
