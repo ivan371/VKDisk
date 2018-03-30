@@ -3,19 +3,21 @@ import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
 import { withRouter } from 'react-router-dom';
 import PropTypes from 'prop-types';
-import {apps, folderType, makeUrls, urls, view} from '../../constants';
+import { apps, folderType, makeUrls, urls, view } from '../../constants';
 import { checkAll, docsUnMount, loadDocs, loadDocsMore } from '../../actions/document';
-import { loadFilterFolders } from '../../actions/folder';
+import {filterFolders, loadFilterFolders, loadRecursiveFolders, loadRoot} from '../../actions/folder';
 import { modalOpen, setModal } from '../../actions/modal';
 import FoldersTile from '../tile/FoldersTile';
 import DocsTile from '../tile/DocsTile';
 import DocsHeader from './DocsHeader';
-import {changeView, clearFilter} from '../../actions/page';
+import { changeView, clearFilter } from '../../actions/page';
 
 class DocsComponent extends React.Component {
     static propTypes = {
         loadDocs: PropTypes.func.isRequired,
         loadFilterFolders: PropTypes.func.isRequired,
+        loadRecursiveFolders: PropTypes.func.isRequired,
+        filterFolders: PropTypes.func.isRequired,
         docsUnMount: PropTypes.func.isRequired,
         clearFilter: PropTypes.func.isRequired,
         params: PropTypes.object.isRequired,
@@ -29,6 +31,7 @@ class DocsComponent extends React.Component {
         checkAll: PropTypes.func.isRequired,
         folder: PropTypes.string.isRequired,
         view: PropTypes.string.isRequired,
+        loadRoot: PropTypes.func.isRequired,
     };
 
     state = {
@@ -37,19 +40,31 @@ class DocsComponent extends React.Component {
 
     componentDidMount() {
         if (this.props.params.hasOwnProperty('id')) {
-            this.props.loadDocs(makeUrls.makeFilterDocsFolder(this.props.params.id));
-            this.props.loadFilterFolders(makeUrls.makeFilterFoldersFolder(this.props.params.id)).then(this.scrollStart);
+            if(this.props.folder === folderType.folder) {
+                this.props.loadDocs(makeUrls.makeFilterDocsFolder(this.props.params.id))
+                    .then(() => this.props.loadFilterFolders(makeUrls.makeRootFoldersFolder())
+                        .then(this.scrollStart))
+                    .then(() => this.props.filterFolders(parseInt(this.props.params.id)))
+                    .then(() => this.props.loadRecursiveFolders(makeUrls.makeFolderRecursive(this.props.params.id)));
+            } else {
+                this.props.loadDocs(makeUrls.makeFilterDocsFolder(this.props.params.id)).then(this.scrollStart);
+                this.props.filterFolders(parseInt(this.props.params.id));
+            }
         }
         if (this.props.folder === folderType.root) {
-            this.props.loadDocs(urls.docs.unsortedDocsUrl);
-            this.props.loadFilterFolders(makeUrls.makeRootFoldersFolder()).then(this.scrollStart);
+            this.props.loadDocs(urls.docs.unsortedDocsUrl)
+                .then(() => this.props.loadFilterFolders(makeUrls.makeRootFoldersFolder())
+                    .then(this.scrollStart))
+                .then(() => this.props.filterFolders(null))
+                .then(() => this.props.loadRoot());
         }
     }
     componentWillReceiveProps(nextProps) {
         if (nextProps.params.hasOwnProperty('id')) {
             if (this.props.params.id !== nextProps.params.id) {
                 this.props.loadDocs(makeUrls.makeFilterDocsFolder(nextProps.params.id));
-                this.props.loadFilterFolders(makeUrls.makeFilterFoldersFolder(nextProps.params.id));
+                this.props.filterFolders(parseInt(nextProps.params.id));
+                this.props.loadRecursiveFolders(makeUrls.makeFolderRecursive(nextProps.params.id));
                 if (this.props.checkList.length) {
                     this.props.checkAll();
                 }
@@ -60,7 +75,8 @@ class DocsComponent extends React.Component {
         }
         if (this.props.filterType !== nextProps.filterType || this.props.filter !== nextProps.filter) {
             if (this.props.folder === folderType.root) {
-                this.props.loadDocs(makeUrls.makeFilterRootDocs(nextProps.filter, nextProps.filterType));
+                this.props.loadDocs(makeUrls.makeFilterRootDocs(nextProps.filter, nextProps.filterType))
+                    .then(() => this.props.filterFolders(null));
             }
         }
     }
@@ -96,7 +112,7 @@ class DocsComponent extends React.Component {
     };
 
     scrollStart = () => {
-        this.setState({ scroll: document.getElementsByClassName('content-flex')[0]} );
+        this.setState({ scroll: document.getElementsByClassName('content-flex')[0] });
     };
 
     renderView() {
@@ -135,11 +151,14 @@ const mapDispatchToProps = dispatch => ({
         loadDocsMore,
         docsUnMount,
         loadFilterFolders,
+        loadRecursiveFolders,
         modalOpen,
         setModal,
         checkAll,
         changeView,
         clearFilter,
+        filterFolders,
+        loadRoot,
     }, dispatch),
 });
 

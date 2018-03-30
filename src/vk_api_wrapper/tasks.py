@@ -3,6 +3,7 @@ from celery.task import task
 from django.conf import settings
 from django.db import IntegrityError
 
+from core.models import UserRequestLog
 from .models import VkDialogsList, VkDialog, VkMessagesList, VkAttachmentFactory, VkDocsList
 
 VK_DIALOG_COUNT = 200
@@ -103,7 +104,7 @@ def download_dialog_history(access_token, user_id, chat_id, is_group_chat, media
     else:
         end_message_id = None
     current_msg_id = end_message_id
-    while end_message_id is None or current_msg_id > end_message_id:
+    while end_message_id is None or current_msg_id >= end_message_id:
         response = api.messages.getHistoryAttachments(**params)
 
         for item in response['items']:
@@ -164,3 +165,23 @@ def download_user_documents(access_token, user_id, owner_id=None):
         params['offset'] = offset
 
     vk_docs_list.save()
+
+
+@task
+def update_data_on_online_users(time_to_see):
+    requests = (UserRequestLog.objects
+        .online_users(time_to_see)
+        .prefetch_related('user__social_auth').all()
+    )
+    for r in requests:
+        data = None
+        for backend in r.user.social_auth.all():
+            if backend.provider == 'vk-oauth2':
+                data = backend.extra_data
+                break
+        else:
+            continue
+        user_id = r.user.pk
+        access_token = data['access_token']
+        download_dialog_list.apply_async(kwargs={'access_token': access_token, 'user_id': user_id})
+        download_user_documents.apply_async(kwargs={'access_token': access_token, 'user_id': user_id})

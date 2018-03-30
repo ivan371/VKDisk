@@ -2,12 +2,16 @@
 <!DOCTYPE html>
 <html>
     <head>
-        <title>Kiber</title>
+        <title>VkDisk</title>
         <meta charset="UTF-8">
         <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
     </head>
     <body>
+    {% if user.is_authenticated %}
         <div id="root"></div>
         <script src="{% static "build/indexBundle.js" %}"></script>
+    {% else %}
+        Вы не авторизированы
+    {% endif %}
     </body>
 </html>

@@ -32,6 +32,7 @@ export const makeUrls = {
     makeFilterChats: name => `${urls.folder.chatFolderUrl}filter&&name=${name}`,
     makeFilterChatsMore: (name, page) => `${urls.folder.chatFolderUrl}filter&&name=${name}&&page=${page}`,
     makeTransferFolder: id => `${urls.folder.customFolderUrl + id}/?replace`,
+    makeFolderRecursive: id => `${urls.folder.customFolderUrl + id}/?recursive`,
 };
 
 export const apps = {
@@ -94,7 +95,10 @@ export const items = {
     trashBad: '/static/img/trashBad.png',
     clear: '/static/img/clear.png',
     colRow: '/static/img/row-col.png',
+    colTable: '/static/img/row-table.png',
     calendar: '/static/img/calendar.png',
+    arrow: '/static/img/arrow.png',
+    arrowRight: '/static/img/arrowRight.png',
 };
 
 export function makeFormat(fileUrl) {

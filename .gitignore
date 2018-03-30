@@ -7,4 +7,7 @@ django.conf
 __pycache__/
 src/db.sqlite3
 collected_static
+*.DS_Store
 *.rdb
+/src/celerybeat-schedule
+*Thumbs.db

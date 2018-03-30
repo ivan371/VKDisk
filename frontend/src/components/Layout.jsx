@@ -21,10 +21,7 @@ class LayoutComponent extends React.Component {
                     </div>
                 </div>
                 <div className="page-content">
-                    <div className="page-content-navigation">
-                        <VkLink link="/root" content="All items" />
-                        <VkLink link="/chat" content="Dialogs" />
-                    </div>
+                    <div className="page-content-navigation" />
                     {this.props.children}
                 </div>
             </div>
