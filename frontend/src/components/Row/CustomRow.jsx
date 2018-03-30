@@ -8,9 +8,10 @@ import Docs from '../document/Docs';
 import { dropOver } from '../../actions/drag';
 import { deleteDocs } from '../../actions/document';
 import { setFilter } from '../../actions/page';
-import Node from "../tree/Node";
 import NodeChat from "../tree/NodeChat";
 import NodeRoot from "../tree/NodeRoot";
+import Tags from "../tag/Tags";
+import NodeTag from "../tree/NodeTag";
 
 
 class CustomRowComponent extends React.Component {
@@ -110,8 +111,9 @@ class CustomRowComponent extends React.Component {
 
     renderNodeList() {
         return [
-            <NodeRoot key="1" folder={ this.props.folder } folderList={ this.props.folderList } />,
-            <NodeChat key="2" folder={ this.props.folder } />,
+            <NodeTag key="1" />,
+            <NodeRoot key="2" folder={ this.props.folder } folderList={ this.props.folderList } />,
+            <NodeChat key="3" folder={ this.props.folder } />,
         ];
     }
 

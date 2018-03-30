@@ -40,7 +40,7 @@ export default class DocsDateHeader extends React.Component {
             <button className="vk-button button-secondary" onClick={ this.props.onFilter }>Cancel</button>
             <button className="vk-button" onClick={ this.handleFilterStart }>Search</button>
             <input
-                className="content-item__input calendar"
+                className="content-item__input calendar search"
                 type="date"
                 onChange={ this.handleChange }
                 name="filter"

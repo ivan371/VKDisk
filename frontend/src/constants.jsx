@@ -119,3 +119,52 @@ export const view = {
     col: 'col',
     row: 'row',
 };
+
+export const tags = [
+    {
+        id: 1,
+        name: 'pdf',
+        type: 'filter',
+        filterName: 'name',
+    },
+    {
+        id: 2,
+        name: 'doc',
+        type: 'filter',
+        filterName: 'name',
+    },
+    {
+        id: 3,
+        name: 'jpg',
+        type: 'filter',
+        filterName: 'name',
+    },
+    {
+        id: 4,
+        name: 'png',
+        type: 'filter',
+        filterName: 'name',
+    },
+    {
+        id: 5,
+        name: 'tex',
+        type: 'filter',
+        filterName: 'name',
+    },
+    {
+        id: 6,
+        name: 'py',
+        type: 'filter',
+        filterName: 'name',
+    },
+    {
+        id: 7,
+        name: 'ppt',
+        type: 'filter',
+        filterName: 'name',
+    },
+];
+
+export const tagType = {
+    filter: 'filter',
+};
