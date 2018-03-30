@@ -102,6 +102,12 @@ export default function document(store = initalState, action) {
                 docList: {
                     $set: [],
                 },
+                checkList: {
+                    $set: [],
+                },
+                countCheck: {
+                    $set: 0,
+                },
             });
         case CHECK_FILE:
             index = store.checkList.indexOf(action.id);

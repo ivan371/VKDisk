@@ -16,7 +16,7 @@ class NodeChatComponent extends React.Component {
         if (this.props.folder === folderType.chat) {
             return items.arrow;
         }
-        return format.folder;
+        return items.arrowRight;
     }
 
     render() {

@@ -18,7 +18,7 @@ class CreateFolderComponent extends React.Component {
         title: '',
     };
 
-    onCreate = (e) => {
+    handleCreate = (e) => {
         if (this.props.folder === folderType.folder) {
             this.props.createFolder(makeUrls.makeFilterFoldersFolder(this.props.id), this.state.title);
         }
@@ -28,7 +28,7 @@ class CreateFolderComponent extends React.Component {
         this.props.modalOpen();
     };
 
-    onChange = (e) => {
+    handleChange = (e) => {
         this.setState({ [e.target.name]: e.target.value });
     };
 
@@ -46,10 +46,10 @@ class CreateFolderComponent extends React.Component {
                         <img src={ format.folder } />
                     </div>
                     <div className="modal-input">
-                        <input name="title" value={ this.state.title } className="vk-input" onChange={ this.onChange } />
+                        <input name="title" value={ this.state.title } className="vk-input" onChange={ this.handleChange } />
                     </div>
                     <div className="modal-footer">
-                        <button className="vk-button" onClick={ this.onCreate }>Создать</button>
+                        <button className="vk-button" onClick={ this.handleCreate }>Create</button>
                     </div>
                 </div>
             </React.Fragment>

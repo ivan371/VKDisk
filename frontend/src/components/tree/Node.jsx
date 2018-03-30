@@ -18,7 +18,7 @@ export default class NodeComponent extends React.Component {
             && this.props.foldersRecursiveList.indexOf(this.props.id) !== -1) {
             return items.arrow;
         }
-        return format.folder;
+        return items.arrowRight;
     }
 
     render() {

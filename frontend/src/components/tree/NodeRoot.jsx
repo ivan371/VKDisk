@@ -18,7 +18,7 @@ class NodeRootComponent extends React.Component {
         if (this.props.folder === folderType.root || this.props.folder === folderType.folder) {
             return items.arrow;
         }
-        return format.folder;
+        return items.arrowRight;
     }
 
     render() {

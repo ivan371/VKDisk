@@ -104,6 +104,7 @@ class TileComponent extends React.Component {
 
 
     handleClick = (e) => {
+        this.setState({ isChecked: !this.state.isChecked });
         if (!this._delayedClick) {
             this._delayedClick = _.debounce(this.doClick, 500);
         }
@@ -159,16 +160,6 @@ class TileComponent extends React.Component {
         }
         if (this.props.isModal) {
             return `${itemClass} ${this.props.id !== this.props.checkedFolder ? '' : 'checked'}`;
-        }
-        if (this.props.type === tileType.file) {
-            if (this.props.checkList.indexOf(this.props.id) !== -1) {
-                return `${itemClass} checked`;
-            }
-        }
-        if (this.props.type === tileType.folder) {
-            if (this.props.checkListFolder.indexOf(this.props.id) !== -1) {
-                return `${itemClass} checked`;
-            }
         }
         return `${itemClass} ${this.state.isChecked ? '' : 'checked'}`;
     }

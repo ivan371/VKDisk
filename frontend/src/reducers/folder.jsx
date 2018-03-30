@@ -46,7 +46,7 @@ function filter(folders, id) {
 function filterRoot(folders) {
     const keys = [];
     for (const i in folders) {
-        if (folders[i].root != null || folders[i].type === folderType.chat) {
+        if (folders[i].root !== null || folders[i].type === folderType.chat) {
             keys.push(folders[i].id);
         }
     }
@@ -84,9 +84,8 @@ export default function folder(store = initalState, action) {
             });
         case LOAD_ROOT:
             return update(store, {
-                folderList: {
-                    $set: _.difference(Object.keys(store.folders)
-                        .map(id => parseInt(id)) || {}, filterRoot(store.folders, action.id)),
+                foldersRecursiveList: {
+                    $set: [],
                 },
             });
         case LOAD_RECURSIVE_FOLDERS:
@@ -247,6 +246,12 @@ export default function folder(store = initalState, action) {
                 // folderTileList: {
                 //     $set: [],
                 // },
+                checkList: {
+                    $set: [],
+                },
+                countCheck: {
+                    $set: 0,
+                },
             });
         case SWITCH_FOLDER:
             return update(store, {

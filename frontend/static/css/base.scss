@@ -133,21 +133,23 @@ input[type="text"]:focus {
     height: 220px;
 }
 .content-flex-item{
-    padding: 10px;
+    padding-top: 15px;
+    padding-botton: 15px;
     height: 80px;
-    width: 80px;
+    width: 100px;
     text-align: center;
 }
 .content-flex-item a{
     color: black;
 }
 .content-flex-item:hover{
-    background-color: #EDEEF0;
+    background-color: $hover-color;
 }
 .content-flex-item-column{
     width: 480px;
     text-align: left;
     height: 30px;
+    padding: 10px;
 }
 img.icon{
     width: 50px;
@@ -243,7 +245,7 @@ img.item{
 .content-item__title{
     cursor: text;
     text-align: center;
-    max-width: 50px;
+    max-width: 90px;
     margin: 0 auto;
     max-height: 38px;
     text-overflow: ellipsis;
@@ -255,6 +257,7 @@ img.item{
     overflow: visible;
 }
 .content-item__title-col{
+    font-size: 1em;
     float: left;
     max-width: 300px;
     text-align: left;
@@ -307,4 +310,6 @@ img.item{
 }
 .node-layout{
     margin-left: 10px;
+}
+.calendar{
 }

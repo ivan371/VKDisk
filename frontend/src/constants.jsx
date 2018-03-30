@@ -98,6 +98,7 @@ export const items = {
     colTable: '/static/img/row-table.png',
     calendar: '/static/img/calendar.png',
     arrow: '/static/img/arrow.png',
+    arrowRight: '/static/img/arrowRight.png',
 };
 
 export function makeFormat(fileUrl) {
