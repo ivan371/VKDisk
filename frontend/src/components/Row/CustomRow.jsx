@@ -2,16 +2,19 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
-import {folderUnMount, loadFolders, loadFoldersMore, loadUnTreeFolders} from '../../actions/folder';
+import {
+    filterFolders, folderUnMount, loadFilterFolders, loadFolders, loadFoldersMore,
+    loadUnTreeFolders
+} from '../../actions/folder';
 import { apps, dragSource, folderType, items, makeUrls, urls } from '../../constants';
 import Docs from '../document/Docs';
 import { dropOver } from '../../actions/drag';
 import { deleteDocs } from '../../actions/document';
 import { setFilter } from '../../actions/page';
-import NodeChat from "../tree/NodeChat";
-import NodeRoot from "../tree/NodeRoot";
-import Tags from "../tag/Tags";
-import NodeTag from "../tree/NodeTag";
+import NodeChat from '../tree/NodeChat';
+import NodeRoot from '../tree/NodeRoot';
+import Tags from '../tag/Tags';
+import NodeTag from '../tree/NodeTag';
 
 
 class CustomRowComponent extends React.Component {
@@ -32,6 +35,8 @@ class CustomRowComponent extends React.Component {
         filter: PropTypes.string.isRequired,
         filterSelect: PropTypes.string.isRequired,
         setFilter: PropTypes.func.isRequired,
+        loadFilterFolders: PropTypes.func.isRequired,
+        filterFolders: PropTypes.func.isRequired,
     };
 
     state = {
@@ -41,11 +46,22 @@ class CustomRowComponent extends React.Component {
     };
 
     componentDidMount() {
-        switch (this.props.folder) {
-            case folderType.chat:
+        if (this.props.params.hasOwnProperty('id')) {
+            if (this.props.folder === folderType.chat) {
                 this.props.loadUnTreeFolders(urls.folder.chatFolderUrl).then(this.scrollStart);
-                break;
-            default:
+            }
+            else {
+                this.props.loadFilterFolders(makeUrls.makeRootFoldersFolder())
+                    .then(() => this.props.filterFolders(parseInt(this.props.params.id)));
+            }
+        } else {
+            if (this.props.folder === folderType.chat) {
+                this.props.loadUnTreeFolders(urls.folder.chatFolderUrl).then(this.scrollStart);
+            }
+            if (this.props.folder === folderType.root) {
+                this.props.loadFilterFolders(makeUrls.makeRootFoldersFolder())
+                    .then(() => this.props.filterFolders(null));
+            }
         }
     }
 
@@ -163,6 +179,8 @@ const mapDispatchToProps = dispatch => ({
         dropOver,
         deleteDocs,
         setFilter,
+        loadFilterFolders,
+        filterFolders,
     }, dispatch),
 });
 

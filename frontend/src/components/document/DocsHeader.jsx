@@ -34,6 +34,7 @@ class DocsHeaderComponent extends React.Component {
         view: PropTypes.string.isRequired,
         renameDoc: PropTypes.func.isRequired,
         renameFolder: PropTypes.func.isRequired,
+        setSort: PropTypes.func.isRequired,
     };
 
     state = {
@@ -92,6 +93,10 @@ class DocsHeaderComponent extends React.Component {
         this.props.changeView();
     };
 
+    handleSetSort = (e) => {
+        this.props.setSort(e.target.value, apps.docs);
+    };
+
     renderMenu() {
         let type = null;
         let title = null;
@@ -110,11 +115,8 @@ class DocsHeaderComponent extends React.Component {
         if (this.state.isSort) {
             return (<React.Fragment>
                 <button className="vk-button button-secondary" onClick={ this.handleSort }>Cancel</button>
-                <button className="vk-button">Sort</button>
-                <select className="vk-button">
-                    <option>Name</option>
-                    <option>Date</option>
-                </select>
+                <button className="vk-button" value="name" onClick={ this.handleSetSort }>Name</button>
+                <button className="vk-button" value="date" onClick={ this.handleSetSort }>Date</button>
             </React.Fragment>);
         }
         if (this.state.isFilter) {
@@ -151,6 +153,7 @@ class DocsHeaderComponent extends React.Component {
             {type === 'sorted' || type === 'folder' || type === 'root' ?
                 <AddFolder id={ parseInt(this.props.params.id) } folder={ this.props.folder } />
                 : null}
+            <img className="item-right" onClick={ this.handleSort } src={ items.sort } />
             <img className="item-right" onClick={ this.handleDate } src={ items.calendar } />
             <img className="item-right" onClick={ this.handleFilter } src={ items.filter } />
         </React.Fragment>);

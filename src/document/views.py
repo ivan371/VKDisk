@@ -113,6 +113,11 @@ class DocumentViewSet(viewsets.ModelViewSet):
             if 'name' in self.request.query_params:
                 if self.request.query_params['name']:
                     q = q.filter(title__icontains=self.request.query_params['name'])
+        if 'sort' in self.request.query_params:
+            if self.request.query_params['sort'] == 'name':
+                q = q.order_by('title')
+            if self.request.query_params['sort'] == 'date':
+                q = q.order_by('created')
         return q
 
 
