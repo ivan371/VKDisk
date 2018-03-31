@@ -8,6 +8,7 @@ import { apps, tagType } from '../../constants';
 export class TagComponent extends React.Component {
     static propTypes = {
         name: PropTypes.string.isRequired,
+        value: PropTypes.string.isRequired,
         type: PropTypes.string.isRequired,
         filterName: PropTypes.string.isRequired,
         setFilter: PropTypes.func.isRequired,
@@ -15,7 +16,7 @@ export class TagComponent extends React.Component {
 
     handleFilter = () => {
         if (this.props.type === tagType.filter) {
-            this.props.setFilter(this.props.name, this.props.filterName, apps.docs);
+            this.props.setFilter(this.props.value, this.props.filterName, apps.docs);
         }
     };
 

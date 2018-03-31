@@ -72,6 +72,7 @@ export const format = {
     file: '/static/img/file.png',
     doc: '/static/img/formats/docx.png',
     docx: '/static/img/formats/docx.png',
+    rtf: '/static/img/formats/docx.png',
     pdf: '/static/img/formats/pdf.png',
     pptx: '/static/img/formats/pptx.png',
     ppt: '/static/img/formats/pptx.png',
@@ -85,6 +86,9 @@ export const format = {
     gif: '/static/img/formats/gif.png',
     zip: '/static/img/formats/zip.png',
     djvu: '/static/img/formats/djvu.png',
+    rar: '/static/img/formats/rar.png',
+    sql: '/static/img/formats/sql.png',
+    c: '/static/img/formats/c.png',
 };
 
 export const items = {
@@ -124,44 +128,51 @@ export const view = {
 
 export const tags = [
     {
+        id: 8,
+        name: 'clear',
+        value: '',
+        type: 'filter',
+        filterName: 'name',
+    },
+    {
         id: 1,
         name: 'pdf',
+        value: 'pdf',
         type: 'filter',
         filterName: 'name',
     },
     {
         id: 2,
         name: 'doc',
+        value: 'doc',
         type: 'filter',
         filterName: 'name',
     },
     {
         id: 3,
         name: 'jpg',
+        value: 'jpg',
         type: 'filter',
         filterName: 'name',
     },
     {
         id: 4,
         name: 'png',
+        value: 'png',
         type: 'filter',
         filterName: 'name',
     },
     {
         id: 5,
         name: 'tex',
-        type: 'filter',
-        filterName: 'name',
-    },
-    {
-        id: 6,
-        name: 'py',
+        value: 'tex',
         type: 'filter',
         filterName: 'name',
     },
     {
         id: 7,
         name: 'ppt',
+        value: 'ppt',
         type: 'filter',
         filterName: 'name',
     },

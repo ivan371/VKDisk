@@ -9,7 +9,7 @@ const initalStore = {
     },
     sort: {
         folder: '',
-        docs: '',
+        docs: 'date',
     },
     filterSelect: {
         folder: 'name',

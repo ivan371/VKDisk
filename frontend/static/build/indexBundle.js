@@ -243,6 +243,7 @@ var format = exports.format = {
     file: '/static/img/file.png',
     doc: '/static/img/formats/docx.png',
     docx: '/static/img/formats/docx.png',
+    rtf: '/static/img/formats/docx.png',
     pdf: '/static/img/formats/pdf.png',
     pptx: '/static/img/formats/pptx.png',
     ppt: '/static/img/formats/pptx.png',
@@ -255,7 +256,10 @@ var format = exports.format = {
     py: '/static/img/formats/py.png',
     gif: '/static/img/formats/gif.png',
     zip: '/static/img/formats/zip.png',
-    djvu: '/static/img/formats/djvu.png'
+    djvu: '/static/img/formats/djvu.png',
+    rar: '/static/img/formats/rar.png',
+    sql: '/static/img/formats/sql.png',
+    c: '/static/img/formats/c.png'
 };
 
 var items = exports.items = {
@@ -296,38 +300,45 @@ var view = exports.view = {
 };
 
 var tags = exports.tags = [{
+    id: 8,
+    name: 'clear',
+    value: '',
+    type: 'filter',
+    filterName: 'name'
+}, {
     id: 1,
     name: 'pdf',
+    value: 'pdf',
     type: 'filter',
     filterName: 'name'
 }, {
     id: 2,
     name: 'doc',
+    value: 'doc',
     type: 'filter',
     filterName: 'name'
 }, {
     id: 3,
     name: 'jpg',
+    value: 'jpg',
     type: 'filter',
     filterName: 'name'
 }, {
     id: 4,
     name: 'png',
+    value: 'png',
     type: 'filter',
     filterName: 'name'
 }, {
     id: 5,
     name: 'tex',
-    type: 'filter',
-    filterName: 'name'
-}, {
-    id: 6,
-    name: 'py',
+    value: 'tex',
     type: 'filter',
     filterName: 'name'
 }, {
     id: 7,
     name: 'ppt',
+    value: 'ppt',
     type: 'filter',
     filterName: 'name'
 }];
@@ -25629,7 +25640,13 @@ var TagsComponent = function (_React$PureComponent) {
         key: 'render',
         value: function render() {
             var tagList = _constants.tags.map(function (tag) {
-                return _react2.default.createElement(_Tag2.default, { key: tag.id, name: tag.name, filterName: tag.filterName, type: tag.type });
+                return _react2.default.createElement(_Tag2.default, {
+                    key: tag.id,
+                    name: tag.name,
+                    value: tag.value,
+                    filterName: tag.filterName,
+                    type: tag.type
+                });
             });
 
             return _react2.default.createElement(
@@ -49351,6 +49368,9 @@ function folder() {
                 folderUnTreeList: {
                     $set: action.payload.result
                 },
+                folderTileList: {
+                    $set: []
+                },
                 count: {
                     $set: action.payload.count
                 },
@@ -50751,7 +50771,7 @@ var initalStore = {
     },
     sort: {
         folder: '',
-        docs: ''
+        docs: 'date'
     },
     filterSelect: {
         folder: 'name',
@@ -52274,12 +52294,12 @@ var DocsHeaderComponent = function (_React$Component) {
                     ),
                     _react2.default.createElement(
                         'button',
-                        { className: 'vk-button', value: 'name', onClick: this.handleSetSort },
+                        { className: 'sort-button' + (this.props.sort === 'name' ? ' sort-button-selected' : ''), value: 'name', onClick: this.handleSetSort },
                         'Name'
                     ),
                     _react2.default.createElement(
                         'button',
-                        { className: 'vk-button', value: 'date', onClick: this.handleSetSort },
+                        { className: 'sort-button' + (this.props.sort === 'date' ? ' sort-button-selected' : ''), value: 'date', onClick: this.handleSetSort },
                         'Date'
                     )
                 );
@@ -52369,7 +52389,8 @@ DocsHeaderComponent.propTypes = {
     view: _propTypes2.default.string.isRequired,
     renameDoc: _propTypes2.default.func.isRequired,
     renameFolder: _propTypes2.default.func.isRequired,
-    setSort: _propTypes2.default.func.isRequired
+    setSort: _propTypes2.default.func.isRequired,
+    sort: _propTypes2.default.string.isRequired
 };
 
 
@@ -52383,6 +52404,7 @@ var mapStoreToProps = function mapStoreToProps(state) {
         page: state.document.page,
         filterSelect: state.page.filterSelect.docs,
         filter: state.page.filter.docs,
+        sort: state.page.sort.docs,
         countCheck: state.document.countCheck,
         countCheckFolder: state.folder.countCheck,
         isOpen: state.modal.isOpen,
@@ -53634,7 +53656,7 @@ var TagComponent = exports.TagComponent = function (_React$Component) {
 
         return _ret = (_temp = (_this = _possibleConstructorReturn(this, (_ref = TagComponent.__proto__ || Object.getPrototypeOf(TagComponent)).call.apply(_ref, [this].concat(args))), _this), _this.handleFilter = function () {
             if (_this.props.type === _constants.tagType.filter) {
-                _this.props.setFilter(_this.props.name, _this.props.filterName, _constants.apps.docs);
+                _this.props.setFilter(_this.props.value, _this.props.filterName, _constants.apps.docs);
             }
         }, _temp), _possibleConstructorReturn(_this, _ret);
     }
@@ -53655,6 +53677,7 @@ var TagComponent = exports.TagComponent = function (_React$Component) {
 
 TagComponent.propTypes = {
     name: _propTypes2.default.string.isRequired,
+    value: _propTypes2.default.string.isRequired,
     type: _propTypes2.default.string.isRequired,
     filterName: _propTypes2.default.string.isRequired,
     setFilter: _propTypes2.default.func.isRequired
@@ -53971,7 +53994,7 @@ exports = module.exports = __webpack_require__(308)(false);
 
 
 // module
-exports.push([module.i, "body {\n  background-color: #EDEEF0;\n  margin: 0;\n  font-family: -apple-system,BlinkMacSystemFont,Roboto,Helvetica Neue,sans-serif;\n}\n\na {\n  text-decoration: none;\n  cursor: pointer;\n}\n\n.page-header {\n  height: 42px;\n  background-color: #4A76A8;\n}\n\n.page-content {\n  margin: 0 auto;\n  width: 960px;\n  display: flex;\n  height: 100%;\n  position: sticky;\n}\n\n.page-header-content {\n  margin: 0 auto;\n  width: 960px;\n}\n\n.page-header-content-logo {\n  width: 139px;\n}\n\n.page-header-content h2 {\n  margin: 0;\n  padding-top: 5px;\n  color: white;\n}\n\n.page-content-navigation {\n  margin-top: 15px;\n  width: 139px;\n}\n\n.page-content-content {\n  padding-top: 15px;\n  padding-bottom: 2px;\n  min-width: 400px;\n  display: flex;\n}\n\n.page-content-content-wrap {\n  width: 300px;\n  background-color: white;\n  max-height: 100%;\n  border-radius: 2px 2px 0 0;\n  box-shadow: 0 1px 0 0 #d7d8db, 0 0 0 1px #e3e4e8;\n  overflow-y: auto;\n}\n\n.page-content-content-wrap a {\n  color: #285473;\n}\n\n.page-content-content-content {\n  background-color: white;\n  max-height: 100%;\n  border-radius: 2px 2px 0 0;\n  box-shadow: 0 1px 0 0 #d7d8db, 0 0 0 1px #e3e4e8;\n}\n\n.page-content-link {\n  display: block;\n  white-space: nowrap;\n  padding: 10px;\n  color: #285473;\n}\n\n.page-content-link:hover {\n  background-color: #E1E5EB;\n}\n\n.content-item {\n  padding: 10px;\n  height: 30px;\n  box-shadow: 0 1px 0 0 #d7d8db;\n}\n\n.page-content-link-item {\n  display: flex;\n  height: 20px;\n}\n\n.page-content-link-item:hover {\n  background-color: #EDEEF0;\n  cursor: pointer;\n}\n\n.content-item input {\n  border: 0px;\n}\n\ninput[type=\"text\"]:focus {\n  outline: none;\n}\n\n.content-flex {\n  display: flex;\n}\n\n.content-flex-row {\n  align-content: start;\n  flex-wrap: wrap;\n  overflow-y: auto;\n}\n\n.content-flex-column {\n  flex-direction: column;\n  overflow-y: auto;\n}\n\n@media screen and (min-height: 0px) and (max-height: 720px) {\n  .content-flex {\n    height: 480px;\n  }\n  .page-content-content {\n    height: 540px;\n  }\n  .page-content-content-content {\n    width: 520px;\n  }\n}\n\n@media screen and (min-height: 700px) and (max-height: 1500px) {\n  .content-flex {\n    height: 640px;\n  }\n  .page-content-content {\n    height: 700px;\n  }\n  .page-content-content-content {\n    width: 680px;\n  }\n}\n\n.content-flex-modal {\n  display: flex;\n  align-content: start;\n  flex-wrap: wrap;\n  overflow-y: auto;\n  height: 220px;\n}\n\n.content-flex-item {\n  padding-top: 10px;\n  padding-bottom: 10px;\n  height: 80px;\n  width: 100px;\n  text-align: center;\n}\n\n.content-flex-item a {\n  color: black;\n}\n\n.content-flex-item:hover {\n  background-color: #E1E5EB;\n}\n\n.content-flex-item-column {\n  width: 480px;\n  text-align: left;\n  height: 30px;\n  padding: 10px;\n}\n\nimg.icon {\n  width: 50px;\n  height: 50px;\n  cursor: pointer;\n}\n\nimg.item {\n  width: 20px;\n  height: 20px;\n  margin-right: 5px;\n}\n\n.modal-container {\n  position: fixed;\n  left: 0;\n  top: 0;\n  text-align: center;\n  background-color: rgba(0, 0, 0, 0.7);\n  width: 100%;\n  height: 100%;\n  z-index: 10;\n}\n\n.modal {\n  cursor: auto;\n  z-index: 100;\n  height: 336px;\n  width: 500px;\n  background-color: white;\n  margin: 116px auto;\n  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.35);\n  outline: none;\n  border-radius: 5px;\n}\n\n.modal-header {\n  border-radius: 5px 5px 0 0;\n  width: 100%;\n  height: 54px;\n  background-color: #4A76A8;\n}\n\n.modal-header-title {\n  padding: 1px;\n}\n\n.modal-header-title p {\n  color: white;\n}\n\n.modal-content {\n  padding: 20px;\n  height: 240px;\n  background-color: #F7F7F7;\n}\n\n.modal-content__img img {\n  width: 100px;\n}\n\n.vk-button {\n  background-color: #5b88bd;\n  text-decoration: none;\n  float: right;\n  padding: 7px 16px 8px;\n  margin-left: 10px;\n  font-size: 12.5px;\n  display: inline-block;\n  zoom: 1;\n  cursor: pointer;\n  white-space: nowrap;\n  outline: none;\n  font-family: -apple-system,BlinkMacSystemFont,Roboto,Helvetica Neue,sans-serif;\n  vertical-align: top;\n  line-height: 15px;\n  text-align: center;\n  color: #fff;\n  border: 0;\n  border-radius: 4px;\n  box-sizing: border-box;\n}\n\n.vk-input {\n  background: #fff;\n  color: #000;\n  border: 1px solid #c0cad5;\n  padding: 5px;\n  vertical-align: top;\n  margin: 0;\n  overflow: auto;\n  outline: 0;\n  line-height: 150%;\n  word-wrap: break-word;\n  width: 200px;\n  cursor: text;\n}\n\n.modal-footer {\n  margin-top: 80px;\n}\n\n.content-item__title {\n  cursor: text;\n  text-align: center;\n  max-width: 90px;\n  margin: 0 auto;\n  max-height: 38px;\n  text-overflow: ellipsis;\n  white-space: pre-wrap;\n  overflow: hidden;\n}\n\n.content-item__title:hover {\n  white-space: normal;\n  overflow: visible;\n}\n\n.content-item__title-col {\n  font-size: 1em;\n  float: left;\n  max-width: 300px;\n  text-align: left;\n}\n\n.content-item__input {\n  border: 1px solid #c0cad5;\n  cursor: text;\n  margin-top: 4px;\n  width: 100%;\n  outline: 0;\n  line-height: 150%;\n}\n\n.page-content-item__input {\n  width: 100px;\n  border: 1px solid #c0cad5;\n  cursor: text;\n  outline: 0;\n  line-height: 150%;\n}\n\n.item-right {\n  cursor: pointer;\n  padding: 5px;\n  width: 20px;\n  height: 20px;\n  float: right;\n  vertical-align: top;\n}\n\n.item-left {\n  cursor: pointer;\n  padding: 5px;\n  width: 20px;\n  height: 20px;\n  float: left;\n  vertical-align: top;\n}\n\n.item-name {\n  float: left;\n  padding: 5px;\n  height: 20px;\n}\n\n.checked {\n  background-color: #E1E5EB;\n}\n\n.button-secondary {\n  background-color: #e5ebf1;\n  color: #55677d;\n}\n\n.node-layout {\n  margin-left: 10px;\n}\n\n.search {\n  width: 150px;\n}\n\n.tags {\n  margin: 5px;\n  display: flex;\n  flex-wrap: wrap;\n  justify-content: space-between;\n}\n\n.tag-button {\n  margin-bottom: 5px;\n}\n", ""]);
+exports.push([module.i, "body {\n  background-color: #EDEEF0;\n  margin: 0;\n  font-family: -apple-system,BlinkMacSystemFont,Roboto,Helvetica Neue,sans-serif;\n}\n\na {\n  text-decoration: none;\n  cursor: pointer;\n}\n\n.page-header {\n  height: 42px;\n  background-color: #4A76A8;\n}\n\n.page-content {\n  margin: 0 auto;\n  width: 960px;\n  display: flex;\n  height: 100%;\n  position: sticky;\n}\n\n.page-header-content {\n  margin: 0 auto;\n  width: 960px;\n}\n\n.page-header-content-logo {\n  width: 139px;\n}\n\n.page-header-content h2 {\n  margin: 0;\n  padding-top: 5px;\n  color: white;\n}\n\n.page-content-navigation {\n  margin-top: 15px;\n  width: 139px;\n}\n\n.page-content-content {\n  padding-top: 15px;\n  padding-bottom: 2px;\n  min-width: 400px;\n  display: flex;\n}\n\n.page-content-content-wrap {\n  width: 300px;\n  background-color: white;\n  max-height: 100%;\n  border-radius: 2px 2px 0 0;\n  box-shadow: 0 1px 0 0 #d7d8db, 0 0 0 1px #e3e4e8;\n  overflow-y: auto;\n}\n\n.page-content-content-wrap a {\n  color: #285473;\n}\n\n.page-content-content-content {\n  background-color: white;\n  max-height: 100%;\n  border-radius: 2px 2px 0 0;\n  box-shadow: 0 1px 0 0 #d7d8db, 0 0 0 1px #e3e4e8;\n}\n\n.page-content-link {\n  display: block;\n  white-space: nowrap;\n  padding: 10px;\n  color: #285473;\n}\n\n.page-content-link:hover {\n  background-color: #E1E5EB;\n}\n\n.content-item {\n  padding: 10px;\n  height: 30px;\n  box-shadow: 0 1px 0 0 #d7d8db;\n}\n\n.page-content-link-item {\n  display: flex;\n  height: 20px;\n}\n\n.page-content-link-item:hover {\n  background-color: #EDEEF0;\n  cursor: pointer;\n}\n\n.content-item input {\n  border: 0px;\n}\n\ninput[type=\"text\"]:focus {\n  outline: none;\n}\n\n.content-flex {\n  display: flex;\n}\n\n.content-flex-row {\n  align-content: start;\n  flex-wrap: wrap;\n  overflow-y: auto;\n}\n\n.content-flex-column {\n  flex-direction: column;\n  overflow-y: auto;\n}\n\n@media screen and (min-height: 0px) and (max-height: 720px) {\n  .content-flex {\n    height: 480px;\n  }\n  .page-content-content {\n    height: 540px;\n  }\n  .page-content-content-content {\n    width: 520px;\n  }\n}\n\n@media screen and (min-height: 700px) and (max-height: 1500px) {\n  .content-flex {\n    height: 640px;\n  }\n  .page-content-content {\n    height: 700px;\n  }\n  .page-content-content-content {\n    width: 680px;\n  }\n}\n\n.content-flex-modal {\n  display: flex;\n  align-content: start;\n  flex-wrap: wrap;\n  overflow-y: auto;\n  height: 220px;\n}\n\n.content-flex-item {\n  padding-top: 10px;\n  padding-bottom: 10px;\n  height: 80px;\n  width: 100px;\n  text-align: center;\n}\n\n.content-flex-item a {\n  color: black;\n}\n\n.content-flex-item:hover {\n  background-color: #E1E5EB;\n}\n\n.content-flex-item-column {\n  width: 480px;\n  text-align: left;\n  height: 30px;\n  padding: 10px;\n}\n\nimg.icon {\n  width: 50px;\n  height: 50px;\n  cursor: pointer;\n}\n\nimg.item {\n  width: 20px;\n  height: 20px;\n  margin-right: 5px;\n}\n\n.modal-container {\n  position: fixed;\n  left: 0;\n  top: 0;\n  text-align: center;\n  background-color: rgba(0, 0, 0, 0.7);\n  width: 100%;\n  height: 100%;\n  z-index: 10;\n}\n\n.modal {\n  cursor: auto;\n  z-index: 100;\n  height: 336px;\n  width: 500px;\n  background-color: white;\n  margin: 116px auto;\n  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.35);\n  outline: none;\n  border-radius: 5px;\n}\n\n.modal-header {\n  border-radius: 5px 5px 0 0;\n  width: 100%;\n  height: 54px;\n  background-color: #4A76A8;\n}\n\n.modal-header-title {\n  padding: 1px;\n}\n\n.modal-header-title p {\n  color: white;\n}\n\n.modal-content {\n  padding: 20px;\n  height: 240px;\n  background-color: #F7F7F7;\n}\n\n.modal-content__img img {\n  width: 100px;\n}\n\n.vk-button {\n  background-color: #5b88bd;\n  text-decoration: none;\n  float: right;\n  padding: 7px 16px 8px;\n  margin-left: 10px;\n  font-size: 12.5px;\n  display: inline-block;\n  zoom: 1;\n  cursor: pointer;\n  white-space: nowrap;\n  outline: none;\n  font-family: -apple-system,BlinkMacSystemFont,Roboto,Helvetica Neue,sans-serif;\n  vertical-align: top;\n  line-height: 15px;\n  text-align: center;\n  color: #fff;\n  border: 0;\n  border-radius: 4px;\n  box-sizing: border-box;\n}\n\n.vk-input {\n  background: #fff;\n  color: #000;\n  border: 1px solid #c0cad5;\n  padding: 5px;\n  vertical-align: top;\n  margin: 0;\n  overflow: auto;\n  outline: 0;\n  line-height: 150%;\n  word-wrap: break-word;\n  width: 200px;\n  cursor: text;\n}\n\n.modal-footer {\n  margin-top: 80px;\n}\n\n.content-item__title {\n  cursor: text;\n  text-align: center;\n  max-width: 90px;\n  margin: 0 auto;\n  max-height: 38px;\n  text-overflow: ellipsis;\n  white-space: pre-wrap;\n  overflow: hidden;\n}\n\n.content-item__title:hover {\n  white-space: normal;\n  overflow: visible;\n}\n\n.content-item__title-col {\n  font-size: 1em;\n  float: left;\n  max-width: 300px;\n  text-align: left;\n}\n\n.content-item__input {\n  border: 1px solid #c0cad5;\n  cursor: text;\n  margin-top: 4px;\n  width: 100%;\n  outline: 0;\n  line-height: 150%;\n}\n\n.page-content-item__input {\n  width: 100px;\n  border: 1px solid #c0cad5;\n  cursor: text;\n  outline: 0;\n  line-height: 150%;\n}\n\n.item-right {\n  cursor: pointer;\n  padding: 5px;\n  width: 20px;\n  height: 20px;\n  float: right;\n  vertical-align: top;\n}\n\n.item-left {\n  cursor: pointer;\n  padding: 5px;\n  width: 20px;\n  height: 20px;\n  float: left;\n  vertical-align: top;\n}\n\n.item-name {\n  float: left;\n  padding: 5px;\n  height: 20px;\n}\n\n.checked {\n  background-color: #E1E5EB;\n}\n\n.button-secondary {\n  background-color: #e5ebf1;\n  color: #55677d;\n}\n\n.node-layout {\n  margin-left: 10px;\n}\n\n.search {\n  width: 150px;\n}\n\n.tags {\n  margin: 5px;\n  display: flex;\n  flex-wrap: wrap;\n  justify-content: space-between;\n}\n\n.tag-button {\n  margin-bottom: 5px;\n  margin-left: 2px;\n}\n\n.sort-button {\n  text-decoration: none;\n  float: left;\n  padding: 7px 16px 8px;\n  margin-left: 10px;\n  font-size: 12.5px;\n  display: inline-block;\n  zoom: 1;\n  cursor: pointer;\n  white-space: nowrap;\n  outline: none;\n  font-family: -apple-system,BlinkMacSystemFont,Roboto,Helvetica Neue,sans-serif;\n  vertical-align: top;\n  line-height: 15px;\n  text-align: center;\n  border: 0;\n  box-sizing: border-box;\n  background-color: white;\n}\n\n.sort-button-selected {\n  border-bottom: #5b88bd 2px solid;\n}\n", ""]);
 
 // exports
 
