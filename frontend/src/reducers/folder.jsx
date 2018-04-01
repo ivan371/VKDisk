@@ -140,6 +140,9 @@ export default function folder(store = initalState, action) {
                 folderUnTreeList: {
                     $set: action.payload.result,
                 },
+                folderTileList: {
+                    $set: [],
+                },
                 count: {
                     $set: action.payload.count,
                 },

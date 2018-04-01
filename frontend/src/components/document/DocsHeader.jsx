@@ -3,16 +3,16 @@ import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
 import { withRouter } from 'react-router-dom';
 import PropTypes from 'prop-types';
-import {modalType, items, folderType, apps, view} from '../../constants';
+import { modalType, items, folderType, apps, view } from '../../constants';
 import AddFolder from '../folder/AddFolder';
 import { modalOpen, setModal } from '../../actions/modal';
-import {checkAll, loadDocs, renameDoc} from '../../actions/document';
+import { checkAll, loadDocs, renameDoc } from '../../actions/document';
 import { changeView, clearFilter, setFilter, setSort } from '../../actions/page';
 import Modal from '../Modal';
 import DocsFilterHeader from './DocsFilterHeader';
 import DocsCheckHeader from './DocsCheckHeader';
 import DocsDateHeader from './DocsDateHeader';
-import {checkAllFolders, renameFolder} from "../../actions/folder";
+import { checkAllFolders, renameFolder } from '../../actions/folder';
 
 class DocsHeaderComponent extends React.Component {
     static propTypes = {
@@ -34,6 +34,8 @@ class DocsHeaderComponent extends React.Component {
         view: PropTypes.string.isRequired,
         renameDoc: PropTypes.func.isRequired,
         renameFolder: PropTypes.func.isRequired,
+        setSort: PropTypes.func.isRequired,
+        sort: PropTypes.string.isRequired,
     };
 
     state = {
@@ -92,6 +94,10 @@ class DocsHeaderComponent extends React.Component {
         this.props.changeView();
     };
 
+    handleSetSort = (e) => {
+        this.props.setSort(e.target.value, apps.docs);
+    };
+
     renderMenu() {
         let type = null;
         let title = null;
@@ -110,11 +116,8 @@ class DocsHeaderComponent extends React.Component {
         if (this.state.isSort) {
             return (<React.Fragment>
                 <button className="vk-button button-secondary" onClick={ this.handleSort }>Cancel</button>
-                <button className="vk-button">Sort</button>
-                <select className="vk-button">
-                    <option>Name</option>
-                    <option>Date</option>
-                </select>
+                <button className={ `sort-button${this.props.sort === 'name' ? ' sort-button-selected' : ''}` } value="name" onClick={ this.handleSetSort }>Name</button>
+                <button className={ `sort-button${this.props.sort === 'date' ? ' sort-button-selected' : ''}` } value="date" onClick={ this.handleSetSort }>Date</button>
             </React.Fragment>);
         }
         if (this.state.isFilter) {
@@ -151,6 +154,7 @@ class DocsHeaderComponent extends React.Component {
             {type === 'sorted' || type === 'folder' || type === 'root' ?
                 <AddFolder id={ parseInt(this.props.params.id) } folder={ this.props.folder } />
                 : null}
+            <img className="item-right" onClick={ this.handleSort } src={ items.sort } />
             <img className="item-right" onClick={ this.handleDate } src={ items.calendar } />
             <img className="item-right" onClick={ this.handleFilter } src={ items.filter } />
         </React.Fragment>);
@@ -184,6 +188,7 @@ const mapStoreToProps = state => ({
     page: state.document.page,
     filterSelect: state.page.filterSelect.docs,
     filter: state.page.filter.docs,
+    sort: state.page.sort.docs,
     countCheck: state.document.countCheck,
     countCheckFolder: state.folder.countCheck,
     isOpen: state.modal.isOpen,

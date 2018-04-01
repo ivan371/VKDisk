@@ -3,6 +3,8 @@ $navigation-width: 139px;
 $hover-color: #E1E5EB;
 $link-color: #285473;
 $vk-color: #4A76A8;
+$vk-button-color: #5b88bd;
+
 body{
     background-color: #EDEEF0;
     margin: 0;
@@ -315,5 +317,37 @@ img.item{
 .calendar{
 }
 .search{
-    width: 100px;
+    width: 150px;
+}
+.tags{
+    margin: 5px;
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+}
+.tag-button{
+    margin-bottom: 5px;
+    margin-left: 2px;
+}
+.sort-button{
+    text-decoration: none;
+    float: left;
+    padding: 7px 16px 8px;
+    margin-left: 10px;
+    font-size: 12.5px;
+    display: inline-block;
+    zoom: 1;
+    cursor: pointer;
+    white-space: nowrap;
+    outline: none;
+    font-family: -apple-system,BlinkMacSystemFont,Roboto,Helvetica Neue,sans-serif;
+    vertical-align: top;
+    line-height: 15px;
+    text-align: center;
+    border: 0;
+    box-sizing: border-box;
+    background-color: white;
+}
+.sort-button-selected{
+    border-bottom: $vk-button-color 2px solid;
 }

@@ -7,9 +7,9 @@ const initalStore = {
         folder: '',
         docs: '',
     },
-    sortSelect: {
+    sort: {
         folder: '',
-        docs: '',
+        docs: 'date',
     },
     filterSelect: {
         folder: 'name',
@@ -54,7 +54,7 @@ export default function page(store = initalStore, action) {
             return update(store, {
                 sort: {
                     [action.app]: {
-                        $set: action.sortSelect,
+                        $set: action.sort,
                     },
                 },
             });
