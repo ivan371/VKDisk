@@ -1,7 +1,7 @@
 from django.shortcuts import render
 from rest_framework import viewsets, permissions
 from .serializers import DocumentSerializer, DocumentBulkSerializer, DocumentTransferSerializer
-from .models import Document, DocumentData
+from .models import Document#, DocumentData
 from django.http import Http404
 from datetime import datetime
 import re
@@ -125,7 +125,8 @@ class DocumentView(es_views.ListElasticAPIView):
         es_filters.ElasticSearchFilter
     )
     es_filter_fields = (
-        es_filters.ESFieldFilter('text', 'title'),
+        es_filters.ESFieldFilter('text', 'text'),
+        es_filters.ESFieldFilter('title', 'title')
     )
     es_search_fields = (
         'text',

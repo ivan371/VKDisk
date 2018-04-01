@@ -2,7 +2,7 @@ from __future__ import absolute_import
 from folder.serializers import FolderSerializer
 
 from .search_indexes import DocumentIndex
-from .models import Document, DocumentData
+from .models import Document
 from rest_framework import serializers, fields
 from rest_framework_elasticsearch.es_serializer import ElasticModelSerializer
 
@@ -54,6 +54,6 @@ class DocumentBulkSerializer(serializers.ModelSerializer):
 
 class DocumentDataSerializer(ElasticModelSerializer):
     class Meta:
-        model = DocumentData
+        model = Document
         es_model = DocumentIndex
-        fields = ('id', 'title')
+        fields = ('id', 'title', 'text')

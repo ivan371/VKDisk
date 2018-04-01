@@ -50,9 +50,9 @@ INSTALLED_APPS = [
     'vk_api_wrapper.apps.VkApiWrapperConfig',
     'social_django',
     'debug_toolbar',
-    'elasticsearch_dsl',
+    # 'elasticsearch_dsl',
     'rest_framework_elasticsearch',
-    'django_elasticsearch'
+    # 'django_elasticsearch'
     # 'widget_tweaks'
 ]
 
