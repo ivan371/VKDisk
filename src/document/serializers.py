@@ -1,5 +1,5 @@
 from __future__ import absolute_import
-from folder.serializers import FolderSerializer
+from folder.serializers import FolderSimpleSerializer
 
 from .search_indexes import DocumentIndex
 from .models import Document, DocumentData
@@ -19,7 +19,7 @@ class DocumentFilteredPrimaryKeyRelatedField(serializers.PrimaryKeyRelatedField)
 class DocumentSerializer(serializers.HyperlinkedModelSerializer):
     author = serializers.PrimaryKeyRelatedField(many=False, read_only=True)
     vk_url = fields.SerializerMethodField('get_url')
-    folder = FolderSerializer(many=False, read_only=True)
+    # folder = FolderSimpleSerializer(many=False, read_only=True)
 
     class Meta:
         model = Document

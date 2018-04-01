@@ -78,6 +78,7 @@ a{
 }
 .page-content-link-item {
     display: flex;
+    height: 20px;
 }
 .page-content-link-item:hover{
     background-color: #EDEEF0;
@@ -144,8 +145,9 @@ input[type="text"]:focus {
     background-color: #EDEEF0;
 }
 .content-flex-item-column{
-    width: 500px;
+    width: 480px;
     text-align: left;
+    height: 30px;
 }
 img.icon{
     width: 50px;
@@ -253,9 +255,8 @@ img.item{
     overflow: visible;
 }
 .content-item__title-col{
-    padding: 15px;
     float: left;
-    max-width: 400px;
+    max-width: 300px;
     text-align: left;
 }
 .content-item__input{
@@ -303,4 +304,7 @@ img.item{
 .button-secondary{
     background-color: #e5ebf1;
     color: #55677d;
+}
+.node-layout{
+    margin-left: 10px;
 }

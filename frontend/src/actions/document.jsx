@@ -19,6 +19,13 @@ export const CHECK_ALL = 'CHECK_ALL';
 export const DELETE_DOCS = 'DELETE_DOCS';
 export const DELETE_DOCS_SUCCESS = 'DELETE_DOCS_SUCCESS';
 export const DELETE_DOCS_ERROR = 'DELETE_DOCS_ERROR';
+export const RENAME_DOC = 'RENAME_DOC';
+
+export function renameDoc() {
+    return {
+        type: RENAME_DOC,
+    };
+}
 
 export function loadDocs(url) {
     const types = [LOAD_DOCS, LOAD_DOCS_SUCCESS, LOAD_DOCS_ERROR];

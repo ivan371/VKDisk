@@ -4,7 +4,7 @@ import {
     CHECK_FILE, DELETE_DOCS_SUCCESS, DOCS_BULK_CREATE_SUCCESS, DOCS_BULK_UPDATE, DOCS_BULK_UPDATE_SUCCESS, DOCS_UNMOUNT,
     LOAD_DOCS,
     LOAD_DOCS_MORE, LOAD_DOCS_MORE_START,
-    LOAD_DOCS_SUCCESS,
+    LOAD_DOCS_SUCCESS, RENAME_DOC,
 } from '../actions/document';
 import _ from 'lodash';
 
@@ -17,6 +17,7 @@ const initalState = {
     docList: [],
     checkList: [],
     countCheck: 0,
+    renamedId: null,
 };
 
 export default function document(store = initalState, action) {
@@ -34,8 +35,20 @@ export default function document(store = initalState, action) {
         }
     }
     let index = null;
-    const deleteList = [];
     switch (action.type) {
+        case RENAME_DOC:
+            if (store.renamedId) {
+                return update(store, {
+                    renamedId: {
+                        $set: null,
+                    },
+                });
+            }
+            return update(store, {
+                renamedId: {
+                    $set: store.checkList[0],
+                },
+            });
         case LOAD_DOCS_MORE_START:
             return update(store, {
                 isLoadingMore: {

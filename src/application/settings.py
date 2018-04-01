@@ -52,8 +52,8 @@ INSTALLED_APPS = [
     'debug_toolbar',
     'elasticsearch_dsl',
     'rest_framework_elasticsearch',
-    'django_elasticsearch'
-    # 'widget_tweaks'
+    'django_elasticsearch',
+    'rest_framework_recursive',
 ]
 
 MIDDLEWARE = [
