@@ -10,4 +10,6 @@ collected_static
 *.DS_Store
 *.rdb
 /src/celerybeat-schedule
-*Thumbs.db
+Thumbs.db
+*.pdf
+*.pptx
