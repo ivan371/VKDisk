@@ -28,10 +28,12 @@ config.read(os.path.join(os.path.dirname(BASE_DIR), 'django.conf'))
 SECRET_KEY = config.get('main', 'SECRET')
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = config.getboolean('main', 'DEBUG', fallback=False)
 
-ALLOWED_HOSTS = []
-
+ALLOWED_HOSTS = [
+    '127.0.0.1',
+    config.get('main', 'ALLOWED_HOSTS_1', fallback='localhost'),
+]
 
 # Application definition
 
@@ -64,7 +66,6 @@ MIDDLEWARE = [
     'debug_toolbar.middleware.DebugToolbarMiddleware',
     'core.middlewares.RequestLoggerMiddleware',
 ]
-
 
 AUTHENTICATION_BACKENDS = (
     'core.oauth2_backends.VKOAuth2',
@@ -116,14 +117,12 @@ TEMPLATES = [
 
 WSGI_APPLICATION = 'application.wsgi.application'
 
-
 # Database
 # https://docs.djangoproject.com/en/2.0/ref/settings/#databases
 
 DATABASES = {
     'default': dj_database_url.parse(config.get("main", "DB_URL"))
 }
-
 
 # Password validation
 # https://docs.djangoproject.com/en/2.0/ref/settings/#auth-password-validators
@@ -142,7 +141,6 @@ AUTH_PASSWORD_VALIDATORS = [
         'NAME': 'django.contrib.auth.password_validation.NumericPasswordValidator',
     },
 ]
-
 
 # Internationalization
 # https://docs.djangoproject.com/en/2.0/topics/i18n/
@@ -164,8 +162,6 @@ REST_FRAMEWORK = {
     # 'PAGE_SIZE': 2
 }
 
-
-
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/2.0/howto/static-files/
 
@@ -175,7 +171,6 @@ STATICFILES_DIRS = (os.path.join(BASE_DIR, 'static/'), os.path.join(BASE_DIR, '.
 
 MEDIA_URL = '/media/'
 MEDIA_ROOT = os.path.join(PROJECT_DIR, 'media/')
-
 
 VK_APP_ID = config.getint("VK", "APP_ID")
 VK_CLIENT_SECRET_KEY = config.get("VK", "SECRET_KEY")
@@ -192,6 +187,9 @@ CELERY_TASK_SERIALIZER = 'json'
 CELERY_RESULT_SERIALIZER = 'json'
 # CELERY_BEAT_SCHEDULER = 'django_celery_beat.schedulers.DatabaseScheduler'
 
-ELASTICSEARCH_URL='http://localhost:9200'
+ELASTICSEARCH_URL = 'http://localhost:9200'.format(
+    config.get('ELASTICSEARCH', 'HOST', fallback='localhost'),
+    config.get('ELASTICSEARCH', 'PORT', fallback='9200'),
+)
 ELASTICSEARCH_DEFAULT_INDEX = 'document'
 ELASTICSEARCH_AUTO_INDEX = True
