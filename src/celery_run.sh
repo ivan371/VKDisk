@@ -1,1 +1,1 @@
-celery -A application worker -l info
+celery -A application worker -l info -B

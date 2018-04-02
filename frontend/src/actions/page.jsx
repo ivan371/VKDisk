@@ -20,10 +20,9 @@ export function clearFilter(app) {
     };
 }
 
-export function setSort(sort, sortSelect, app) {
+export function setSort(sort, app) {
     return {
         type: SET_SORT,
-        sortSelect,
         app,
         sort,
     };

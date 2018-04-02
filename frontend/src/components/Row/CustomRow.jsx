@@ -2,13 +2,19 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
-import { folderUnMount, loadFolders, loadFoldersMore } from '../../actions/folder';
+import {
+    filterFolders, folderUnMount, loadFilterFolders, loadFolders, loadFoldersMore,
+    loadUnTreeFolders
+} from '../../actions/folder';
 import { apps, dragSource, folderType, items, makeUrls, urls } from '../../constants';
-import Folder from '../folder/Folder';
 import Docs from '../document/Docs';
 import { dropOver } from '../../actions/drag';
 import { deleteDocs } from '../../actions/document';
 import { setFilter } from '../../actions/page';
+import NodeChat from '../tree/NodeChat';
+import NodeRoot from '../tree/NodeRoot';
+import Tags from '../tag/Tags';
+import NodeTag from '../tree/NodeTag';
 
 
 class CustomRowComponent extends React.Component {
@@ -16,7 +22,7 @@ class CustomRowComponent extends React.Component {
         folder: PropTypes.string.isRequired,
         isLoading: PropTypes.bool.isRequired,
         isLoadingMore: PropTypes.bool.isRequired,
-        loadFolders: PropTypes.func.isRequired,
+        loadUnTreeFolders: PropTypes.func.isRequired,
         folderUnMount: PropTypes.func.isRequired,
         count: PropTypes.number.isRequired,
         page: PropTypes.number.isRequired,
@@ -29,6 +35,8 @@ class CustomRowComponent extends React.Component {
         filter: PropTypes.string.isRequired,
         filterSelect: PropTypes.string.isRequired,
         setFilter: PropTypes.func.isRequired,
+        loadFilterFolders: PropTypes.func.isRequired,
+        filterFolders: PropTypes.func.isRequired,
     };
 
     state = {
@@ -38,17 +46,28 @@ class CustomRowComponent extends React.Component {
     };
 
     componentDidMount() {
-        switch (this.props.folder) {
-            case folderType.chat:
-                this.props.loadFolders(urls.folder.chatFolderUrl).then(this.scrollStart);
-                break;
-            default:
+        if (this.props.params.hasOwnProperty('id')) {
+            if (this.props.folder === folderType.chat) {
+                this.props.loadUnTreeFolders(urls.folder.chatFolderUrl).then(this.scrollStart);
+            }
+            else {
+                this.props.loadFilterFolders(makeUrls.makeRootFoldersFolder())
+                    .then(() => this.props.filterFolders(parseInt(this.props.params.id)));
+            }
+        } else {
+            if (this.props.folder === folderType.chat) {
+                this.props.loadUnTreeFolders(urls.folder.chatFolderUrl).then(this.scrollStart);
+            }
+            if (this.props.folder === folderType.root) {
+                this.props.loadFilterFolders(makeUrls.makeRootFoldersFolder())
+                    .then(() => this.props.filterFolders(null));
+            }
         }
     }
 
     componentWillReceiveProps(nextProps) {
         if (this.props.filter !== nextProps.filter && this.props.folder === folderType.chat) {
-            this.props.loadFolders(makeUrls.makeFilterChats(nextProps.filter));
+            this.props.loadUnTreeFolders(makeUrls.makeFilterChats(nextProps.filter));
         }
     }
 
@@ -106,22 +125,21 @@ class CustomRowComponent extends React.Component {
         return items.trash;
     }
 
+    renderNodeList() {
+        return [
+            <NodeTag key="1" />,
+            <NodeRoot key="2" folder={ this.props.folder } folderList={ this.props.folderList } />,
+            <NodeChat key="3" folder={ this.props.folder } />,
+        ];
+    }
+
     render() {
-        let folderList = [];
-        if (this.props.isLoading || this.props.folder === folderType.root) {
-            folderList = this.props.folderList.map(folderId => (<Folder
-                id={ folderId }
-                key={ folderId }
-                folder={ this.props.folder }
-            >Папка
-            </Folder>));
-        }
         return (
             <div className="page-content-content">
                 <div className="page-content-content-wrap" onScroll={ this.handleScroll }>
                     <div className="content-item">
                         <input
-                            className="content-item__input"
+                            className="content-item__input search"
                             type="text"
                             placeholder="Search"
                             name="filter"
@@ -131,7 +149,7 @@ class CustomRowComponent extends React.Component {
                         />
                         <img className="item-right" src={ this.renderTrash() } onDragOver={ this.handleDragOver } onDrop={ this.handleDrop } />
                     </div>
-                    {folderList}
+                    {this.renderNodeList()}
                 </div>
                 <Docs params={ this.props.params } history={ this.props.history } folder={ this.props.folder } />
             </div>
@@ -142,6 +160,7 @@ class CustomRowComponent extends React.Component {
 const mapStoreToProps = state => ({
     isLoading: state.folder.isLoading,
     folderList: state.folder.folderList,
+    folderTileList: state.folder.folderTileList,
     page: state.folder.page,
     count: state.folder.count,
     allowDrag: state.drag.allowDrag,
@@ -154,12 +173,14 @@ const mapStoreToProps = state => ({
 
 const mapDispatchToProps = dispatch => ({
     ...bindActionCreators({
-        loadFolders,
+        loadUnTreeFolders,
         folderUnMount,
         loadFoldersMore,
         dropOver,
         deleteDocs,
         setFilter,
+        loadFilterFolders,
+        filterFolders,
     }, dispatch),
 });
 

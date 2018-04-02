@@ -26,12 +26,15 @@ export const makeUrls = {
     makeReplaceDocs: id => `${urls.docs.docsUrl}?folder=${id}&&bulk_update`,
     makeDeleteDocs: () => `${urls.docs.docsUrl}?bulk_delete`,
     makeFilterDocs: (id, filter, value) => `${urls.docs.docsUrl}?folder=${id}&&filter&&${value}=${filter}`,
+    makeFilterSortDocs: (id, filter, value, sort) => `${urls.docs.docsUrl}?folder=${id}&&filter&&${value}=${filter}&&sort=${sort}`,
     makeFilterRootDocs: (filter, value) => `${urls.docs.docsUrl}?root&&filter&&${value}=${filter}`,
+    makeFilterRootSortDocs: (filter, value, sort) => `${urls.docs.docsUrl}?root&&filter&&${value}=${filter}&&sort=${sort}`,
     makeFilterDocsDate: (id, year, month, day) => `${urls.docs.docsUrl}?folder=${id}&&filter&&year=${year}&&month=${month}&&day=${day}`,
     makeChatsMore: page => `${urls.folder.chatFolderUrl}&&page=${page}`,
     makeFilterChats: name => `${urls.folder.chatFolderUrl}filter&&name=${name}`,
     makeFilterChatsMore: (name, page) => `${urls.folder.chatFolderUrl}filter&&name=${name}&&page=${page}`,
     makeTransferFolder: id => `${urls.folder.customFolderUrl + id}/?replace`,
+    makeFolderRecursive: id => `${urls.folder.customFolderUrl + id}/?recursive`,
 };
 
 export const apps = {
@@ -69,6 +72,7 @@ export const format = {
     file: '/static/img/file.png',
     doc: '/static/img/formats/docx.png',
     docx: '/static/img/formats/docx.png',
+    rtf: '/static/img/formats/docx.png',
     pdf: '/static/img/formats/pdf.png',
     pptx: '/static/img/formats/pptx.png',
     ppt: '/static/img/formats/pptx.png',
@@ -82,6 +86,9 @@ export const format = {
     gif: '/static/img/formats/gif.png',
     zip: '/static/img/formats/zip.png',
     djvu: '/static/img/formats/djvu.png',
+    rar: '/static/img/formats/rar.png',
+    sql: '/static/img/formats/sql.png',
+    c: '/static/img/formats/c.png',
 };
 
 export const items = {
@@ -94,7 +101,10 @@ export const items = {
     trashBad: '/static/img/trashBad.png',
     clear: '/static/img/clear.png',
     colRow: '/static/img/row-col.png',
+    colTable: '/static/img/row-table.png',
     calendar: '/static/img/calendar.png',
+    arrow: '/static/img/arrow.png',
+    arrowRight: '/static/img/arrowRight.png',
 };
 
 export function makeFormat(fileUrl) {
@@ -114,4 +124,60 @@ export const dragSource = {
 export const view = {
     col: 'col',
     row: 'row',
+};
+
+export const tags = [
+    {
+        id: 8,
+        name: 'clear',
+        value: '',
+        type: 'filter',
+        filterName: 'name',
+    },
+    {
+        id: 1,
+        name: 'pdf',
+        value: 'pdf',
+        type: 'filter',
+        filterName: 'name',
+    },
+    {
+        id: 2,
+        name: 'doc',
+        value: 'doc',
+        type: 'filter',
+        filterName: 'name',
+    },
+    {
+        id: 3,
+        name: 'jpg',
+        value: 'jpg',
+        type: 'filter',
+        filterName: 'name',
+    },
+    {
+        id: 4,
+        name: 'png',
+        value: 'png',
+        type: 'filter',
+        filterName: 'name',
+    },
+    {
+        id: 5,
+        name: 'tex',
+        value: 'tex',
+        type: 'filter',
+        filterName: 'name',
+    },
+    {
+        id: 7,
+        name: 'ppt',
+        value: 'ppt',
+        type: 'filter',
+        filterName: 'name',
+    },
+];
+
+export const tagType = {
+    filter: 'filter',
 };

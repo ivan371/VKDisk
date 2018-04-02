@@ -1,8 +1,8 @@
 from __future__ import absolute_import
-from folder.serializers import FolderSerializer
+from folder.serializers import FolderSimpleSerializer
 
 from .search_indexes import DocumentIndex
-from .models import Document, DocumentData
+from .models import Document
 from rest_framework import serializers, fields
 from rest_framework_elasticsearch.es_serializer import ElasticModelSerializer
 
@@ -19,7 +19,7 @@ class DocumentFilteredPrimaryKeyRelatedField(serializers.PrimaryKeyRelatedField)
 class DocumentSerializer(serializers.HyperlinkedModelSerializer):
     author = serializers.PrimaryKeyRelatedField(many=False, read_only=True)
     vk_url = fields.SerializerMethodField('get_url')
-    folder = FolderSerializer(many=False, read_only=True)
+    # folder = FolderSimpleSerializer(many=False, read_only=True)
 
     class Meta:
         model = Document
@@ -54,6 +54,6 @@ class DocumentBulkSerializer(serializers.ModelSerializer):
 
 class DocumentDataSerializer(ElasticModelSerializer):
     class Meta:
-        model = DocumentData
+        model = Document
         es_model = DocumentIndex
-        fields = ('id', 'title')
+        fields = ('id', 'title', 'text')

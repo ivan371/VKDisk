@@ -6,15 +6,20 @@ from elasticsearch_dsl import (
     Date,
     Keyword,
     Text,
-    Integer
+    Integer,
 )
 
 
 class DocumentIndex(DocType):
-    pk = Integer()
-    text = Text(fields={'raw': Keyword()})
-    title = Text()
+    id = Integer()
+    text = Text(analyzer='snowball', fields={'raw': Keyword()})
+    title = Text(analyzer='snowball', fields={'raw': Keyword()})
     created = Date()
 
     class Meta:
         index = 'document'
+
+
+# TODO: Раскоменти при первом запуске и закоменть обратно
+# from elasticsearch import Elasticsearch, RequestsHttpConnection
+# DocumentIndex.init(using=Elasticsearch(hosts=['localhost:9200/'], connection_class=RequestsHttpConnection))

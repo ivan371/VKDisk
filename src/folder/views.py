@@ -4,7 +4,8 @@ from rest_framework.response import Response
 from rest_framework.pagination import PageNumberPagination
 
 from .models import Folder
-from .serializers import FolderSerializer, FolderBulkSerializer, FolderTransferSerializer
+from .serializers import FolderSerializer, FolderBulkSerializer, FolderTransferSerializer, FolderRecursiveSerializer, \
+    FolderSimpleSerializer
 from django.db.models import Q
 from django.http import Http404
 
@@ -16,7 +17,7 @@ class LargeResultsSetPagination(PageNumberPagination):
 
 
 class FolderViewSet(viewsets.ModelViewSet):
-    queryset = Folder.objects.all().prefetch_related('author')
+    queryset = Folder.objects.all().prefetch_related('author', 'folder_set', 'folder_set__root')
     serializer_class = FolderSerializer
     pagination_class = LargeResultsSetPagination
 
@@ -37,7 +38,11 @@ class FolderViewSet(viewsets.ModelViewSet):
             return FolderBulkSerializer
         if self.request.method == 'PUT' and 'replace' in self.request.query_params:
             return FolderTransferSerializer
-        return FolderSerializer
+        if 'recursive' in self.request.query_params and self.request.method == 'GET':
+            return FolderRecursiveSerializer
+        if self.request.method == 'GET':
+            return FolderSerializer
+        return FolderSimpleSerializer
 
     def perform_create(self, serializer):
         if 'folder' in self.request.query_params:
@@ -66,7 +71,7 @@ class FolderViewSet(viewsets.ModelViewSet):
         if 'type' in self.request.query_params:
             q = q.filter(type=self.request.query_params['type'])
         if 'root' in self.request.query_params:
-            q = q.filter(root=None, type='folder')
+            q = q.filter(type='folder')
         if 'filter' in self.request.query_params:
             if 'name' in self.request.query_params:
                 if self.request.query_params['name']:

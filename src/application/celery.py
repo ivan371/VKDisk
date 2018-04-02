@@ -16,6 +16,15 @@ app.config_from_object('django.conf:settings', namespace='CELERY')
 app.autodiscover_tasks()
 
 
+app.conf.beat_schedule = {
+    'update_online_every_minute': {
+        'task': 'vk_api_wrapper.tasks.update_data_on_online_users',
+        'schedule': 60.0,
+        'args': (60.0, )
+    },
+}
+
+
 @app.task(bind=True)
 def debug_task(self):
     print('Request: {0!r}'.format(self.request))
