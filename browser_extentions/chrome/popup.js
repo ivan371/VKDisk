@@ -9,6 +9,10 @@ function loadVKAuth(vk_url) {
     });
 }
 
+function openSite() {
+    chrome.runtime.sendMessage({type: "OPEN_SITE"});
+}
+
 function logout() {
     fetch(LOGOUT_URL, {
             // method: "POST",
@@ -23,6 +27,7 @@ function logout() {
 
 function buildLoggedInPopup(response) {
     let visitSiteBtn = $("<div><button class='login-btn'>Перейти на сайт</button></div>");
+    visitSiteBtn.click(openSite);
     let logoutBtn = $("<a class='logout-btn'>Logout</a>").attr('href', LOGOUT_URL);
     logoutBtn.click(logout);
     let content = $("<div><h3>Вы авторизированы.</h3></div>");
