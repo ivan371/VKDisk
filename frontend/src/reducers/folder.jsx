@@ -9,7 +9,7 @@ import {
     RENAME_FOLDER,
 } from '../actions/folder';
 import { DOCS_UNMOUNT } from '../actions/document';
-import { folderType } from "../constants";
+import { folderType } from '../constants';
 
 const initalState = {
     isLoading: false,
@@ -211,19 +211,29 @@ export default function folder(store = initalState, action) {
                 },
             });
         case FOLDER_CREATE:
+            if (action.payload.entities.folder[action.payload.result].root) {
+                store = update(store, {
+                    folders: {
+                        [action.payload.entities.folder[action.payload.result].root]: {
+                            folder_set: {
+                                $unshift: [action.payload.result],
+                            },
+                        },
+                    },
+                });
+            } else {
+                store = update(store, {
+                    folderList: {
+                        $unshift: [action.payload.result],
+                    },
+                });
+            }
             return update(store, {
                 isOwnLoading: {
                     $set: true,
                 },
                 folderTileList: {
                     $unshift: [action.payload.result],
-                },
-                folders: {
-                    [action.payload.entities.folder[action.payload.result].root]: {
-                        folder_set: {
-                            $unshift: [action.payload.result],
-                        },
-                    },
                 },
             });
         case LOAD_FILTER_FOLDERS:

@@ -20,6 +20,7 @@ class AppComponent extends React.Component {
                         <Route exact path="/folder/:id" component={ FolderFolder } />
                         <Route exact path="/chat" component={ ChatFolder } />
                         <Route exact path="/chat/:id" component={ ChatFolder } />
+                        <Route path="" component={ RootFolder } />
                     </Switch>
                 </Layout>
             </div>
