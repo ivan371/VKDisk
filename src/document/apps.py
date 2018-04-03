@@ -7,3 +7,4 @@ class DocumentConfig(AppConfig):
     def ready(self):
         from . import handlers
         from . import search_indexes
+        from . import signals

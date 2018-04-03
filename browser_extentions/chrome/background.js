@@ -9,7 +9,9 @@ function fetch_login_form(code, state) {
         body: data,
         mode: 'cors',
         credentials: "same-origin"
-    }).then(response => {});
+    }).then(response => {
+        chrome.runtime.sendMessage({type: "COMPLETE_LOGIN_VK"});
+    });
 }
 
 function parseQuery(queryString) {
@@ -22,7 +24,7 @@ function parseQuery(queryString) {
     return query;
 }
 
-function loadVKAuth(vk_url) {
+function loadVKAuth(vk_url, sendResponse) {
     chrome.tabs.create({url: SITE_URL + vk_url, active: true}, (tab) => {
         let authTabId = tab.id;
         chrome.tabs.onUpdated.addListener((tabId, changeInfo, tab) => {
@@ -39,8 +41,15 @@ function loadVKAuth(vk_url) {
     });
 }
 
+function openSite() {
+    chrome.tabs.create({url: SITE_URL, active: true});
+}
+
 chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
-    if (request.send_vk_request === true && request.vk_url != undefined) {
+    if (request.type === "LOGIN_VK" && request.vk_url) {
         loadVKAuth(request.vk_url);
+    }
+    if (request.type === "OPEN_SITE") {
+        openSite();
     }
 });

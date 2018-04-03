@@ -42,7 +42,7 @@ export default class DocsFilterHeader extends React.Component {
             <button className="vk-button button-secondary" onClick={ this.props.onFilter }>Cancel</button>
             <button className="vk-button" onClick={ this.handleFilterStart }>Search</button>
             <input
-                className="content-item__input"
+                className="content-item__input search"
                 type="list"
                 list="extension-list"
                 placeholder="Search"
