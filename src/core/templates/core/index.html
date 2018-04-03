@@ -4,6 +4,9 @@
     <head>
         <title>VkDisk</title>
         <meta charset="UTF-8">
+        {% if not user.is_authenticated %}
+            <link rel="stylesheet" href="{% static "css/base.css" %}" type="text/css"/>
+        {% endif %}
         <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
     </head>
     <body>
@@ -11,7 +14,22 @@
         <div id="root"></div>
         <script src="{% static "build/indexBundle.js" %}"></script>
     {% else %}
-        Вы не авторизированы
-    {% endif %}
+        <div>
+            <div class="page-header">
+                <div class="page-header-content" >
+                    <div class="page-header-content-logo">
+                        <h2>VK DISK</h2>
+                    </div>
+                </div>
+            </div>
+            <div class="page-content">
+                <div class="page-content-right">
+                    <img class="chrome-icon" src="{% static "img/chrome.png" %}" />
+                    <p>You are not authenticated. To authenticate you need to download extension</p>
+                    <a href="https://drive.google.com/open?id=15Fbnlua7mt4lUS0oW0SHjgk0ZzV9xLSl" class="vk-button">Got it</a>
+                </div>
+            </div>
+        </div>
+        {% endif %}
     </body>
 </html>
