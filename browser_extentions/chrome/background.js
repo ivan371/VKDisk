@@ -41,8 +41,15 @@ function loadVKAuth(vk_url, sendResponse) {
     });
 }
 
+function openSite() {
+    chrome.tabs.create({url: SITE_URL, active: true});
+}
+
 chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
     if (request.type === "LOGIN_VK" && request.vk_url) {
         loadVKAuth(request.vk_url);
+    }
+    if (request.type === "OPEN_SITE") {
+        openSite();
     }
 });
