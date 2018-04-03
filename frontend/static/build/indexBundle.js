@@ -49460,7 +49460,12 @@ function folder() {
                 },
                 folderTileList: {
                     $unshift: [action.payload.result]
-                }
+                },
+                folders: _defineProperty({}, action.payload.entities.folder[action.payload.result].root, {
+                    folder_set: {
+                        $unshift: [action.payload.result]
+                    }
+                })
             });
         case _folder.LOAD_FILTER_FOLDERS:
             return (0, _reactAddonsUpdate2.default)(store, {
