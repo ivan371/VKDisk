@@ -30,28 +30,11 @@ a{
 }
 .vk-button{
     background-color: #5b88bd;
-    text-decoration: none;
-    float: right;
-    padding: 7px 16px 8px;
-    margin-left: 10px;
-    font-size: 12.5px;
-    display: inline-block;
-    zoom: 1;
-    cursor: pointer;
-    white-space: nowrap;
-    outline: none;
-    font-family: -apple-system,BlinkMacSystemFont,Roboto,Helvetica Neue,sans-serif;
-    vertical-align: top;
-    line-height: 15px;
-    text-align: center;
-    color: #fff;
-    border: 0;
-    border-radius: 4px;
-    box-sizing: border-box;
 }
 .chrome-icon{
-    height: 40px;
-    width: 40px;
+    height: 35px;
+    width: 35px;
+    margin: 5px;
 }
 .page-content-right{
     width: 320px;
