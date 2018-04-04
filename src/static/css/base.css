@@ -7,14 +7,22 @@ a{
     text-decoration: none;
     cursor: pointer;
 }
+h1{
+    font-weight: 400;
+    line-height: 19px;
+}
 .page-header{
     height: 42px;
     background-color: #4A76A8;
 }
 .page-content{
-    margin: 0 auto;
-    width: 960px;
-    display: flex;
+    margin: 15px auto;
+    width: 840px;
+    background-color: white;
+    border-radius: 2px 2px 0 0;
+    box-shadow: 0 1px 0 0 #d7d8db, 0 0 0 1px #e3e4e8;
+    padding: 1.25rem;
+    height: 190px;
 }
 .page-header-content{
     margin: 0 auto;
@@ -30,11 +38,33 @@ a{
 }
 .vk-button{
     background-color: #5b88bd;
+    text-decoration: none;
+    float: left;
+    padding: 7px 16px 8px;
+    font-size: 12.5px;
+    display: inline-block;
+    zoom: 1;
+    cursor: pointer;
+    white-space: nowrap;
+    outline: none;
+    font-family: -apple-system,BlinkMacSystemFont,Roboto,Helvetica Neue,sans-serif;
+    vertical-align: top;
+    line-height: 15px;
+    text-align: center;
+    color: #fff;
+    border: 0;
+    border-radius: 4px;
+    box-sizing: border-box;
+}
+.vk-button__span{
+    float: right;
+    margin-top: 5px;
+    margin-left: 5px;
 }
 .chrome-icon{
-    height: 35px;
-    width: 35px;
-    margin: 5px;
+    float: left;
+    height: 25px;
+    width: 25px;
 }
 .page-content-right{
     width: 320px;
@@ -44,4 +74,11 @@ a{
     background: #fff;
     border-radius: 2px;
     box-shadow: 0 1px 0 0 #d7d8db;
+}
+
+hr{
+    border-top: 1px solid #dfe2e8;
+    border-bottom: none;
+    border-right: none;
+    border-left: none;
 }
