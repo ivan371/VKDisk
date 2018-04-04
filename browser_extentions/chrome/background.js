@@ -1,4 +1,5 @@
 SITE_URL = "http://localhost:8000";
+FILES_ROOT_URL = SITE_URL + "/root";
 
 function fetch_login_form(code, state) {
     let data = new FormData();
@@ -42,7 +43,7 @@ function loadVKAuth(vk_url, sendResponse) {
 }
 
 function openSite() {
-    chrome.tabs.create({url: SITE_URL, active: true});
+    chrome.tabs.create({url: FILES_ROOT_URL, active: true});
 }
 
 chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {

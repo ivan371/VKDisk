@@ -49439,6 +49439,21 @@ function folder() {
                 }
             });
         case _folder.FOLDER_CREATE:
+            if (action.payload.entities.folder[action.payload.result].root) {
+                store = (0, _reactAddonsUpdate2.default)(store, {
+                    folders: _defineProperty({}, action.payload.entities.folder[action.payload.result].root, {
+                        folder_set: {
+                            $unshift: [action.payload.result]
+                        }
+                    })
+                });
+            } else {
+                store = (0, _reactAddonsUpdate2.default)(store, {
+                    folderList: {
+                        $unshift: [action.payload.result]
+                    }
+                });
+            }
             return (0, _reactAddonsUpdate2.default)(store, {
                 isOwnLoading: {
                     $set: true
@@ -51008,7 +51023,8 @@ var AppComponent = function (_React$Component) {
                         _react2.default.createElement(_reactRouterDom.Route, { exact: true, path: '/root', component: _RootFolder2.default }),
                         _react2.default.createElement(_reactRouterDom.Route, { exact: true, path: '/folder/:id', component: _FolderFolder2.default }),
                         _react2.default.createElement(_reactRouterDom.Route, { exact: true, path: '/chat', component: _ChatFolder2.default }),
-                        _react2.default.createElement(_reactRouterDom.Route, { exact: true, path: '/chat/:id', component: _ChatFolder2.default })
+                        _react2.default.createElement(_reactRouterDom.Route, { exact: true, path: '/chat/:id', component: _ChatFolder2.default }),
+                        _react2.default.createElement(_reactRouterDom.Route, { path: '', component: _RootFolder2.default })
                     )
                 )
             );
