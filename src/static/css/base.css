@@ -7,10 +7,12 @@ a{
     text-decoration: none;
     cursor: pointer;
 }
+
 h1{
     font-weight: 400;
     line-height: 19px;
 }
+
 .page-header{
     height: 42px;
     background-color: #4A76A8;
