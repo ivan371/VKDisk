@@ -1,5 +1,7 @@
 from django.shortcuts import render
 from rest_framework import viewsets, permissions
+
+from folder.views import LargeResultsSetPagination
 from .serializers import DocumentSerializer, DocumentBulkSerializer, DocumentTransferSerializer
 from .models import Document#, DocumentData
 from django.http import Http404
@@ -20,7 +22,11 @@ class MediumResultsSetPagination(PageNumberPagination):
 class DocumentViewSet(viewsets.ModelViewSet):
     queryset = Document.objects.all().select_related('folder', 'vk_doc')
     serializer_class = DocumentSerializer
-    pagination_class = MediumResultsSetPagination
+
+    def get_pagination_class(self):
+        if 'large' in self.request.query_params:
+            return LargeResultsSetPagination
+        return MediumResultsSetPagination
 
     def add_docs(self, documents):
         if 'folder' in self.request.query_params:
@@ -94,6 +100,7 @@ class DocumentViewSet(viewsets.ModelViewSet):
 
     def get_queryset(self):
         q = super(DocumentViewSet, self).get_queryset().filter(author=self.request.user)
+        self.pagination_class = self.get_pagination_class()
         if 'folder' in self.request.query_params:
             if self.request.query_params['folder'].isdigit():
                 q = q.filter(folder=self.request.query_params['folder'])

@@ -10,8 +10,14 @@ from django.db.models import Q
 from django.http import Http404
 
 
-class LargeResultsSetPagination(PageNumberPagination):
+class MiddleResultsSetPagination(PageNumberPagination):
     page_size = 15
+    page_size_query_param = 'page_size'
+    max_page_size = 1000
+
+
+class LargeResultsSetPagination(PageNumberPagination):
+    page_size = 1000
     page_size_query_param = 'page_size'
     max_page_size = 1000
 
@@ -19,7 +25,11 @@ class LargeResultsSetPagination(PageNumberPagination):
 class FolderViewSet(viewsets.ModelViewSet):
     queryset = Folder.objects.all().prefetch_related('author', 'folder_set', 'folder_set__root')
     serializer_class = FolderSerializer
-    pagination_class = LargeResultsSetPagination
+
+    def get_pagination_class(self):
+        if 'root' in self.request.query_params or 'large' in self.request.query_params:
+            return LargeResultsSetPagination
+        return MiddleResultsSetPagination
 
     def add_folders(self, folders):
         folder_list = [Folder(
@@ -65,6 +75,7 @@ class FolderViewSet(viewsets.ModelViewSet):
 
     def get_queryset(self):
         q = super(FolderViewSet, self).get_queryset().filter(author=self.request.user)
+        self.pagination_class = self.get_pagination_class()
         if 'folder' in self.request.query_params:
             if self.request.query_params['folder'].isdigit():
                 q = q.filter(root_id=int(self.request.query_params['folder']))

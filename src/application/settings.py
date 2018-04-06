@@ -160,6 +160,9 @@ USE_TZ = True
 REST_FRAMEWORK = {
     'DEFAULT_PAGINATION_CLASS': 'rest_api.pagination.ResultsSetPagination',
     # 'PAGE_SIZE': 2
+    'DEFAULT_PERMISSION_CLASSES': (
+        'rest_framework.permissions.IsAuthenticated',
+    )
 }
 
 # Static files (CSS, JavaScript, Images)
