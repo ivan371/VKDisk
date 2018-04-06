@@ -27,7 +27,7 @@ class FolderViewSet(viewsets.ModelViewSet):
     serializer_class = FolderSerializer
 
     def get_pagination_class(self):
-        if 'root' in self.request.query_params:
+        if 'root' in self.request.query_params or 'large' in self.request.query_params:
             return LargeResultsSetPagination
         return MiddleResultsSetPagination
 
