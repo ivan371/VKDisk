@@ -81,7 +81,14 @@ class DocsComponent extends React.Component {
                     nextProps.sort,
                 ));
             }
-        } else if (this.props.folder === folderType.root) {
+        } else if(this.props.folder !== nextProps.folder) {
+            if (nextProps.folder === folderType.root) {
+                this.props.loadDocs(urls.docs.unsortedDocsUrl)
+                    .then(this.scrollStart)
+                    .then(() => this.props.loadRoot());
+            }
+        }
+        if (this.props.folder === folderType.root) {
             if (this.props.filterType !== nextProps.filterType || this.props.filter !== nextProps.filter) {
                 this.props.loadDocs(makeUrls.makeFilterRootSortDocs(
                     nextProps.filter,

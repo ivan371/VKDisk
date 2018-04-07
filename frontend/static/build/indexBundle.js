@@ -50982,10 +50982,6 @@ var _ChatFolder = __webpack_require__(304);
 
 var _ChatFolder2 = _interopRequireDefault(_ChatFolder);
 
-var _FolderFolder = __webpack_require__(305);
-
-var _FolderFolder2 = _interopRequireDefault(_FolderFolder);
-
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
@@ -51021,7 +51017,7 @@ var AppComponent = function (_React$Component) {
                         _reactRouterDom.Switch,
                         null,
                         _react2.default.createElement(_reactRouterDom.Route, { exact: true, path: '/root', component: _RootFolder2.default }),
-                        _react2.default.createElement(_reactRouterDom.Route, { exact: true, path: '/folder/:id', component: _FolderFolder2.default }),
+                        _react2.default.createElement(_reactRouterDom.Route, { exact: true, path: '/folder/:id', component: _RootFolder2.default }),
                         _react2.default.createElement(_reactRouterDom.Route, { exact: true, path: '/chat', component: _ChatFolder2.default }),
                         _react2.default.createElement(_reactRouterDom.Route, { exact: true, path: '/chat/:id', component: _ChatFolder2.default }),
                         _react2.default.createElement(_reactRouterDom.Route, { path: '', component: _RootFolder2.default })
@@ -51788,7 +51784,13 @@ var RootFolderComponent = function (_React$Component) {
     _createClass(RootFolderComponent, [{
         key: 'render',
         value: function render() {
-            return _react2.default.createElement(_CustomRow2.default, { folder: _constants.folderType.root, params: this.props.match.params, history: this.props.history });
+            var folder = null;
+            if (this.props.match.params.hasOwnProperty("id")) {
+                folder = _constants.folderType.folder;
+            } else {
+                folder = _constants.folderType.root;
+            }
+            return _react2.default.createElement(_CustomRow2.default, { folder: folder, params: this.props.match.params, history: this.props.history });
         }
     }]);
 
@@ -51915,6 +51917,8 @@ var DocsComponent = function (_React$Component) {
     }, {
         key: 'componentWillReceiveProps',
         value: function componentWillReceiveProps(nextProps) {
+            var _this3 = this;
+
             if (nextProps.params.hasOwnProperty('id')) {
                 if (this.props.params.id !== nextProps.params.id) {
                     this.props.loadDocs(_constants.makeUrls.makeFilterDocsFolder(nextProps.params.id));
@@ -51929,7 +51933,14 @@ var DocsComponent = function (_React$Component) {
                 } else if (this.props.sort !== nextProps.sort) {
                     this.props.loadDocs(_constants.makeUrls.makeFilterSortDocs(nextProps.params.id, this.props.filter, this.props.filterType, nextProps.sort));
                 }
-            } else if (this.props.folder === _constants.folderType.root) {
+            } else if (this.props.folder !== nextProps.folder) {
+                if (nextProps.folder === _constants.folderType.root) {
+                    this.props.loadDocs(_constants.urls.docs.unsortedDocsUrl).then(this.scrollStart).then(function () {
+                        return _this3.props.loadRoot();
+                    });
+                }
+            }
+            if (this.props.folder === _constants.folderType.root) {
                 if (this.props.filterType !== nextProps.filterType || this.props.filter !== nextProps.filter) {
                     this.props.loadDocs(_constants.makeUrls.makeFilterRootSortDocs(nextProps.filter, nextProps.filterType, this.props.sort));
                 } else if (this.props.sort !== nextProps.sort) {
@@ -53900,58 +53911,7 @@ var ChatFolderComponent = function (_React$Component) {
 exports.default = ChatFolderComponent;
 
 /***/ }),
-/* 305 */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-
-
-Object.defineProperty(exports, "__esModule", {
-    value: true
-});
-
-var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
-
-var _react = __webpack_require__(0);
-
-var _react2 = _interopRequireDefault(_react);
-
-var _constants = __webpack_require__(2);
-
-var _CustomRow = __webpack_require__(83);
-
-var _CustomRow2 = _interopRequireDefault(_CustomRow);
-
-function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-
-function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
-
-function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
-
-function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
-
-var FolderFolderComponent = function (_React$Component) {
-    _inherits(FolderFolderComponent, _React$Component);
-
-    function FolderFolderComponent() {
-        _classCallCheck(this, FolderFolderComponent);
-
-        return _possibleConstructorReturn(this, (FolderFolderComponent.__proto__ || Object.getPrototypeOf(FolderFolderComponent)).apply(this, arguments));
-    }
-
-    _createClass(FolderFolderComponent, [{
-        key: 'render',
-        value: function render() {
-            return _react2.default.createElement(_CustomRow2.default, { folder: _constants.folderType.folder, params: this.props.match.params, history: this.props.history });
-        }
-    }]);
-
-    return FolderFolderComponent;
-}(_react2.default.Component);
-
-exports.default = FolderFolderComponent;
-
-/***/ }),
+/* 305 */,
 /* 306 */
 /***/ (function(module, exports, __webpack_require__) {
 
