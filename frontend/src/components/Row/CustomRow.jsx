@@ -10,10 +10,9 @@ import { apps, dragSource, folderType, items, makeUrls, urls } from '../../const
 import Docs from '../document/Docs';
 import { dropOver } from '../../actions/drag';
 import { deleteDocs } from '../../actions/document';
-import { setFilter } from '../../actions/page';
+import {setFilter, setSort} from '../../actions/page';
 import NodeChat from '../tree/NodeChat';
 import NodeRoot from '../tree/NodeRoot';
-import Tags from '../tag/Tags';
 import NodeTag from '../tree/NodeTag';
 import RowHeader from './RowHeader';
 
@@ -38,6 +37,8 @@ class CustomRowComponent extends React.Component {
         setFilter: PropTypes.func.isRequired,
         loadFilterFolders: PropTypes.func.isRequired,
         filterFolders: PropTypes.func.isRequired,
+        setSort: PropTypes.func.isRequired,
+        sort: PropTypes.string.isRequired,
     };
 
     state = {
@@ -66,7 +67,10 @@ class CustomRowComponent extends React.Component {
 
     componentWillReceiveProps(nextProps) {
         if (this.props.filter !== nextProps.filter && this.props.folder === folderType.chat) {
-            this.props.loadUnTreeFolders(makeUrls.makeFilterChats(nextProps.filter));
+            this.props.loadUnTreeFolders(makeUrls.makeFilterSortChats(nextProps.filter, this.props.sort));
+        }
+        if (this.props.sort !== nextProps.sort && this.props.folder === folderType.chat) {
+            this.props.loadUnTreeFolders(makeUrls.makeFilterSortChats(this.props.filter, nextProps.sort));
         }
     }
 
@@ -75,7 +79,7 @@ class CustomRowComponent extends React.Component {
     }
 
     handleLoadMore = (e) => {
-        this.props.loadFoldersMore(makeUrls.makeChatsMore(this.props.page));
+        this.props.loadFoldersMore(makeUrls.makeFilterChatsSortMore(this.props.page, this.props.filter, this.props.sort));
     };
 
     handleScroll = () => {
@@ -102,7 +106,7 @@ class CustomRowComponent extends React.Component {
     render() {
         return (
             <div className="page-content-content">
-                <div className="page-content-content-wrap" onScroll={ this.handleScroll }>
+                <div className="page-content-content-wrap">
                     <RowHeader
                         folder={this.props.folder}
                         filter={this.props.filter}
@@ -113,8 +117,12 @@ class CustomRowComponent extends React.Component {
                         source={this.props.source}
                         setFilter={this.props.setFilter}
                         deleteDocs={this.props.deleteDocs}
+                        setSort={this.props.setSort}
+                        sort={this.props.sort}
                     />
-                    {this.renderNodeList()}
+                    <div className="content-flex content-flex-column" onScroll={ this.handleScroll }>
+                        {this.renderNodeList()}
+                    </div>
                 </div>
                 <Docs params={ this.props.params } history={ this.props.history } folder={ this.props.folder } />
             </div>
@@ -132,6 +140,7 @@ const mapStoreToProps = state => ({
     source: state.drag.source,
     id: state.drag.id,
     filter: state.page.filter.folder,
+    sort: state.page.sort.folder,
     filterSelect: state.page.filterSelect.folder,
     isLoadingMore: state.folder.isLoadingMore,
 });
@@ -146,6 +155,7 @@ const mapDispatchToProps = dispatch => ({
         setFilter,
         loadFilterFolders,
         filterFolders,
+        setSort,
     }, dispatch),
 });
 

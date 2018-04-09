@@ -18,6 +18,11 @@ export default class RowHeaderComponent extends React.Component {
     state = {
         filter: this.props.filter,
         filterSelect: this.props.filterSelect,
+        isSort: false,
+    };
+
+    handleSortOpen = () => {
+        this.setState({isSort: !this.state.isSort})
     };
 
     handleDragOver = (e) => {
@@ -41,6 +46,10 @@ export default class RowHeaderComponent extends React.Component {
         if (e.keyCode === 13) {
             this.props.setFilter(this.state.filter, this.state.filterSelect, apps.folder);
         }
+    };
+
+    handleSetSort = (e) => {
+        this.props.setSort(e.target.value, apps.folder);
     };
 
     renderTrash() {
@@ -71,12 +80,21 @@ export default class RowHeaderComponent extends React.Component {
 
     renderSort() {
         if (this.props.folder === folderType.chat) {
-            return <img className="item-right" src={items.sort}/>
+            return <img className="item-right" src={items.sort} onClick={this.handleSortOpen}/>
         }
         return null;
     }
 
-    render () {
+    renderHeader() {
+        if (this.state.isSort) {
+            return (
+                <div className="content-item">
+                    <button className="vk-button button-secondary" onClick={ this.handleSortOpen }>Cancel</button>
+                    <button className={ `sort-button${this.props.sort === 'name' ? ' sort-button-selected' : ''}` } value="name" onClick={ this.handleSetSort }>Name</button>
+                    <button className={ `sort-button${this.props.sort === 'date' ? ' sort-button-selected' : ''}` } value="date" onClick={ this.handleSetSort }>Date</button>
+                </div>
+            );
+        }
         return (
             <div className="content-item">
                 {this.renderSearch()}
@@ -84,5 +102,9 @@ export default class RowHeaderComponent extends React.Component {
                 {this.renderSort()}
             </div>
         )
+    }
+
+    render () {
+        return (this.renderHeader())
     }
 }

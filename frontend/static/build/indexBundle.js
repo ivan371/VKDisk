@@ -186,19 +186,19 @@ var makeUrls = exports.makeUrls = {
         return urls.docs.docsUrl + '?root&&filter&&' + value + '=' + filter;
     },
     makeFilterRootSortDocs: function makeFilterRootSortDocs(filter, value, sort) {
-        return urls.docs.docsUrl + '?root&&filter&&' + value + '=' + filter + '&&sort=' + sort;
+        return urls.docs.docsUrl + '?root&&filter&' + value + '=' + filter + '&sort=' + sort;
     },
     makeFilterDocsDate: function makeFilterDocsDate(id, year, month, day) {
-        return urls.docs.docsUrl + '?folder=' + id + '&&filter&&year=' + year + '&&month=' + month + '&&day=' + day;
+        return urls.docs.docsUrl + '?folder=' + id + '&filter&year=' + year + '&month=' + month + '&&day=' + day;
     },
     makeChatsMore: function makeChatsMore(page) {
         return urls.folder.chatFolderUrl + '&&page=' + page;
     },
-    makeFilterChats: function makeFilterChats(name) {
-        return urls.folder.chatFolderUrl + 'filter&&name=' + name;
+    makeFilterSortChats: function makeFilterSortChats(name, sort) {
+        return urls.folder.chatFolderUrl + 'filter&name=' + name + '&sort=' + sort;
     },
-    makeFilterChatsMore: function makeFilterChatsMore(name, page) {
-        return urls.folder.chatFolderUrl + 'filter&&name=' + name + '&&page=' + page;
+    makeFilterChatsSortMore: function makeFilterChatsSortMore(page, name, sort) {
+        return urls.folder.chatFolderUrl + 'filter&name=' + name + '&page=' + page + '&sort=' + sort;
     },
     makeTransferFolder: function makeTransferFolder(id) {
         return urls.folder.customFolderUrl + id + '/?replace';
@@ -24946,15 +24946,11 @@ var _NodeRoot = __webpack_require__(301);
 
 var _NodeRoot2 = _interopRequireDefault(_NodeRoot);
 
-var _Tags = __webpack_require__(147);
-
-var _Tags2 = _interopRequireDefault(_Tags);
-
 var _NodeTag = __webpack_require__(303);
 
 var _NodeTag2 = _interopRequireDefault(_NodeTag);
 
-var _RowHeader = __webpack_require__(310);
+var _RowHeader = __webpack_require__(304);
 
 var _RowHeader2 = _interopRequireDefault(_RowHeader);
 
@@ -24983,7 +24979,7 @@ var CustomRowComponent = function (_React$Component) {
         return _ret = (_temp = (_this = _possibleConstructorReturn(this, (_ref = CustomRowComponent.__proto__ || Object.getPrototypeOf(CustomRowComponent)).call.apply(_ref, [this].concat(args))), _this), _this.state = {
             scroll: null
         }, _this.handleLoadMore = function (e) {
-            _this.props.loadFoldersMore(_constants.makeUrls.makeChatsMore(_this.props.page));
+            _this.props.loadFoldersMore(_constants.makeUrls.makeFilterChatsSortMore(_this.props.page, _this.props.filter, _this.props.sort));
         }, _this.handleScroll = function () {
             if (!_this.props.isLoadingMore && _this.props.isLoading && _this.props.count > 15 * (_this.props.page - 1)) {
                 var scroll = _this.state.scroll;
@@ -25025,7 +25021,10 @@ var CustomRowComponent = function (_React$Component) {
         key: 'componentWillReceiveProps',
         value: function componentWillReceiveProps(nextProps) {
             if (this.props.filter !== nextProps.filter && this.props.folder === _constants.folderType.chat) {
-                this.props.loadUnTreeFolders(_constants.makeUrls.makeFilterChats(nextProps.filter));
+                this.props.loadUnTreeFolders(_constants.makeUrls.makeFilterSortChats(nextProps.filter, this.props.sort));
+            }
+            if (this.props.sort !== nextProps.sort && this.props.folder === _constants.folderType.chat) {
+                this.props.loadUnTreeFolders(_constants.makeUrls.makeFilterSortChats(this.props.filter, nextProps.sort));
             }
         }
     }, {
@@ -25046,7 +25045,7 @@ var CustomRowComponent = function (_React$Component) {
                 { className: 'page-content-content' },
                 _react2.default.createElement(
                     'div',
-                    { className: 'page-content-content-wrap', onScroll: this.handleScroll },
+                    { className: 'page-content-content-wrap' },
                     _react2.default.createElement(_RowHeader2.default, {
                         folder: this.props.folder,
                         filter: this.props.filter,
@@ -25056,9 +25055,15 @@ var CustomRowComponent = function (_React$Component) {
                         id: this.props.id,
                         source: this.props.source,
                         setFilter: this.props.setFilter,
-                        deleteDocs: this.props.deleteDocs
+                        deleteDocs: this.props.deleteDocs,
+                        setSort: this.props.setSort,
+                        sort: this.props.sort
                     }),
-                    this.renderNodeList()
+                    _react2.default.createElement(
+                        'div',
+                        { className: 'content-flex content-flex-column', onScroll: this.handleScroll },
+                        this.renderNodeList()
+                    )
                 ),
                 _react2.default.createElement(_Docs2.default, { params: this.props.params, history: this.props.history, folder: this.props.folder })
             );
@@ -25086,7 +25091,9 @@ CustomRowComponent.propTypes = {
     filterSelect: _propTypes2.default.string.isRequired,
     setFilter: _propTypes2.default.func.isRequired,
     loadFilterFolders: _propTypes2.default.func.isRequired,
-    filterFolders: _propTypes2.default.func.isRequired
+    filterFolders: _propTypes2.default.func.isRequired,
+    setSort: _propTypes2.default.func.isRequired,
+    sort: _propTypes2.default.string.isRequired
 };
 
 
@@ -25101,6 +25108,7 @@ var mapStoreToProps = function mapStoreToProps(state) {
         source: state.drag.source,
         id: state.drag.id,
         filter: state.page.filter.folder,
+        sort: state.page.sort.folder,
         filterSelect: state.page.filterSelect.folder,
         isLoadingMore: state.folder.isLoadingMore
     };
@@ -25115,7 +25123,8 @@ var mapDispatchToProps = function mapDispatchToProps(dispatch) {
         deleteDocs: _document.deleteDocs,
         setFilter: _page.setFilter,
         loadFilterFolders: _folder.loadFilterFolders,
-        filterFolders: _folder.filterFolders
+        filterFolders: _folder.filterFolders,
+        setSort: _page.setSort
     }, dispatch));
 };
 
@@ -25664,7 +25673,7 @@ var _App = __webpack_require__(277);
 
 var _App2 = _interopRequireDefault(_App);
 
-__webpack_require__(305);
+__webpack_require__(306);
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
@@ -50756,7 +50765,7 @@ var initalStore = {
         docs: ''
     },
     sort: {
-        folder: '',
+        folder: 'date',
         docs: 'date'
     },
     filterSelect: {
@@ -50949,7 +50958,7 @@ var _RootFolder = __webpack_require__(290);
 
 var _RootFolder2 = _interopRequireDefault(_RootFolder);
 
-var _ChatFolder = __webpack_require__(304);
+var _ChatFolder = __webpack_require__(305);
 
 var _ChatFolder2 = _interopRequireDefault(_ChatFolder);
 
@@ -53781,7 +53790,7 @@ var NodeTagComponent = function (_React$Component) {
         key: 'render',
         value: function render() {
             return _react2.default.createElement(
-                _react2.default.Fragment,
+                'a',
                 null,
                 _react2.default.createElement(
                     'div',
@@ -53846,6 +53855,174 @@ var _react = __webpack_require__(0);
 
 var _react2 = _interopRequireDefault(_react);
 
+var _propTypes = __webpack_require__(1);
+
+var _propTypes2 = _interopRequireDefault(_propTypes);
+
+var _constants = __webpack_require__(2);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+function _defineProperty(obj, key, value) { if (key in obj) { Object.defineProperty(obj, key, { value: value, enumerable: true, configurable: true, writable: true }); } else { obj[key] = value; } return obj; }
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
+
+function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
+
+var RowHeaderComponent = function (_React$Component) {
+    _inherits(RowHeaderComponent, _React$Component);
+
+    function RowHeaderComponent() {
+        var _ref;
+
+        var _temp, _this, _ret;
+
+        _classCallCheck(this, RowHeaderComponent);
+
+        for (var _len = arguments.length, args = Array(_len), _key = 0; _key < _len; _key++) {
+            args[_key] = arguments[_key];
+        }
+
+        return _ret = (_temp = (_this = _possibleConstructorReturn(this, (_ref = RowHeaderComponent.__proto__ || Object.getPrototypeOf(RowHeaderComponent)).call.apply(_ref, [this].concat(args))), _this), _this.state = {
+            filter: _this.props.filter,
+            filterSelect: _this.props.filterSelect,
+            isSort: false
+        }, _this.handleSortOpen = function () {
+            _this.setState({ isSort: !_this.state.isSort });
+        }, _this.handleDragOver = function (e) {
+            if (_this.props.source === _constants.dragSource.file && _this.props.allowDrag) {
+                e.preventDefault();
+            }
+        }, _this.handleChange = function (e) {
+            _this.setState(_defineProperty({}, e.target.name, e.target.value));
+        }, _this.handleDrop = function (e) {
+            if (_this.props.source === _constants.dragSource.file && _this.props.allowDrag) {
+                _this.props.deleteDocs(_constants.makeUrls.makeCustomFile(_this.props.id), _this.props.id);
+                _this.props.dropOver();
+            }
+        }, _this.handleFilter = function (e) {
+            if (e.keyCode === 13) {
+                _this.props.setFilter(_this.state.filter, _this.state.filterSelect, _constants.apps.folder);
+            }
+        }, _this.handleSetSort = function (e) {
+            _this.props.setSort(e.target.value, _constants.apps.folder);
+        }, _temp), _possibleConstructorReturn(_this, _ret);
+    }
+
+    _createClass(RowHeaderComponent, [{
+        key: 'renderTrash',
+        value: function renderTrash() {
+            if (this.props.source === _constants.dragSource.file) {
+                if (this.props.allowDrag) {
+                    return _constants.items.trashGood;
+                }
+                return _constants.items.trashBad;
+            }
+            return _constants.items.trash;
+        }
+    }, {
+        key: 'renderSearch',
+        value: function renderSearch() {
+            if (this.props.folder === _constants.folderType.chat) {
+                return _react2.default.createElement('input', {
+                    className: 'content-item__input search',
+                    type: 'text',
+                    placeholder: 'Search',
+                    name: 'filter',
+                    value: this.state.filter,
+                    onChange: this.handleChange,
+                    onKeyDown: this.handleFilter
+                });
+            } else {
+                return _react2.default.createElement(
+                    'div',
+                    { className: 'item-name' },
+                    'Your folders'
+                );
+            }
+        }
+    }, {
+        key: 'renderSort',
+        value: function renderSort() {
+            if (this.props.folder === _constants.folderType.chat) {
+                return _react2.default.createElement('img', { className: 'item-right', src: _constants.items.sort, onClick: this.handleSortOpen });
+            }
+            return null;
+        }
+    }, {
+        key: 'renderHeader',
+        value: function renderHeader() {
+            if (this.state.isSort) {
+                return _react2.default.createElement(
+                    'div',
+                    { className: 'content-item' },
+                    _react2.default.createElement(
+                        'button',
+                        { className: 'vk-button button-secondary', onClick: this.handleSortOpen },
+                        'Cancel'
+                    ),
+                    _react2.default.createElement(
+                        'button',
+                        { className: 'sort-button' + (this.props.sort === 'name' ? ' sort-button-selected' : ''), value: 'name', onClick: this.handleSetSort },
+                        'Name'
+                    ),
+                    _react2.default.createElement(
+                        'button',
+                        { className: 'sort-button' + (this.props.sort === 'date' ? ' sort-button-selected' : ''), value: 'date', onClick: this.handleSetSort },
+                        'Date'
+                    )
+                );
+            }
+            return _react2.default.createElement(
+                'div',
+                { className: 'content-item' },
+                this.renderSearch(),
+                _react2.default.createElement('img', { className: 'item-right', src: this.renderTrash(), onDragOver: this.handleDragOver, onDrop: this.handleDrop }),
+                this.renderSort()
+            );
+        }
+    }, {
+        key: 'render',
+        value: function render() {
+            return this.renderHeader();
+        }
+    }]);
+
+    return RowHeaderComponent;
+}(_react2.default.Component);
+
+RowHeaderComponent.propTypes = {
+    folder: _propTypes2.default.string.isRequired,
+    filter: _propTypes2.default.string.isRequired,
+    filterSelect: _propTypes2.default.string.isRequired,
+    setFilter: _propTypes2.default.func.isRequired,
+    allowDrag: _propTypes2.default.bool.isRequired,
+    dropOver: _propTypes2.default.func.isRequired,
+    deleteDocs: _propTypes2.default.func.isRequired,
+    source: _propTypes2.default.string,
+    id: _propTypes2.default.number
+};
+exports.default = RowHeaderComponent;
+
+/***/ }),
+/* 305 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+Object.defineProperty(exports, "__esModule", {
+    value: true
+});
+
+var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+
+var _react = __webpack_require__(0);
+
+var _react2 = _interopRequireDefault(_react);
+
 var _constants = __webpack_require__(2);
 
 var _CustomRow = __webpack_require__(144);
@@ -53882,11 +54059,11 @@ var ChatFolderComponent = function (_React$Component) {
 exports.default = ChatFolderComponent;
 
 /***/ }),
-/* 305 */
+/* 306 */
 /***/ (function(module, exports, __webpack_require__) {
 
 
-var content = __webpack_require__(306);
+var content = __webpack_require__(307);
 
 if(typeof content === 'string') content = [[module.i, content, '']];
 
@@ -53900,7 +54077,7 @@ var options = {"hmr":true}
 options.transform = transform
 options.insertInto = undefined;
 
-var update = __webpack_require__(308)(content, options);
+var update = __webpack_require__(309)(content, options);
 
 if(content.locals) module.exports = content.locals;
 
@@ -53932,21 +54109,21 @@ if(false) {
 }
 
 /***/ }),
-/* 306 */
+/* 307 */
 /***/ (function(module, exports, __webpack_require__) {
 
-exports = module.exports = __webpack_require__(307)(false);
+exports = module.exports = __webpack_require__(308)(false);
 // imports
 
 
 // module
-exports.push([module.i, "body {\n  background-color: #EDEEF0;\n  margin: 0;\n  font-family: -apple-system,BlinkMacSystemFont,Roboto,Helvetica Neue,sans-serif;\n}\n\na {\n  text-decoration: none;\n  cursor: pointer;\n}\n\n.page-header {\n  height: 42px;\n  background-color: #4A76A8;\n}\n\n.page-content {\n  margin: 0 auto;\n  width: 960px;\n  display: flex;\n  height: 100%;\n  position: sticky;\n}\n\n.page-header-content {\n  margin: 0 auto;\n  width: 960px;\n}\n\n.page-header-content-logo {\n  width: 139px;\n}\n\n.page-header-content h2 {\n  margin: 0;\n  padding-top: 5px;\n  color: white;\n}\n\n.page-content-navigation {\n  margin-top: 15px;\n  width: 139px;\n}\n\n.page-content-content {\n  padding-top: 15px;\n  padding-bottom: 2px;\n  min-width: 400px;\n  display: flex;\n}\n\n.page-content-content-wrap {\n  width: 300px;\n  background-color: white;\n  max-height: 100%;\n  border-radius: 2px 2px 0 0;\n  box-shadow: 0 1px 0 0 #d7d8db, 0 0 0 1px #e3e4e8;\n  overflow-y: auto;\n}\n\n.page-content-content-wrap a {\n  color: #285473;\n}\n\n.page-content-content-content {\n  background-color: white;\n  max-height: 100%;\n  border-radius: 2px 2px 0 0;\n  box-shadow: 0 1px 0 0 #d7d8db, 0 0 0 1px #e3e4e8;\n}\n\n.page-content-link {\n  display: block;\n  white-space: nowrap;\n  padding: 10px;\n  color: #285473;\n}\n\n.page-content-link:hover {\n  background-color: #E1E5EB;\n}\n\n.content-item {\n  padding: 10px;\n  height: 30px;\n  box-shadow: 0 1px 0 0 #d7d8db;\n}\n\n.page-content-link-item {\n  display: flex;\n  height: 20px;\n}\n\n.page-content-link-item:hover {\n  background-color: #EDEEF0;\n  cursor: pointer;\n}\n\n.content-item input {\n  border: 0px;\n}\n\ninput[type=\"text\"]:focus {\n  outline: none;\n}\n\n.content-flex {\n  display: flex;\n}\n\n.content-flex-row {\n  align-content: start;\n  flex-wrap: wrap;\n  overflow-y: auto;\n}\n\n.content-flex-column {\n  flex-direction: column;\n  overflow-y: auto;\n}\n\n@media screen and (min-height: 0px) and (max-height: 720px) {\n  .content-flex {\n    height: 480px;\n  }\n  .page-content-content {\n    height: 540px;\n  }\n  .page-content-content-content {\n    width: 520px;\n  }\n}\n\n@media screen and (min-height: 700px) and (max-height: 1500px) {\n  .content-flex {\n    height: 640px;\n  }\n  .page-content-content {\n    height: 700px;\n  }\n  .page-content-content-content {\n    width: 680px;\n  }\n}\n\n.content-flex-modal {\n  display: flex;\n  align-content: start;\n  flex-wrap: wrap;\n  overflow-y: auto;\n  height: 220px;\n}\n\n.content-flex-item {\n  padding-top: 10px;\n  padding-bottom: 10px;\n  height: 80px;\n  width: 100px;\n  text-align: center;\n}\n\n.content-flex-item a {\n  color: black;\n}\n\n.content-flex-item:hover {\n  background-color: #E1E5EB;\n}\n\n.content-flex-item-column {\n  width: 480px;\n  text-align: left;\n  height: 30px;\n  padding: 10px;\n}\n\nimg.icon {\n  width: 50px;\n  height: 50px;\n  cursor: pointer;\n}\n\nimg.item {\n  width: 20px;\n  height: 20px;\n  margin-right: 5px;\n}\n\n.modal-container {\n  position: fixed;\n  left: 0;\n  top: 0;\n  text-align: center;\n  background-color: rgba(0, 0, 0, 0.7);\n  width: 100%;\n  height: 100%;\n  z-index: 10;\n}\n\n.modal {\n  cursor: auto;\n  z-index: 100;\n  height: 336px;\n  width: 500px;\n  background-color: white;\n  margin: 116px auto;\n  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.35);\n  outline: none;\n  border-radius: 5px;\n}\n\n.modal-header {\n  border-radius: 5px 5px 0 0;\n  width: 100%;\n  height: 54px;\n  background-color: #4A76A8;\n}\n\n.modal-header-title {\n  padding: 1px;\n}\n\n.modal-header-title p {\n  color: white;\n}\n\n.modal-content {\n  padding: 20px;\n  height: 240px;\n  background-color: #F7F7F7;\n}\n\n.modal-content__img img {\n  width: 100px;\n}\n\n.vk-button {\n  background-color: #5b88bd;\n  text-decoration: none;\n  float: right;\n  padding: 7px 16px 8px;\n  margin-left: 10px;\n  font-size: 12.5px;\n  display: inline-block;\n  zoom: 1;\n  cursor: pointer;\n  white-space: nowrap;\n  outline: none;\n  font-family: -apple-system,BlinkMacSystemFont,Roboto,Helvetica Neue,sans-serif;\n  vertical-align: top;\n  line-height: 15px;\n  text-align: center;\n  color: #fff;\n  border: 0;\n  border-radius: 4px;\n  box-sizing: border-box;\n}\n\n.vk-input {\n  background: #fff;\n  color: #000;\n  border: 1px solid #c0cad5;\n  padding: 5px;\n  vertical-align: top;\n  margin: 0;\n  overflow: auto;\n  outline: 0;\n  line-height: 150%;\n  word-wrap: break-word;\n  width: 200px;\n  cursor: text;\n}\n\n.modal-footer {\n  margin-top: 80px;\n}\n\n.content-item__title {\n  cursor: text;\n  text-align: center;\n  max-width: 90px;\n  margin: 0 auto;\n  max-height: 38px;\n  text-overflow: ellipsis;\n  white-space: pre-wrap;\n  overflow: hidden;\n}\n\n.content-item__title:hover {\n  white-space: normal;\n  overflow: visible;\n}\n\n.content-item__title-col {\n  font-size: 1em;\n  float: left;\n  max-width: 300px;\n  text-align: left;\n}\n\n.content-item__input {\n  border: 1px solid #c0cad5;\n  cursor: text;\n  margin-top: 4px;\n  width: 100%;\n  outline: 0;\n  line-height: 150%;\n}\n\n.page-content-item__input {\n  width: 100px;\n  border: 1px solid #c0cad5;\n  cursor: text;\n  outline: 0;\n  line-height: 150%;\n}\n\n.item-right {\n  cursor: pointer;\n  padding: 5px;\n  width: 20px;\n  height: 20px;\n  float: right;\n  vertical-align: top;\n}\n\n.item-left {\n  cursor: pointer;\n  padding: 5px;\n  width: 20px;\n  height: 20px;\n  float: left;\n  vertical-align: top;\n}\n\n.item-name {\n  float: left;\n  padding: 5px;\n  height: 20px;\n}\n\n.checked {\n  background-color: #E1E5EB;\n}\n\n.button-secondary {\n  background-color: #e5ebf1;\n  color: #55677d;\n}\n\n.node-layout {\n  margin-left: 10px;\n}\n\n.search {\n  width: 150px;\n}\n\n.tags {\n  margin: 5px;\n  display: flex;\n  flex-wrap: wrap;\n  justify-content: space-between;\n}\n\n.tag-button {\n  margin-bottom: 5px;\n  margin-left: 2px;\n}\n\n.sort-button {\n  text-decoration: none;\n  float: left;\n  padding: 7px 16px 8px;\n  margin-left: 10px;\n  font-size: 12.5px;\n  display: inline-block;\n  zoom: 1;\n  cursor: pointer;\n  white-space: nowrap;\n  outline: none;\n  font-family: -apple-system,BlinkMacSystemFont,Roboto,Helvetica Neue,sans-serif;\n  vertical-align: top;\n  line-height: 15px;\n  text-align: center;\n  border: 0;\n  box-sizing: border-box;\n  background-color: white;\n}\n\n.sort-button-selected {\n  border-bottom: #5b88bd 2px solid;\n}\n", ""]);
+exports.push([module.i, "body {\n  background-color: #EDEEF0;\n  margin: 0;\n  font-family: -apple-system,BlinkMacSystemFont,Roboto,Helvetica Neue,sans-serif;\n}\n\na {\n  text-decoration: none;\n  cursor: pointer;\n}\n\n.page-header {\n  height: 42px;\n  background-color: #4A76A8;\n}\n\n.page-content {\n  margin: 0 auto;\n  width: 960px;\n  display: flex;\n  height: 100%;\n  position: sticky;\n}\n\n.page-header-content {\n  margin: 0 auto;\n  width: 960px;\n}\n\n.page-header-content-logo {\n  width: 139px;\n}\n\n.page-header-content h2 {\n  margin: 0;\n  padding-top: 5px;\n  color: white;\n}\n\n.page-content-navigation {\n  margin-top: 15px;\n  width: 139px;\n}\n\n.page-content-content {\n  padding-top: 15px;\n  padding-bottom: 2px;\n  min-width: 400px;\n  display: flex;\n}\n\n.page-content-content-wrap {\n  width: 300px;\n  background-color: white;\n  max-height: 100%;\n  border-radius: 2px 2px 0 0;\n  box-shadow: 0 1px 0 0 #d7d8db, 0 0 0 1px #e3e4e8;\n  overflow-y: auto;\n}\n\n.page-content-content-wrap a {\n  color: #285473;\n}\n\n.page-content-content-content {\n  background-color: white;\n  max-height: 100%;\n  border-radius: 2px 2px 0 0;\n  box-shadow: 0 1px 0 0 #d7d8db, 0 0 0 1px #e3e4e8;\n}\n\n.page-content-link {\n  display: block;\n  white-space: nowrap;\n  padding: 10px;\n  color: #285473;\n}\n\n.page-content-link:hover {\n  background-color: #E1E5EB;\n}\n\n.content-item {\n  padding: 10px;\n  height: 30px;\n  box-shadow: 0 1px 0 0 #d7d8db;\n}\n\n.page-content-link-item {\n  display: flex;\n  height: 20px;\n}\n\n.page-content-link-item:hover {\n  background-color: #EDEEF0;\n  cursor: pointer;\n}\n\n.content-item input {\n  border: 0px;\n}\n\ninput[type=\"text\"]:focus {\n  outline: none;\n}\n\n.content-flex {\n  display: flex;\n}\n\n.content-flex-row {\n  align-content: start;\n  flex-wrap: wrap;\n  overflow-y: auto;\n}\n\n.content-flex-column {\n  flex-direction: column;\n  overflow-y: auto;\n}\n\n@media screen and (min-height: 0px) and (max-height: 720px) {\n  .content-flex {\n    height: 480px;\n  }\n  .page-content-content {\n    height: 540px;\n  }\n  .page-content-content-content {\n    width: 520px;\n  }\n}\n\n@media screen and (min-height: 700px) and (max-height: 1500px) {\n  .content-flex {\n    height: 640px;\n  }\n  .page-content-content {\n    height: 700px;\n  }\n  .page-content-content-content {\n    width: 680px;\n  }\n}\n\n.content-flex-modal {\n  display: flex;\n  align-content: start;\n  flex-wrap: wrap;\n  overflow-y: auto;\n  height: 220px;\n}\n\n.content-flex-item {\n  padding-top: 10px;\n  padding-bottom: 10px;\n  height: 80px;\n  width: 100px;\n  text-align: center;\n}\n\n.content-flex-item a {\n  color: black;\n}\n\n.content-flex-item:hover {\n  background-color: #E1E5EB;\n}\n\n.content-flex-item-column {\n  width: 480px;\n  text-align: left;\n  height: 30px;\n  padding: 10px;\n}\n\nimg.icon {\n  width: 50px;\n  height: 50px;\n  cursor: pointer;\n}\n\nimg.item {\n  width: 20px;\n  height: 20px;\n  margin-right: 5px;\n}\n\n.modal-container {\n  position: fixed;\n  left: 0;\n  top: 0;\n  text-align: center;\n  background-color: rgba(0, 0, 0, 0.7);\n  width: 100%;\n  height: 100%;\n  z-index: 10;\n}\n\n.modal {\n  cursor: auto;\n  z-index: 100;\n  height: 336px;\n  width: 500px;\n  background-color: white;\n  margin: 116px auto;\n  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.35);\n  outline: none;\n  border-radius: 5px;\n}\n\n.modal-header {\n  border-radius: 5px 5px 0 0;\n  width: 100%;\n  height: 54px;\n  background-color: #4A76A8;\n}\n\n.modal-header-title {\n  padding: 1px;\n}\n\n.modal-header-title p {\n  color: white;\n}\n\n.modal-content {\n  padding: 20px;\n  height: 240px;\n  background-color: #F7F7F7;\n}\n\n.modal-content__img img {\n  width: 100px;\n}\n\n.vk-button {\n  background-color: #5b88bd;\n  text-decoration: none;\n  float: right;\n  padding: 7px 16px 8px;\n  margin-left: 10px;\n  font-size: 12.5px;\n  display: inline-block;\n  zoom: 1;\n  cursor: pointer;\n  white-space: nowrap;\n  outline: none;\n  font-family: -apple-system,BlinkMacSystemFont,Roboto,Helvetica Neue,sans-serif;\n  vertical-align: top;\n  line-height: 15px;\n  text-align: center;\n  color: #fff;\n  border: 0;\n  border-radius: 4px;\n  box-sizing: border-box;\n}\n\n.vk-input {\n  background: #fff;\n  color: #000;\n  border: 1px solid #c0cad5;\n  padding: 5px;\n  vertical-align: top;\n  margin: 0;\n  overflow: auto;\n  outline: 0;\n  line-height: 150%;\n  word-wrap: break-word;\n  width: 200px;\n  cursor: text;\n}\n\n.modal-footer {\n  margin-top: 80px;\n}\n\n.content-item__title {\n  cursor: text;\n  text-align: center;\n  max-width: 90px;\n  margin: 0 auto;\n  max-height: 38px;\n  text-overflow: ellipsis;\n  white-space: pre-wrap;\n  overflow: hidden;\n}\n\n.content-item__title:hover {\n  white-space: normal;\n  overflow: visible;\n}\n\n.content-item__title-col {\n  font-size: 1em;\n  float: left;\n  max-width: 300px;\n  text-align: left;\n}\n\n.content-item__input {\n  border: 1px solid #c0cad5;\n  cursor: text;\n  margin-top: 4px;\n  width: 100%;\n  outline: 0;\n  line-height: 150%;\n}\n\n.page-content-item__input {\n  width: 100px;\n  border: 1px solid #c0cad5;\n  cursor: text;\n  outline: 0;\n  line-height: 150%;\n}\n\n.item-right {\n  cursor: pointer;\n  padding: 5px;\n  width: 20px;\n  height: 20px;\n  float: right;\n  vertical-align: top;\n}\n\n.item-left {\n  cursor: pointer;\n  padding: 5px;\n  width: 20px;\n  height: 20px;\n  float: left;\n  vertical-align: top;\n}\n\n.item-name {\n  float: left;\n  padding: 5px;\n  height: 20px;\n}\n\n.checked {\n  background-color: #E1E5EB;\n}\n\n.button-secondary {\n  background-color: #e5ebf1;\n  color: #55677d;\n}\n\n.node-layout {\n  margin-left: 10px;\n}\n\n.search {\n  width: 150px;\n}\n\n.tags {\n  margin: 5px;\n  display: flex;\n  flex-wrap: wrap;\n  justify-content: space-between;\n}\n\n.tag-button {\n  margin-bottom: 5px;\n  margin-left: 2px;\n}\n\n.sort-button {\n  text-decoration: none;\n  float: left;\n  padding: 7px 16px 8px;\n  font-size: 12.5px;\n  display: inline-block;\n  zoom: 1;\n  cursor: pointer;\n  white-space: nowrap;\n  outline: none;\n  font-family: -apple-system,BlinkMacSystemFont,Roboto,Helvetica Neue,sans-serif;\n  vertical-align: top;\n  line-height: 15px;\n  text-align: center;\n  border: 0;\n  box-sizing: border-box;\n  background-color: white;\n}\n\n.sort-button-selected {\n  border-bottom: #5b88bd 2px solid;\n}\n", ""]);
 
 // exports
 
 
 /***/ }),
-/* 307 */
+/* 308 */
 /***/ (function(module, exports) {
 
 /*
@@ -54028,7 +54205,7 @@ function toComment(sourceMap) {
 
 
 /***/ }),
-/* 308 */
+/* 309 */
 /***/ (function(module, exports, __webpack_require__) {
 
 /*
@@ -54094,7 +54271,7 @@ var singleton = null;
 var	singletonCounter = 0;
 var	stylesInsertedAtTop = [];
 
-var	fixUrls = __webpack_require__(309);
+var	fixUrls = __webpack_require__(310);
 
 module.exports = function(list, options) {
 	if (typeof DEBUG !== "undefined" && DEBUG) {
@@ -54410,7 +54587,7 @@ function updateLink (link, options, obj) {
 
 
 /***/ }),
-/* 309 */
+/* 310 */
 /***/ (function(module, exports) {
 
 
@@ -54503,143 +54680,6 @@ module.exports = function (css) {
 	return fixedCss;
 };
 
-
-/***/ }),
-/* 310 */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-
-
-Object.defineProperty(exports, "__esModule", {
-    value: true
-});
-
-var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
-
-var _react = __webpack_require__(0);
-
-var _react2 = _interopRequireDefault(_react);
-
-var _propTypes = __webpack_require__(1);
-
-var _propTypes2 = _interopRequireDefault(_propTypes);
-
-var _constants = __webpack_require__(2);
-
-function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-
-function _defineProperty(obj, key, value) { if (key in obj) { Object.defineProperty(obj, key, { value: value, enumerable: true, configurable: true, writable: true }); } else { obj[key] = value; } return obj; }
-
-function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
-
-function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
-
-function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
-
-var RowHeaderComponent = function (_React$Component) {
-    _inherits(RowHeaderComponent, _React$Component);
-
-    function RowHeaderComponent() {
-        var _ref;
-
-        var _temp, _this, _ret;
-
-        _classCallCheck(this, RowHeaderComponent);
-
-        for (var _len = arguments.length, args = Array(_len), _key = 0; _key < _len; _key++) {
-            args[_key] = arguments[_key];
-        }
-
-        return _ret = (_temp = (_this = _possibleConstructorReturn(this, (_ref = RowHeaderComponent.__proto__ || Object.getPrototypeOf(RowHeaderComponent)).call.apply(_ref, [this].concat(args))), _this), _this.state = {
-            filter: _this.props.filter,
-            filterSelect: _this.props.filterSelect
-        }, _this.handleDragOver = function (e) {
-            if (_this.props.source === _constants.dragSource.file && _this.props.allowDrag) {
-                e.preventDefault();
-            }
-        }, _this.handleChange = function (e) {
-            _this.setState(_defineProperty({}, e.target.name, e.target.value));
-        }, _this.handleDrop = function (e) {
-            if (_this.props.source === _constants.dragSource.file && _this.props.allowDrag) {
-                _this.props.deleteDocs(_constants.makeUrls.makeCustomFile(_this.props.id), _this.props.id);
-                _this.props.dropOver();
-            }
-        }, _this.handleFilter = function (e) {
-            if (e.keyCode === 13) {
-                _this.props.setFilter(_this.state.filter, _this.state.filterSelect, _constants.apps.folder);
-            }
-        }, _temp), _possibleConstructorReturn(_this, _ret);
-    }
-
-    _createClass(RowHeaderComponent, [{
-        key: 'renderTrash',
-        value: function renderTrash() {
-            if (this.props.source === _constants.dragSource.file) {
-                if (this.props.allowDrag) {
-                    return _constants.items.trashGood;
-                }
-                return _constants.items.trashBad;
-            }
-            return _constants.items.trash;
-        }
-    }, {
-        key: 'renderSearch',
-        value: function renderSearch() {
-            if (this.props.folder === _constants.folderType.chat) {
-                return _react2.default.createElement('input', {
-                    className: 'content-item__input search',
-                    type: 'text',
-                    placeholder: 'Search',
-                    name: 'filter',
-                    value: this.state.filter,
-                    onChange: this.handleChange,
-                    onKeyDown: this.handleFilter
-                });
-            } else {
-                return _react2.default.createElement(
-                    'div',
-                    { className: 'item-name' },
-                    'Your folders'
-                );
-            }
-        }
-    }, {
-        key: 'renderSort',
-        value: function renderSort() {
-            if (this.props.folder === _constants.folderType.chat) {
-                return _react2.default.createElement('img', { className: 'item-right', src: _constants.items.sort });
-            }
-            return null;
-        }
-    }, {
-        key: 'render',
-        value: function render() {
-            return _react2.default.createElement(
-                'div',
-                { className: 'content-item' },
-                this.renderSearch(),
-                _react2.default.createElement('img', { className: 'item-right', src: this.renderTrash(), onDragOver: this.handleDragOver, onDrop: this.handleDrop }),
-                this.renderSort()
-            );
-        }
-    }]);
-
-    return RowHeaderComponent;
-}(_react2.default.Component);
-
-RowHeaderComponent.propTypes = {
-    folder: _propTypes2.default.string.isRequired,
-    filter: _propTypes2.default.string.isRequired,
-    filterSelect: _propTypes2.default.string.isRequired,
-    setFilter: _propTypes2.default.func.isRequired,
-    allowDrag: _propTypes2.default.bool.isRequired,
-    dropOver: _propTypes2.default.func.isRequired,
-    deleteDocs: _propTypes2.default.func.isRequired,
-    source: _propTypes2.default.string,
-    id: _propTypes2.default.number
-};
-exports.default = RowHeaderComponent;
 
 /***/ })
 /******/ ]);
