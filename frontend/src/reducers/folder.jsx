@@ -87,6 +87,9 @@ export default function folder(store = initalState, action) {
                 foldersRecursiveList: {
                     $set: [],
                 },
+                folderTileList: {
+                    $set: store.folderList,
+                }
             });
         case LOAD_RECURSIVE_FOLDERS:
             return update(store, {
@@ -234,13 +237,6 @@ export default function folder(store = initalState, action) {
                 },
                 folderTileList: {
                     $unshift: [action.payload.result],
-                },
-                folders: {
-                    [action.payload.entities.folder[action.payload.result].root]: {
-                        folder_set: {
-                            $unshift: [action.payload.result],
-                        },
-                    },
                 },
             });
         case LOAD_FILTER_FOLDERS:
