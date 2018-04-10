@@ -87,4 +87,7 @@ class FolderViewSet(viewsets.ModelViewSet):
             if 'name' in self.request.query_params:
                 if self.request.query_params['name']:
                     q = q.filter(title__istartswith=self.request.query_params['name'])
+        if 'sort' in self.request.query_params:
+            if self.request.query_params['sort'] == 'name':
+                q = q.order_by('title')
         return q

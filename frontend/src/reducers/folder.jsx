@@ -4,9 +4,9 @@ import {
     FOLDER_CREATE, FOLDER_UNMOUNT,
     LOAD_FILTER_FOLDERS, LOAD_FILTER_FOLDERS_SUCCESS, LOAD_FOLDER, LOAD_FOLDERS, LOAD_FOLDERS_MORE,
     LOAD_FOLDERS_SUCCESS, LOAD_FOLDERS_TRANSFER, LOAD_FOLDERS_TRANSFER_SUCCESS, SWITCH_FOLDER, TRANSFER_UNMOUNT,
-    LOAD_FOLDERS_MORE_START, DELETE_FOLDER_SUCCESS, FILTER_FOLDERS, LOAD_RECURSIVE_FOLDERS,
+    LOAD_FOLDERS_MORE_START, ROOT_FOLDER_SUCCESS, FILTER_FOLDERS, LOAD_RECURSIVE_FOLDERS,
     LOAD_RECURSIVE_FOLDERS_SUCCESS, LOAD_UNTREE_FOLDERS_SUCCESS, LOAD_ROOT, CHECK_FOLDER, CHECK_ALL_FOLDERS,
-    RENAME_FOLDER,
+    RENAME_FOLDER, DELETE_FOLDER_SUCCESS,
 } from '../actions/folder';
 import { DOCS_UNMOUNT } from '../actions/document';
 import { folderType } from '../constants';
@@ -87,6 +87,9 @@ export default function folder(store = initalState, action) {
                 foldersRecursiveList: {
                     $set: [],
                 },
+                folderTileList: {
+                    $set: store.folderList,
+                }
             });
         case LOAD_RECURSIVE_FOLDERS:
             return update(store, {
@@ -235,13 +238,6 @@ export default function folder(store = initalState, action) {
                 folderTileList: {
                     $unshift: [action.payload.result],
                 },
-                folders: {
-                    [action.payload.entities.folder[action.payload.result].root]: {
-                        folder_set: {
-                            $unshift: [action.payload.result],
-                        },
-                    },
-                },
             });
         case LOAD_FILTER_FOLDERS:
             return update(store, {
@@ -294,8 +290,33 @@ export default function folder(store = initalState, action) {
                     $set: null,
                 },
             });
+        case ROOT_FOLDER_SUCCESS:
+            index = store.folderTileList.indexOf(action.payload.id);
+            return update(store, {
+                folderTileList: {
+                    $splice: [[index, 1]],
+                },
+            });
         case DELETE_FOLDER_SUCCESS:
             index = store.folderTileList.indexOf(action.payload.id);
+            if (action.payload.root) {
+                store = update(store, {
+                    folders: {
+                        [action.payload.root]: {
+                            folder_set: {
+                                $splice: [[index, 1]],
+                            },
+                        },
+                    },
+                });
+            } else {
+                store = update(store, {
+                    folderList: {
+                        $splice: [[index, 1]],
+                    },
+                });
+            }
+            delete store.folders[action.payload.id];
             return update(store, {
                 folderTileList: {
                     $splice: [[index, 1]],

@@ -58,6 +58,7 @@ const mapStoreToProps = (state, props) => ({
     isLoading: state.folder.isTileLoading,
     folders: state.folder.folders,
     foldersRecursiveList: state.folder.foldersRecursiveList,
+    folderList: state.folder.folderList,
 });
 
 const mapDispatchToProps = dispatch => ({
