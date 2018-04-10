@@ -15,6 +15,7 @@ from rest_framework.pagination import PageNumberPagination
 from elasticsearch import Elasticsearch, RequestsHttpConnection
 from rest_framework_elasticsearch import es_views, es_filters
 from .search_indexes import DocumentIndex
+from .elastic_search import es_client
 
 
 class MediumResultsSetPagination(PageNumberPagination):
@@ -169,8 +170,7 @@ class DocumentViewSet(viewsets.ModelViewSet):
 
 
 class DocumentView(es_views.ListElasticAPIView):
-    es_client = Elasticsearch(hosts=['localhost:9200/'],
-                              connection_class=RequestsHttpConnection)
+    es_client = es_client
     es_model = DocumentIndex
     es_filter_backends = (
         es_filters.ElasticFieldsFilter,
