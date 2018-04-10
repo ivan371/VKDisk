@@ -8,7 +8,7 @@ const initalStore = {
         docs: '',
     },
     sort: {
-        folder: '',
+        folder: 'date',
         docs: 'date',
     },
     filterSelect: {

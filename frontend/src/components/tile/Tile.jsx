@@ -158,8 +158,8 @@ class TileComponent extends React.Component {
         if (this.props.type === tileType.file) {
             return !this.props.countCheckFile;
         }
-        if (this.props.type === tileType.file) {
-            return !this.props.countCheckFile;
+        if (this.props.type === tileType.folder) {
+            return !this.props.countCheckFolder;
         }
         return 0;
     }
@@ -200,7 +200,6 @@ class TileComponent extends React.Component {
             return (<img
                 className={ this.props.view === view.col ? 'item' : 'icon' }
                 style={ this.props.view === view.col ? { float: 'left' } : null }
-                onClick={ this.handleClick }
                 onDragStart={ this.handleDragStart }
                 src={ imageUrl }
                 draggable="true"
@@ -211,7 +210,6 @@ class TileComponent extends React.Component {
             return (<img
                 style={ this.props.view === view.col ? { float: 'left' } : null }
                 className={ this.props.view === view.col ? 'item' : 'icon' }
-                onClick={ this.handleClick }
                 onDragStart={ this.handleDragStart }
                 src={ imageUrl }
                 onDragOver={ this.handleDragOver }
@@ -225,7 +223,7 @@ class TileComponent extends React.Component {
 
     render() {
         return (
-            <div className={ this.renderClassName() }>
+            <div className={ this.renderClassName() } onClick={ this.handleClick } >
                 { this.renderItem() }
                 {!this.isRenamed() ?
                     <div

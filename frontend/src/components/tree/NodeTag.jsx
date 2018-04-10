@@ -31,7 +31,7 @@ class NodeTagComponent extends React.Component {
 
     render() {
         return (
-            <React.Fragment>
+            <a>
                 <div className="content-item page-content-link-item" onClick={ this.handleOpen }>
                     <div><img className="item" src={ this.renderImage() } /></div>
                     <div>Tags</div>
@@ -39,7 +39,7 @@ class NodeTagComponent extends React.Component {
                 <div className="node-layout">
                     { this.renderTags() }
                 </div>
-            </React.Fragment>
+            </a>
         );
     }
 }
