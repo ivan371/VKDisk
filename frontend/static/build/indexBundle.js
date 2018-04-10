@@ -25412,8 +25412,8 @@ var TileComponent = function (_React$Component) {
             if (this.props.type === _constants.tileType.file) {
                 return !this.props.countCheckFile;
             }
-            if (this.props.type === _constants.tileType.file) {
-                return !this.props.countCheckFile;
+            if (this.props.type === _constants.tileType.folder) {
+                return !this.props.countCheckFolder;
             }
             return 0;
         }
@@ -25457,7 +25457,6 @@ var TileComponent = function (_React$Component) {
                 return _react2.default.createElement('img', {
                     className: this.props.view === _constants.view.col ? 'item' : 'icon',
                     style: this.props.view === _constants.view.col ? { float: 'left' } : null,
-                    onClick: this.handleClick,
                     onDragStart: this.handleDragStart,
                     src: imageUrl,
                     draggable: 'true',
@@ -25468,7 +25467,6 @@ var TileComponent = function (_React$Component) {
                 return _react2.default.createElement('img', {
                     style: this.props.view === _constants.view.col ? { float: 'left' } : null,
                     className: this.props.view === _constants.view.col ? 'item' : 'icon',
-                    onClick: this.handleClick,
                     onDragStart: this.handleDragStart,
                     src: imageUrl,
                     onDragOver: this.handleDragOver,
@@ -25484,7 +25482,7 @@ var TileComponent = function (_React$Component) {
         value: function render() {
             return _react2.default.createElement(
                 'div',
-                { className: this.renderClassName() },
+                { className: this.renderClassName(), onClick: this.handleClick },
                 this.renderItem(),
                 !this.isRenamed() ? _react2.default.createElement(
                     'div',
