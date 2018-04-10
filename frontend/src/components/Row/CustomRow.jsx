@@ -3,6 +3,7 @@ import PropTypes from 'prop-types';
 import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
 import {
+    deleteFolders,
     filterFolders, folderUnMount, loadFilterFolders, loadFolders, loadFoldersMore,
     loadUnTreeFolders
 } from '../../actions/folder';
@@ -31,6 +32,7 @@ class CustomRowComponent extends React.Component {
         allowDrag: PropTypes.bool.isRequired,
         dropOver: PropTypes.func.isRequired,
         deleteDocs: PropTypes.func.isRequired,
+        deleteFolders: PropTypes.func.isRequired,
         id: PropTypes.number,
         filter: PropTypes.string.isRequired,
         filterSelect: PropTypes.string.isRequired,
@@ -117,8 +119,10 @@ class CustomRowComponent extends React.Component {
                         source={this.props.source}
                         setFilter={this.props.setFilter}
                         deleteDocs={this.props.deleteDocs}
+                        deleteFolders={this.props.deleteFolders}
                         setSort={this.props.setSort}
                         sort={this.props.sort}
+                        root={parseInt(this.props.params.id) || null}
                     />
                     <div className="content-flex content-flex-column" onScroll={ this.handleScroll }>
                         {this.renderNodeList()}
@@ -152,6 +156,7 @@ const mapDispatchToProps = dispatch => ({
         loadFoldersMore,
         dropOver,
         deleteDocs,
+        deleteFolders,
         setFilter,
         loadFilterFolders,
         filterFolders,

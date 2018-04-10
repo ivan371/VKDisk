@@ -1171,7 +1171,7 @@ module.exports = function (it) {
 Object.defineProperty(exports, "__esModule", {
     value: true
 });
-exports.RENAME_FOLDER = exports.CHECK_ALL_FOLDERS = exports.CHECK_FOLDER = exports.LOAD_ROOT = exports.LOAD_UNTREE_FOLDERS_SUCCESS = exports.FILTER_FOLDERS = exports.DELETE_FOLDER_ERROR = exports.DELETE_FOLDER_SUCCESS = exports.DELETE_FOLDER = exports.TRANSFER_UNMOUNT = exports.LOAD_FOLDERS_MORE_START = exports.LOAD_FOLDERS_MORE = exports.FOLDER_UNMOUNT = exports.SWITCH_FOLDER = exports.FOLDER_UPDATE = exports.FOLDER_CREATE = exports.LOAD_FOLDER_ERROR = exports.LOAD_FOLDER_SUCCESS = exports.LOAD_FOLDER = exports.LOAD_FILTER_FOLDERS_ERROR = exports.LOAD_FILTER_FOLDERS_SUCCESS = exports.LOAD_FILTER_FOLDERS = exports.LOAD_FOLDERS_ERROR = exports.LOAD_FOLDERS_TRANSFER_SUCCESS = exports.LOAD_FOLDERS_TRANSFER = exports.LOAD_RECURSIVE_FOLDERS_SUCCESS = exports.LOAD_RECURSIVE_FOLDERS = exports.LOAD_FOLDERS_SUCCESS = exports.LOAD_FOLDERS = undefined;
+exports.RENAME_FOLDER = exports.CHECK_ALL_FOLDERS = exports.CHECK_FOLDER = exports.LOAD_ROOT = exports.LOAD_UNTREE_FOLDERS_SUCCESS = exports.FILTER_FOLDERS = exports.ROOT_FOLDER_SUCCESS = exports.DELETE_FOLDER_ERROR = exports.DELETE_FOLDER_SUCCESS = exports.DELETE_FOLDER = exports.TRANSFER_UNMOUNT = exports.LOAD_FOLDERS_MORE_START = exports.LOAD_FOLDERS_MORE = exports.FOLDER_UNMOUNT = exports.SWITCH_FOLDER = exports.FOLDER_UPDATE = exports.FOLDER_CREATE = exports.LOAD_FOLDER_ERROR = exports.LOAD_FOLDER_SUCCESS = exports.LOAD_FOLDER = exports.LOAD_FILTER_FOLDERS_ERROR = exports.LOAD_FILTER_FOLDERS_SUCCESS = exports.LOAD_FILTER_FOLDERS = exports.LOAD_FOLDERS_ERROR = exports.LOAD_FOLDERS_TRANSFER_SUCCESS = exports.LOAD_FOLDERS_TRANSFER = exports.LOAD_RECURSIVE_FOLDERS_SUCCESS = exports.LOAD_RECURSIVE_FOLDERS = exports.LOAD_FOLDERS_SUCCESS = exports.LOAD_FOLDERS = undefined;
 exports.renameFolder = renameFolder;
 exports.checkFolder = checkFolder;
 exports.checkAllFolders = checkAllFolders;
@@ -1182,6 +1182,7 @@ exports.filterFolders = filterFolders;
 exports.loadRecursiveFolders = loadRecursiveFolders;
 exports.loadFoldersMore = loadFoldersMore;
 exports.updateFolderRoot = updateFolderRoot;
+exports.deleteFolders = deleteFolders;
 exports.loadTransferFolders = loadTransferFolders;
 exports.loadFilterFolders = loadFilterFolders;
 exports.createFolder = createFolder;
@@ -1217,6 +1218,7 @@ var TRANSFER_UNMOUNT = exports.TRANSFER_UNMOUNT = 'TRANSFER_UNMOUNT';
 var DELETE_FOLDER = exports.DELETE_FOLDER = 'DELETE_FOLDER';
 var DELETE_FOLDER_SUCCESS = exports.DELETE_FOLDER_SUCCESS = 'DELETE_FOLDER_SUCCESS';
 var DELETE_FOLDER_ERROR = exports.DELETE_FOLDER_ERROR = 'DELETE_FOLDER_ERROR';
+var ROOT_FOLDER_SUCCESS = exports.ROOT_FOLDER_SUCCESS = 'ROOT_FOLDER_ERROR';
 var FILTER_FOLDERS = exports.FILTER_FOLDERS = 'FILTER_FOLDERS';
 var LOAD_UNTREE_FOLDERS_SUCCESS = exports.LOAD_UNTREE_FOLDERS_SUCCESS = 'LOAD_UNTREE_FOLDERS_SUCCESS';
 var LOAD_ROOT = exports.LOAD_ROOT = 'LOAD_ROOT';
@@ -1277,10 +1279,15 @@ function loadFoldersMore(url) {
 }
 
 function updateFolderRoot(url, root) {
-    var types = [DELETE_FOLDER, DELETE_FOLDER_SUCCESS, DELETE_FOLDER_ERROR];
+    var types = [DELETE_FOLDER, ROOT_FOLDER_SUCCESS, DELETE_FOLDER_ERROR];
     return (0, _load.apiLoad)(url, 'PUT', types, JSON.stringify({ root: root }), function (a) {
         return a;
     }, true);
+}
+
+function deleteFolders(url, id, root) {
+    var types = [DELETE_FOLDER, DELETE_FOLDER_SUCCESS, DELETE_FOLDER_ERROR];
+    return (0, _load.apiLoad)(url, 'DELETE', types, null, function () {}, true, id, root);
 }
 
 function loadTransferFolders(url) {
@@ -24574,7 +24581,7 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
 
 function _defineProperty(obj, key, value) { if (key in obj) { Object.defineProperty(obj, key, { value: value, enumerable: true, configurable: true, writable: true }); } else { obj[key] = value; } return obj; }
 
-function apiLoad(url, method, types, body, normalizer, isSimple, id) {
+function apiLoad(url, method, types, body, normalizer, isSimple, id, root) {
     return _defineProperty({}, _reduxApiMiddleware.CALL_API, {
         credentials: 'same-origin',
         endpoint: url,
@@ -24585,7 +24592,7 @@ function apiLoad(url, method, types, body, normalizer, isSimple, id) {
             type: types[1],
             payload: function payload(action, state, res) {
                 if (method === 'DELETE') {
-                    return { id: id };
+                    return { id: id, root: root };
                 }
                 return (0, _reduxApiMiddleware.getJSON)(res).then(function (json) {
                     if (isSimple) {
@@ -25056,8 +25063,10 @@ var CustomRowComponent = function (_React$Component) {
                         source: this.props.source,
                         setFilter: this.props.setFilter,
                         deleteDocs: this.props.deleteDocs,
+                        deleteFolders: this.props.deleteFolders,
                         setSort: this.props.setSort,
-                        sort: this.props.sort
+                        sort: this.props.sort,
+                        root: parseInt(this.props.params.id) || null
                     }),
                     _react2.default.createElement(
                         'div',
@@ -25086,6 +25095,7 @@ CustomRowComponent.propTypes = {
     allowDrag: _propTypes2.default.bool.isRequired,
     dropOver: _propTypes2.default.func.isRequired,
     deleteDocs: _propTypes2.default.func.isRequired,
+    deleteFolders: _propTypes2.default.func.isRequired,
     id: _propTypes2.default.number,
     filter: _propTypes2.default.string.isRequired,
     filterSelect: _propTypes2.default.string.isRequired,
@@ -25121,6 +25131,7 @@ var mapDispatchToProps = function mapDispatchToProps(dispatch) {
         loadFoldersMore: _folder.loadFoldersMore,
         dropOver: _drag.dropOver,
         deleteDocs: _document.deleteDocs,
+        deleteFolders: _folder.deleteFolders,
         setFilter: _page.setFilter,
         loadFilterFolders: _folder.loadFilterFolders,
         filterFolders: _folder.filterFolders,
@@ -49428,8 +49439,30 @@ function folder() {
                     $set: null
                 }
             });
+        case _folder.ROOT_FOLDER_SUCCESS:
+            index = store.folderTileList.indexOf(action.payload.id);
+            return (0, _reactAddonsUpdate2.default)(store, {
+                folderTileList: {
+                    $splice: [[index, 1]]
+                }
+            });
         case _folder.DELETE_FOLDER_SUCCESS:
             index = store.folderTileList.indexOf(action.payload.id);
+            if (action.payload.root) {
+                store = (0, _reactAddonsUpdate2.default)(store, {
+                    folders: _defineProperty({}, action.payload.root, {
+                        folder_set: {
+                            $splice: [[index, 1]]
+                        }
+                    })
+                });
+            } else {
+                store = (0, _reactAddonsUpdate2.default)(store, {
+                    folderList: {
+                        $splice: [[index, 1]]
+                    }
+                });
+            }
             return (0, _reactAddonsUpdate2.default)(store, {
                 folderTileList: {
                     $splice: [[index, 1]]
@@ -53889,7 +53922,7 @@ var RowHeaderComponent = function (_React$Component) {
         }, _this.handleSortOpen = function () {
             _this.setState({ isSort: !_this.state.isSort });
         }, _this.handleDragOver = function (e) {
-            if (_this.props.source === _constants.dragSource.file && _this.props.allowDrag) {
+            if ((_this.props.source === _constants.dragSource.file || _this.props.source === _constants.dragSource.folder) && _this.props.allowDrag) {
                 e.preventDefault();
             }
         }, _this.handleChange = function (e) {
@@ -53897,6 +53930,10 @@ var RowHeaderComponent = function (_React$Component) {
         }, _this.handleDrop = function (e) {
             if (_this.props.source === _constants.dragSource.file && _this.props.allowDrag) {
                 _this.props.deleteDocs(_constants.makeUrls.makeCustomFile(_this.props.id), _this.props.id);
+                _this.props.dropOver();
+            }
+            if (_this.props.source === _constants.dragSource.folder && _this.props.allowDrag) {
+                _this.props.deleteFolders(_constants.makeUrls.makeCustomFolder(_this.props.id), _this.props.id, _this.props.root);
                 _this.props.dropOver();
             }
         }, _this.handleFilter = function (e) {
@@ -53911,7 +53948,7 @@ var RowHeaderComponent = function (_React$Component) {
     _createClass(RowHeaderComponent, [{
         key: 'renderTrash',
         value: function renderTrash() {
-            if (this.props.source === _constants.dragSource.file) {
+            if (this.props.source === _constants.dragSource.file || this.props.source === _constants.dragSource.folder) {
                 if (this.props.allowDrag) {
                     return _constants.items.trashGood;
                 }
@@ -53998,8 +54035,10 @@ RowHeaderComponent.propTypes = {
     allowDrag: _propTypes2.default.bool.isRequired,
     dropOver: _propTypes2.default.func.isRequired,
     deleteDocs: _propTypes2.default.func.isRequired,
+    deleteFolders: _propTypes2.default.func.isRequired,
     source: _propTypes2.default.string,
-    id: _propTypes2.default.number
+    id: _propTypes2.default.number,
+    root: _propTypes2.default.number
 };
 exports.default = RowHeaderComponent;
 

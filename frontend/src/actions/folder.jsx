@@ -24,6 +24,7 @@ export const TRANSFER_UNMOUNT = 'TRANSFER_UNMOUNT';
 export const DELETE_FOLDER = 'DELETE_FOLDER';
 export const DELETE_FOLDER_SUCCESS = 'DELETE_FOLDER_SUCCESS';
 export const DELETE_FOLDER_ERROR = 'DELETE_FOLDER_ERROR';
+export const ROOT_FOLDER_SUCCESS = 'ROOT_FOLDER_ERROR';
 export const FILTER_FOLDERS = 'FILTER_FOLDERS';
 export const LOAD_UNTREE_FOLDERS_SUCCESS = 'LOAD_UNTREE_FOLDERS_SUCCESS';
 export const LOAD_ROOT = 'LOAD_ROOT';
@@ -85,8 +86,13 @@ export function loadFoldersMore(url) {
 }
 
 export function updateFolderRoot(url, root) {
-    const types = [DELETE_FOLDER, DELETE_FOLDER_SUCCESS, DELETE_FOLDER_ERROR];
+    const types = [DELETE_FOLDER, ROOT_FOLDER_SUCCESS, DELETE_FOLDER_ERROR];
     return apiLoad(url, 'PUT', types, JSON.stringify({ root }), a => a, true);
+}
+
+export function deleteFolders(url, id, root) {
+    const types = [DELETE_FOLDER, DELETE_FOLDER_SUCCESS, DELETE_FOLDER_ERROR];
+    return apiLoad(url, 'DELETE', types, null, () => {}, true, id, root);
 }
 
 export function loadTransferFolders(url) {

@@ -11,8 +11,10 @@ export default class RowHeaderComponent extends React.Component {
         allowDrag: PropTypes.bool.isRequired,
         dropOver: PropTypes.func.isRequired,
         deleteDocs: PropTypes.func.isRequired,
+        deleteFolders: PropTypes.func.isRequired,
         source: PropTypes.string,
         id: PropTypes.number,
+        root: PropTypes.number,
     };
 
     state = {
@@ -26,7 +28,7 @@ export default class RowHeaderComponent extends React.Component {
     };
 
     handleDragOver = (e) => {
-        if (this.props.source === dragSource.file && this.props.allowDrag) {
+        if ((this.props.source === dragSource.file || this.props.source === dragSource.folder) && this.props.allowDrag) {
             e.preventDefault();
         }
     };
@@ -38,6 +40,10 @@ export default class RowHeaderComponent extends React.Component {
     handleDrop = (e) => {
         if (this.props.source === dragSource.file && this.props.allowDrag) {
             this.props.deleteDocs(makeUrls.makeCustomFile(this.props.id), this.props.id);
+            this.props.dropOver();
+        }
+        if (this.props.source === dragSource.folder && this.props.allowDrag) {
+            this.props.deleteFolders(makeUrls.makeCustomFolder(this.props.id), this.props.id, this.props.root);
             this.props.dropOver();
         }
     };
@@ -53,7 +59,7 @@ export default class RowHeaderComponent extends React.Component {
     };
 
     renderTrash() {
-        if (this.props.source === dragSource.file) {
+        if (this.props.source === dragSource.file || this.props.source === dragSource.folder) {
             if (this.props.allowDrag) {
                 return items.trashGood;
             }
