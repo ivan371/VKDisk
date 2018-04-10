@@ -49463,6 +49463,7 @@ function folder() {
                     }
                 });
             }
+            delete store.folders[action.payload.id];
             return (0, _reactAddonsUpdate2.default)(store, {
                 folderTileList: {
                     $splice: [[index, 1]]

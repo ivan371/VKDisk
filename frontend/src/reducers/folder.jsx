@@ -316,6 +316,7 @@ export default function folder(store = initalState, action) {
                     },
                 });
             }
+            delete store.folders[action.payload.id];
             return update(store, {
                 folderTileList: {
                     $splice: [[index, 1]],
