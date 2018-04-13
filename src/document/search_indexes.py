@@ -7,13 +7,21 @@ from elasticsearch_dsl import (
     Keyword,
     Text,
     Integer,
+    Object
 )
 
 
 class DocumentIndex(DocType):
-    id = Integer()
+    id = Integer(fields={'raw': Keyword()})
     text = Text(analyzer='snowball', fields={'raw': Keyword()})
     title = Text(analyzer='snowball', fields={'raw': Keyword()})
+    folder = Object(
+        properties={
+            'id': Integer(fields={'raw': Keyword()}),
+            'typeForElasticSearchPleaseDontTouchMe': Text(analyzer='snowball', fields={'raw': Keyword()}),
+        }
+    )
+
     created = Date()
 
     class Meta:

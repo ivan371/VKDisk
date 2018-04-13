@@ -180,11 +180,20 @@ class DocumentView(es_views.ListElasticAPIView):
     es_model = DocumentIndex
     es_filter_backends = (
         es_filters.ElasticFieldsFilter,
+        es_filters.ElasticOrderingFilter,
         es_filters.ElasticSearchFilter
     )
+    es_ordering_fields = (
+        "created",
+        ("title.raw", "title"),
+        ("id.raw", "id")
+    )
     es_filter_fields = (
-        es_filters.ESFieldFilter('text', 'text'),
-        es_filters.ESFieldFilter('title', 'title')
+        es_filters.ESFieldFilter('text', 'text.raw'),
+        es_filters.ESFieldFilter('title', 'title.raw'),
+        es_filters.ESFieldFilter('folder_id', 'folder.id.raw'),
+        es_filters.ESFieldFilter('folder_type', 'folder.typeForElasticSearchPleaseDontTouchMe.raw'),
+        es_filters.ESFieldFilter('created', 'created')
     )
     es_search_fields = (
         'text',

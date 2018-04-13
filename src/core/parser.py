@@ -3,10 +3,12 @@ import urllib.request
 import docx2txt
 import pptx
 import xlrd
+from subprocess import Popen, PIPE
 from pdfminer.pdfinterp import PDFResourceManager, PDFPageInterpreter
 from pdfminer.converter import TextConverter
 from pdfminer.layout import LAParams
 from pdfminer.pdfpage import PDFPage
+from tesserocr import PyTessBaseAPI
 from io import StringIO
 
 class Parser:
@@ -93,6 +95,7 @@ class pptxParser(Parser):
                         text_runs.append(run.text)
         text = "".join(text_runs)
         os.remove("test.pdf")
+        os.remove("test.pptx")
         return text
 
 
@@ -134,6 +137,30 @@ class txtParser(Parser):
         return text
 
 
+class imageParser(Parser):
+
+    def __init__(self, vk_url):
+        super().__init__(vk_url, True)
+
+    def getText(self):
+        file = open("test.png", "wb")
+        file.write(self.document_text)
+        file.close()
+        text = ""
+        out, err = Popen('python ../../models/tutorials/image/imagenet/classify_image.py --image_file test.png', shell=True, stdout=PIPE).communicate()
+        text += out.decode("utf-8")
+        api = PyTessBaseAPI()
+        api.SetImageFile("test.png")
+        text += api.GetUTF8Text()
+        os.remove("test.png")
+        return text
+
+
+ListOfExtensionsYouCanOpenWithNanoOrVim = (".txt", ".csv", ".sln", ".csproj", ".cs", ".py", ".cpp", ".c", ".hpp",
+                                           ".h", ".js", ".html", ".data", ".css", ".f90", ".f")
+ImageExtension = (".gif", ".jpg", ".jpeg", ".png")
+
+
 def GetText(url, extension):
     base, query = url.split("?")
     query = query.split("&")
@@ -144,7 +171,7 @@ def GetText(url, extension):
     query = "&".join(query)
     url = base + "?" + query
     try:
-        if extension.lower() == ".txt":
+        if extension.lower() in ListOfExtensionsYouCanOpenWithNanoOrVim:
             parser = txtParser(url)
             return parser.getText()[:32743]
         elif extension.lower() == ".pdf":
@@ -158,6 +185,18 @@ def GetText(url, extension):
             return parser.getText()[:32743]
         elif extension.lower() == ".ppt" or extension.lower() == ".pptx":
             parser = pptxParser(url)
+            return parser.getText()[:32743]
+        elif extension.lower() in (".doc", ".docx"):
+            parser = docParser(url)
+            return parser.getText()[:32743]
+        elif extension.lower() in (".xls", ".xlsx"):
+            parser = xlsxParser(url)
+            return parser.getText()[:32743]
+        elif extension.lower() in (".ppt", ".pptx"):
+            parser = pptxParser(url)
+            return parser.getText()[:32743]
+        elif extension.lower() in ImageExtension:
+            parser = imageParser(url)
             return parser.getText()[:32743]
         else:
             return ""

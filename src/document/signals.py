@@ -1,5 +1,4 @@
 import logging
-
 from django.db.models.signals import pre_save, post_delete
 from django.dispatch import receiver
 from .serializers import DocumentDataSerializer

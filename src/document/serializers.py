@@ -1,6 +1,7 @@
 from __future__ import absolute_import
 from folder.serializers import FolderSimpleSerializer
 
+from folder.models import Folder
 from .search_indexes import DocumentIndex
 from .models import Document
 from rest_framework import serializers, fields
@@ -52,8 +53,16 @@ class DocumentBulkSerializer(serializers.ModelSerializer):
         fields = ('id', 'docs')
 
 
+class ElasticFolderSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Folder
+        fields = ('id', 'typeForElasticSearchPleaseDontTouchMe')
+
+
 class DocumentDataSerializer(ElasticModelSerializer):
+    folder = ElasticFolderSerializer()
+
     class Meta:
         model = Document
         es_model = DocumentIndex
-        fields = ('id', 'title', 'text')
+        fields = ('id', 'title', 'text', 'created', 'folder')
