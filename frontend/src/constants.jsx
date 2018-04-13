@@ -95,6 +95,8 @@ export const items = {
     add: '/static/img/add.png',
     back: '/static/img/back.png',
     sort: '/static/img/sort.png',
+    sortDirect: '/static/img/sort-direct.png',
+    sortReverse: '/static/img/sort-reverse.png',
     filter: '/static/img/search.png',
     trash: '/static/img/trash.png',
     trashGood: '/static/img/trashGood.png',
@@ -180,4 +182,9 @@ export const tags = [
 
 export const tagType = {
     filter: 'filter',
+};
+
+export const sort = {
+    name: 'name',
+    date: 'date',
 };

@@ -164,7 +164,7 @@ const mapStoreToProps = state => ({
     page: state.document.page,
     filter: state.page.filter.docs,
     filterType: state.page.filterSelect.docs,
-    sort: state.page.sort.docs,
+    sort: state.page.sort.docs.name,
     checkList: state.document.checkList,
     view: state.page.view,
     isLoadingMore: state.document.isLoadingMore,
