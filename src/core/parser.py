@@ -146,7 +146,7 @@ class imageParser(Parser):
         file.write(self.document_text)
         file.close()
         text = ""
-        out, err = Popen('python ../../../models/tutorials/image/imagenet/classify_image.py --image_file test.png', shell=True, stdout=PIPE).communicate()
+        out, err = Popen('python ../../models/tutorials/image/imagenet/classify_image.py --image_file test.png', shell=True, stdout=PIPE).communicate()
         text += out.decode("utf-8")
         api = PyTessBaseAPI()
         api.SetImageFile("test.png")
