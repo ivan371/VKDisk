@@ -167,7 +167,7 @@ class DocsHeaderComponent extends React.Component {
         if (this.props.isOpen) {
             modal = <Modal />;
         }
-        if (this.props.isLoading && this.props.isFoldersLoading
+        if (this.props.isFoldersLoading
             && ((this.props.params.hasOwnProperty('id')) || this.props.folder === folderType.root)) {
             folderHeader = (<React.Fragment>
                 {this.renderMenu()}
