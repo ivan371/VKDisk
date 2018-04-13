@@ -1,5 +1,5 @@
 import update from 'react-addons-update';
-import {SET_FILTER, SET_SORT, SET_LINK, CHANGE_VIEW, CLEAR_FILTER} from '../actions/page';
+import {SET_FILTER, SET_SORT, SET_LINK, CHANGE_VIEW, CLEAR_FILTER, SORT_DIRECTION} from '../actions/page';
 import { view } from '../constants';
 
 const initalStore = {
@@ -8,8 +8,14 @@ const initalStore = {
         docs: '',
     },
     sort: {
-        folder: 'date',
-        docs: 'date',
+        folder: {
+            name: 'date',
+            isDirect: true
+        },
+        docs: {
+            name: 'date',
+            isDirect: true,
+        },
     },
     filterSelect: {
         folder: 'name',
@@ -50,11 +56,26 @@ export default function page(store = initalStore, action) {
                     },
                 },
             });
+        case SORT_DIRECTION:
+            return update(store, {
+                sort: {
+                    [action.app]: {
+                        isDirect: {
+                            $set: !store.sort[action.app].isDirect,
+                        },
+                    },
+                },
+            });
         case SET_SORT:
             return update(store, {
                 sort: {
                     [action.app]: {
-                        $set: action.sort,
+                        name: {
+                            $set: action.sort,
+                        },
+                        isDirect: {
+                            $set: true,
+                        }
                     },
                 },
             });
