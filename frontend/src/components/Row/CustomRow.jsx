@@ -144,7 +144,7 @@ const mapStoreToProps = state => ({
     source: state.drag.source,
     id: state.drag.id,
     filter: state.page.filter.folder,
-    sort: state.page.sort.folder,
+    sort: state.page.sort.folder.name,
     filterSelect: state.page.filterSelect.folder,
     isLoadingMore: state.folder.isLoadingMore,
 });

@@ -7,12 +7,13 @@ import { modalType, items, folderType, apps, view } from '../../constants';
 import AddFolder from '../folder/AddFolder';
 import { modalOpen, setModal } from '../../actions/modal';
 import { checkAll, loadDocs, renameDoc } from '../../actions/document';
-import { changeView, clearFilter, setFilter, setSort } from '../../actions/page';
+import {changeSortDirection, changeView, clearFilter, setFilter, setSort} from '../../actions/page';
 import Modal from '../Modal';
 import DocsFilterHeader from './DocsFilterHeader';
 import DocsCheckHeader from './DocsCheckHeader';
 import DocsDateHeader from './DocsDateHeader';
 import { checkAllFolders, renameFolder } from '../../actions/folder';
+import DocsSortHeader from './DocsSortHeader';
 
 class DocsHeaderComponent extends React.Component {
     static propTypes = {
@@ -36,6 +37,8 @@ class DocsHeaderComponent extends React.Component {
         renameFolder: PropTypes.func.isRequired,
         setSort: PropTypes.func.isRequired,
         sort: PropTypes.string.isRequired,
+        sortDirect: PropTypes.bool.isRequired,
+        changeSortDirection: PropTypes.func.isRequired,
     };
 
     state = {
@@ -94,10 +97,6 @@ class DocsHeaderComponent extends React.Component {
         this.props.changeView();
     };
 
-    handleSetSort = (e) => {
-        this.props.setSort(e.target.value, apps.docs);
-    };
-
     renderMenu() {
         let type = null;
         let title = null;
@@ -114,11 +113,13 @@ class DocsHeaderComponent extends React.Component {
             </React.Fragment>);
         }
         if (this.state.isSort) {
-            return (<React.Fragment>
-                <button className="vk-button button-secondary" onClick={ this.handleSort }>Cancel</button>
-                <button className={ `sort-button${this.props.sort === 'name' ? ' sort-button-selected' : ''}` } value="name" onClick={ this.handleSetSort }>Name</button>
-                <button className={ `sort-button${this.props.sort === 'date' ? ' sort-button-selected' : ''}` } value="date" onClick={ this.handleSetSort }>Date</button>
-            </React.Fragment>);
+            return (<DocsSortHeader
+                setSort={this.props.setSort}
+                sort={this.props.sort}
+                clearSort={this.handleSort}
+                sortDirect={this.props.sortDirect}
+                changeSortDirection={this.props.changeSortDirection}
+            />);
         }
         if (this.state.isFilter) {
             return (<DocsFilterHeader
@@ -166,7 +167,7 @@ class DocsHeaderComponent extends React.Component {
         if (this.props.isOpen) {
             modal = <Modal />;
         }
-        if (this.props.isLoading && this.props.isFoldersLoading
+        if (this.props.isFoldersLoading
             && ((this.props.params.hasOwnProperty('id')) || this.props.folder === folderType.root)) {
             folderHeader = (<React.Fragment>
                 {this.renderMenu()}
@@ -188,7 +189,8 @@ const mapStoreToProps = state => ({
     page: state.document.page,
     filterSelect: state.page.filterSelect.docs,
     filter: state.page.filter.docs,
-    sort: state.page.sort.docs,
+    sort: state.page.sort.docs.name,
+    sortDirect: state.page.sort.docs.isDirect,
     countCheck: state.document.countCheck,
     countCheckFolder: state.folder.countCheck,
     isOpen: state.modal.isOpen,
@@ -208,6 +210,7 @@ const mapDispatchToProps = dispatch => ({
         clearFilter,
         renameDoc,
         renameFolder,
+        changeSortDirection,
     }, dispatch),
 });
 

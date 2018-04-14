@@ -24,7 +24,14 @@ class DocsTileComponent extends React.Component {
                 isModal={ false }
             />));
         }
-        return (<React.Fragment>{docList}</React.Fragment>);
+        return (<React.Fragment>
+            {this.props.isLoading ? docList :
+                <div className="load">
+                    <div className="line"/>
+                    <div className="line"/>
+                    <div className="line"/>
+                </div>}
+            </React.Fragment>);
     }
 }
 

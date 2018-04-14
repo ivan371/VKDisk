@@ -21,14 +21,14 @@ export const makeUrls = {
     makeTransferFile: id => `${urls.docs.docsUrl + id}/?replace`,
     makeDocsMore: (id, page, filter, value) => `${urls.docs.docsUrl}?folder=${id}&&page=${page}&&filter&&${filter}=${value}`,
     makeDocsRootMore: (page, filter, value) => `${urls.docs.docsUrl}?root&&page=${page}&&filter&&${filter}=${value}`,
-    makeDocsMoreDate: (id, page, year, month, day) => `${urls.docs.docsUrl}?folder=${id}&&page=${page}&&filter&&year=${year}&&month=${month}&&day=${day}`,
-    makeCopyDocs: id => `${urls.docs.docsUrl}?folder=${id}&&bulk_create`,
-    makeReplaceDocs: id => `${urls.docs.docsUrl}?folder=${id}&&bulk_update`,
+    makeDocsMoreDate: (id, page, year, month, day) => `${urls.docs.docsUrl}?folder=${id}&page=${page}&filter&year=${year}&month=${month}&day=${day}`,
+    makeCopyDocs: id => `${urls.docs.docsUrl}?folder=${id}&bulk_create`,
+    makeReplaceDocs: id => `${urls.docs.docsUrl}?folder=${id}&bulk_update`,
     makeDeleteDocs: () => `${urls.docs.docsUrl}?bulk_delete`,
     makeFilterDocs: (id, filter, value) => `${urls.docs.docsUrl}?folder=${id}&&filter&&${value}=${filter}`,
-    makeFilterSortDocs: (id, filter, value, sort) => `${urls.docs.docsUrl}?folder=${id}&&filter&&${value}=${filter}&&sort=${sort}`,
+    makeFilterSortDocs: (id, filter, value, sort, reverse) => `${urls.docs.docsUrl}?folder=${id}&filter&${value}=${filter}&sort=${sort}&${reverse ? 'reverse' : ''}`,
     makeFilterRootDocs: (filter, value) => `${urls.docs.docsUrl}?root&&filter&&${value}=${filter}`,
-    makeFilterRootSortDocs: (filter, value, sort) => `${urls.docs.docsUrl}?root&&filter&${value}=${filter}&sort=${sort}`,
+    makeFilterRootSortDocs: (filter, value, sort, reverse) => `${urls.docs.docsUrl}?root&&filter&${value}=${filter}&sort=${sort}&${reverse ? 'reverse' : ''}`,
     makeFilterDocsDate: (id, year, month, day) => `${urls.docs.docsUrl}?folder=${id}&filter&year=${year}&month=${month}&&day=${day}`,
     makeChatsMore: page => `${urls.folder.chatFolderUrl}&&page=${page}`,
     makeFilterSortChats: (name, sort) => `${urls.folder.chatFolderUrl}filter&name=${name}&sort=${sort}`,
@@ -95,6 +95,8 @@ export const items = {
     add: '/static/img/add.png',
     back: '/static/img/back.png',
     sort: '/static/img/sort.png',
+    sortDirect: '/static/img/sort-direct.png',
+    sortReverse: '/static/img/sort-reverse.png',
     filter: '/static/img/search.png',
     trash: '/static/img/trash.png',
     trashGood: '/static/img/trashGood.png',
@@ -180,4 +182,9 @@ export const tags = [
 
 export const tagType = {
     filter: 'filter',
+};
+
+export const sort = {
+    name: 'name',
+    date: 'date',
 };
