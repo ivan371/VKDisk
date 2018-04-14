@@ -10,6 +10,9 @@ export const urls = {
         docsUrl: '/api/v1/documents/',
         unsortedDocsUrl: '/api/v1/documents/?root',
     },
+    elastic: {
+        customSearchUsl: '/api/v1/list?'
+    },
 };
 
 export const makeUrls = {
@@ -35,6 +38,11 @@ export const makeUrls = {
     makeFilterChatsSortMore: (page, name, sort) => `${urls.folder.chatFolderUrl}filter&name=${name}&page=${page}&sort=${sort}`,
     makeTransferFolder: id => `${urls.folder.customFolderUrl + id}/?replace`,
     makeFolderRecursive: id => `${urls.folder.customFolderUrl + id}/?recursive`,
+};
+
+export const makeElasticUrls = {
+    makeFilterSortDocs: (id, sort, filter, page) => `search=${filter}&page=${page}&ordering=${sort}&folder_id=${id}`,
+    makeFilterSortDocsRoot: (sort, filter, page) => `search=${filter}&page=${page}&ordering=${sort}&folder_type=chat`,
 };
 
 export const apps = {
