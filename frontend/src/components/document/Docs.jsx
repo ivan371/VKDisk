@@ -33,6 +33,7 @@ class DocsComponent extends React.Component {
         folder: PropTypes.string.isRequired,
         view: PropTypes.string.isRequired,
         loadRoot: PropTypes.func.isRequired,
+        sortDirect: PropTypes.bool.isRequired,
     };
 
     state = {
@@ -72,6 +73,7 @@ class DocsComponent extends React.Component {
                     nextProps.filter,
                     nextProps.filterType,
                     this.props.sort,
+                    !this.props.sortDirect
                 ));
             } else if (this.props.sort !== nextProps.sort) {
                 this.props.loadDocs(makeUrls.makeFilterSortDocs(
@@ -79,20 +81,45 @@ class DocsComponent extends React.Component {
                     this.props.filter,
                     this.props.filterType,
                     nextProps.sort,
+                    !this.props.sortDirect
+                ));
+            } else if (this.props.sortDirect !== nextProps.sortDirect) {
+                this.props.loadDocs(makeUrls.makeFilterSortDocs(
+                    nextProps.params.id,
+                    this.props.filter,
+                    this.props.filterType,
+                    this.props.sort,
+                    !nextProps.sortDirect
                 ));
             }
-        } else if (this.props.folder === folderType.root) {
+        } else if(this.props.folder !== nextProps.folder) {
+            if (nextProps.folder === folderType.root) {
+                this.props.loadDocs(urls.docs.unsortedDocsUrl)
+                    .then(this.scrollStart)
+                    .then(() => this.props.loadRoot());
+            }
+        }
+        if (this.props.folder === folderType.root) {
             if (this.props.filterType !== nextProps.filterType || this.props.filter !== nextProps.filter) {
                 this.props.loadDocs(makeUrls.makeFilterRootSortDocs(
                     nextProps.filter,
                     nextProps.filterType,
                     this.props.sort,
+                    !this.props.sortDirect
                 ));
             } else if (this.props.sort !== nextProps.sort) {
                 this.props.loadDocs(makeUrls.makeFilterRootSortDocs(
                     this.props.filter,
                     this.props.filterType,
                     nextProps.sort,
+                    !this.props.sortDirect
+                ));
+            } else if (this.props.sortDirect !== nextProps.sortDirect) {
+                this.props.loadDocs(makeUrls.makeFilterRootSortDocs(
+                    this.props.filter,
+                    this.props.filterType,
+                    this.props.sort,
+                    !nextProps.sortDirect
                 ));
             }
         }
@@ -157,7 +184,8 @@ const mapStoreToProps = state => ({
     page: state.document.page,
     filter: state.page.filter.docs,
     filterType: state.page.filterSelect.docs,
-    sort: state.page.sort.docs,
+    sort: state.page.sort.docs.name,
+    sortDirect: state.page.sort.docs.isDirect,
     checkList: state.document.checkList,
     view: state.page.view,
     isLoadingMore: state.document.isLoadingMore,

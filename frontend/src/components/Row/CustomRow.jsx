@@ -3,6 +3,7 @@ import PropTypes from 'prop-types';
 import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
 import {
+    deleteFolders,
     filterFolders, folderUnMount, loadFilterFolders, loadFolders, loadFoldersMore,
     loadUnTreeFolders
 } from '../../actions/folder';
@@ -10,11 +11,11 @@ import { apps, dragSource, folderType, items, makeUrls, urls } from '../../const
 import Docs from '../document/Docs';
 import { dropOver } from '../../actions/drag';
 import { deleteDocs } from '../../actions/document';
-import { setFilter } from '../../actions/page';
+import {setFilter, setSort} from '../../actions/page';
 import NodeChat from '../tree/NodeChat';
 import NodeRoot from '../tree/NodeRoot';
-import Tags from '../tag/Tags';
 import NodeTag from '../tree/NodeTag';
+import RowHeader from './RowHeader';
 
 
 class CustomRowComponent extends React.Component {
@@ -31,17 +32,18 @@ class CustomRowComponent extends React.Component {
         allowDrag: PropTypes.bool.isRequired,
         dropOver: PropTypes.func.isRequired,
         deleteDocs: PropTypes.func.isRequired,
+        deleteFolders: PropTypes.func.isRequired,
         id: PropTypes.number,
         filter: PropTypes.string.isRequired,
         filterSelect: PropTypes.string.isRequired,
         setFilter: PropTypes.func.isRequired,
         loadFilterFolders: PropTypes.func.isRequired,
         filterFolders: PropTypes.func.isRequired,
+        setSort: PropTypes.func.isRequired,
+        sort: PropTypes.string.isRequired,
     };
 
     state = {
-        filter: this.props.filter,
-        filterSelect: this.props.filterSelect,
         scroll: null,
     };
 
@@ -67,7 +69,10 @@ class CustomRowComponent extends React.Component {
 
     componentWillReceiveProps(nextProps) {
         if (this.props.filter !== nextProps.filter && this.props.folder === folderType.chat) {
-            this.props.loadUnTreeFolders(makeUrls.makeFilterChats(nextProps.filter));
+            this.props.loadUnTreeFolders(makeUrls.makeFilterSortChats(nextProps.filter, this.props.sort));
+        }
+        if (this.props.sort !== nextProps.sort && this.props.folder === folderType.chat) {
+            this.props.loadUnTreeFolders(makeUrls.makeFilterSortChats(this.props.filter, nextProps.sort));
         }
     }
 
@@ -76,30 +81,7 @@ class CustomRowComponent extends React.Component {
     }
 
     handleLoadMore = (e) => {
-        this.props.loadFoldersMore(makeUrls.makeChatsMore(this.props.page));
-    };
-
-    handleDragOver = (e) => {
-        if (this.props.source === dragSource.file && this.props.allowDrag) {
-            e.preventDefault();
-        }
-    };
-
-    handleDrop = (e) => {
-        if (this.props.source === dragSource.file && this.props.allowDrag) {
-            this.props.deleteDocs(makeUrls.makeCustomFile(this.props.id), this.props.id);
-            this.props.dropOver();
-        }
-    };
-
-    handleChange = (e) => {
-        this.setState({ [e.target.name]: e.target.value });
-    };
-
-    handleFilter = (e) => {
-        if (e.keyCode === 13) {
-            this.props.setFilter(this.state.filter, this.state.filterSelect, apps.folder);
-        }
+        this.props.loadFoldersMore(makeUrls.makeFilterChatsSortMore(this.props.page, this.props.filter, this.props.sort));
     };
 
     handleScroll = () => {
@@ -115,16 +97,6 @@ class CustomRowComponent extends React.Component {
         this.setState({ scroll: document.getElementsByClassName('page-content-content-wrap')[0] });
     };
 
-    renderTrash() {
-        if (this.props.source === dragSource.file) {
-            if (this.props.allowDrag) {
-                return items.trashGood;
-            }
-            return items.trashBad;
-        }
-        return items.trash;
-    }
-
     renderNodeList() {
         return [
             <NodeTag key="1" />,
@@ -136,20 +108,25 @@ class CustomRowComponent extends React.Component {
     render() {
         return (
             <div className="page-content-content">
-                <div className="page-content-content-wrap" onScroll={ this.handleScroll }>
-                    <div className="content-item">
-                        <input
-                            className="content-item__input search"
-                            type="text"
-                            placeholder="Search"
-                            name="filter"
-                            value={ this.state.filter }
-                            onChange={ this.handleChange }
-                            onKeyDown={ this.handleFilter }
-                        />
-                        <img className="item-right" src={ this.renderTrash() } onDragOver={ this.handleDragOver } onDrop={ this.handleDrop } />
+                <div className="page-content-content-wrap">
+                    <RowHeader
+                        folder={this.props.folder}
+                        filter={this.props.filter}
+                        filterSelect={this.props.filterSelect}
+                        allowDrag={this.props.allowDrag}
+                        dropOver={this.props.dropOver}
+                        id={this.props.id}
+                        source={this.props.source}
+                        setFilter={this.props.setFilter}
+                        deleteDocs={this.props.deleteDocs}
+                        deleteFolders={this.props.deleteFolders}
+                        setSort={this.props.setSort}
+                        sort={this.props.sort}
+                        root={parseInt(this.props.params.id) || null}
+                    />
+                    <div className="content-flex content-flex-column" onScroll={ this.handleScroll }>
+                        {this.renderNodeList()}
                     </div>
-                    {this.renderNodeList()}
                 </div>
                 <Docs params={ this.props.params } history={ this.props.history } folder={ this.props.folder } />
             </div>
@@ -167,6 +144,7 @@ const mapStoreToProps = state => ({
     source: state.drag.source,
     id: state.drag.id,
     filter: state.page.filter.folder,
+    sort: state.page.sort.folder.name,
     filterSelect: state.page.filterSelect.folder,
     isLoadingMore: state.folder.isLoadingMore,
 });
@@ -178,9 +156,11 @@ const mapDispatchToProps = dispatch => ({
         loadFoldersMore,
         dropOver,
         deleteDocs,
+        deleteFolders,
         setFilter,
         loadFilterFolders,
         filterFolders,
+        setSort,
     }, dispatch),
 });
 

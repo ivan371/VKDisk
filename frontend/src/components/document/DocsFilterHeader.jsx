@@ -1,14 +1,6 @@
 import React from 'react';
-import { bindActionCreators } from 'redux';
-import { connect } from 'react-redux';
-import { withRouter } from 'react-router-dom';
 import PropTypes from 'prop-types';
 import { modalType, items, makeUrls, folderType, apps } from '../../constants';
-import AddFolder from '../folder/AddFolder';
-import { modalOpen, setModal } from '../../actions/modal';
-import { loadDocs } from '../../actions/document';
-import { setFilter, setSort } from '../../actions/page';
-import Modal from '../Modal';
 
 export default class DocsFilterHeader extends React.Component {
     static propTypes = {

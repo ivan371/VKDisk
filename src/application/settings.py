@@ -160,6 +160,9 @@ USE_TZ = True
 REST_FRAMEWORK = {
     'DEFAULT_PAGINATION_CLASS': 'rest_api.pagination.ResultsSetPagination',
     # 'PAGE_SIZE': 2
+    'DEFAULT_PERMISSION_CLASSES': (
+        'rest_framework.permissions.IsAuthenticated',
+    )
 }
 
 # Static files (CSS, JavaScript, Images)
@@ -187,9 +190,11 @@ CELERY_TASK_SERIALIZER = 'json'
 CELERY_RESULT_SERIALIZER = 'json'
 # CELERY_BEAT_SCHEDULER = 'django_celery_beat.schedulers.DatabaseScheduler'
 
-ELASTICSEARCH_URL = 'http://localhost:9200'.format(
-    config.get('ELASTICSEARCH', 'HOST', fallback='localhost'),
-    config.get('ELASTICSEARCH', 'PORT', fallback='9200'),
-)
+ELASTICSEARCH_HOSTS = [
+    'http://{}:{}'.format(
+        config.get('ELASTICSEARCH', 'HOST', fallback='localhost'),
+        config.get('ELASTICSEARCH', 'PORT', fallback='9200'),
+    ),
+]
 ELASTICSEARCH_DEFAULT_INDEX = 'document'
 ELASTICSEARCH_AUTO_INDEX = True
