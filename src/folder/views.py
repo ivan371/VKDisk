@@ -90,4 +90,6 @@ class FolderViewSet(viewsets.ModelViewSet):
         if 'sort' in self.request.query_params:
             if self.request.query_params['sort'] == 'name':
                 q = q.order_by('title')
+        else:
+            q = q.order_by('-pk')
         return q
