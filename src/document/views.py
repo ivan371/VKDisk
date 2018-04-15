@@ -186,9 +186,9 @@ class DocumentView(es_views.ListElasticAPIView):
     es_ordering_fields = (
         "created",
         ("title.raw", "title"),
-        ("id.raw", "id")
     )
     es_filter_fields = (
+        es_filters.ESFieldFilter('id_elastic', 'id_elastic.raw'),
         es_filters.ESFieldFilter('text', 'text.raw'),
         es_filters.ESFieldFilter('title', 'title.raw'),
         es_filters.ESFieldFilter('folder_id', 'folder.id.raw'),

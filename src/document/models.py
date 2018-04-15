@@ -10,6 +10,7 @@ from vk_api_wrapper.models import DocAttachment
 
 
 class Document(Named, Authored, Dated):
+    id_elastic = models.CharField(max_length=1024, default="1")
     type = models.CharField(max_length=128, blank=False, default=_(u'file'), verbose_name=_(u'file'))
     folder = models.ForeignKey(Folder, on_delete=models.CASCADE, null=True, blank=True, verbose_name=_(u"folder"))
     text = models.TextField(null=True)
