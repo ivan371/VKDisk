@@ -65,4 +65,4 @@ class DocumentDataSerializer(ElasticModelSerializer):
     class Meta:
         model = Document
         es_model = DocumentIndex
-        fields = ('id', 'title', 'text', 'created', 'folder')
+        fields = ('id', 'id_elastic', 'title', 'text', 'created', 'folder')
