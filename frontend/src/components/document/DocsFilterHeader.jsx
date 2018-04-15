@@ -7,6 +7,8 @@ export default class DocsFilterHeader extends React.Component {
         setFilter: PropTypes.func.isRequired,
         onFilter: PropTypes.func.isRequired,
         filter: PropTypes.string.isRequired,
+        setElastic: PropTypes.func.isRequired,
+        isElastic: PropTypes.bool.isRequired,
     };
 
     state = {
@@ -28,11 +30,25 @@ export default class DocsFilterHeader extends React.Component {
         this.setState({ [e.target.name]: e.target.value });
     };
 
+    handleCheck = () => {
+       this.props.setElastic();
+    };
+
+    renderSwitchImage() {
+        return <React.Fragment>
+            <div className="item-right vk-switch-container" onClick={ this.handleCheck }>
+                <div className={`vk-switch ${this.props.isElastic ? '' : 'vk-switch-left'}`} />
+            </div>
+            <div className="item-name span-right">include content</div>
+        </React.Fragment>
+    }
+
     render() {
         return (<React.Fragment>
             <img className="item-left" onClick={ this.handleFilter } src={ items.filter } />
             <button className="vk-button button-secondary" onClick={ this.props.onFilter }>Cancel</button>
             <button className="vk-button" onClick={ this.handleFilterStart }>Search</button>
+            {this.renderSwitchImage()}
             <input
                 className="content-item__input search"
                 type="list"

@@ -1,5 +1,5 @@
 import update from 'react-addons-update';
-import {SET_FILTER, SET_SORT, SET_LINK, CHANGE_VIEW, CLEAR_FILTER, SORT_DIRECTION} from '../actions/page';
+import {SET_FILTER, SET_SORT, SET_LINK, CHANGE_VIEW, CLEAR_FILTER, SORT_DIRECTION, SET_ELASTIC} from '../actions/page';
 import { view } from '../constants';
 
 const initalStore = {
@@ -9,11 +9,11 @@ const initalStore = {
     },
     sort: {
         folder: {
-            name: 'date',
+            name: 'created',
             isDirect: true
         },
         docs: {
-            name: 'date',
+            name: 'created',
             isDirect: true,
         },
     },
@@ -25,6 +25,7 @@ const initalStore = {
         global: '',
         modal: '',
     },
+    isElastic: false,
     view: view.row,
 };
 
@@ -98,6 +99,12 @@ export default function page(store = initalStore, action) {
             return update(store, {
                 view: {
                     $set: view.row,
+                },
+            });
+        case SET_ELASTIC:
+            return update(store, {
+                isElastic: {
+                    $set: !store.isElastic
                 },
             });
         default:

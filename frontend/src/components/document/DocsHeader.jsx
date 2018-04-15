@@ -7,7 +7,7 @@ import { modalType, items, folderType, apps, view } from '../../constants';
 import AddFolder from '../folder/AddFolder';
 import { modalOpen, setModal } from '../../actions/modal';
 import { checkAll, loadDocs, renameDoc } from '../../actions/document';
-import {changeSortDirection, changeView, clearFilter, setFilter, setSort} from '../../actions/page';
+import {changeSortDirection, changeView, clearFilter, setElastic, setFilter, setSort} from '../../actions/page';
 import Modal from '../Modal';
 import DocsFilterHeader from './DocsFilterHeader';
 import DocsCheckHeader from './DocsCheckHeader';
@@ -39,6 +39,8 @@ class DocsHeaderComponent extends React.Component {
         sort: PropTypes.string.isRequired,
         sortDirect: PropTypes.bool.isRequired,
         changeSortDirection: PropTypes.func.isRequired,
+        setElastic: PropTypes.func.isRequired,
+        isElastic: PropTypes.bool.isRequired,
     };
 
     state = {
@@ -126,6 +128,8 @@ class DocsHeaderComponent extends React.Component {
                 setFilter={ this.props.setFilter }
                 onFilter={ this.handleFilter }
                 filter={ this.props.filter }
+                isElastic={ this.props.isElastic }
+                setElastic={ this.props.setElastic }
             />);
         }
         if (this.state.isDate) {
@@ -195,6 +199,7 @@ const mapStoreToProps = state => ({
     countCheckFolder: state.folder.countCheck,
     isOpen: state.modal.isOpen,
     view: state.page.view,
+    isElastic: state.page.isElastic,
 });
 
 const mapDispatchToProps = dispatch => ({
@@ -211,6 +216,7 @@ const mapDispatchToProps = dispatch => ({
         renameDoc,
         renameFolder,
         changeSortDirection,
+        setElastic,
     }, dispatch),
 });
 

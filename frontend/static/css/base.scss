@@ -317,7 +317,7 @@ img.item{
 .calendar{
 }
 .search{
-    width: 150px;
+    width: 120px;
 }
 .tags{
     margin: 5px;
@@ -369,4 +369,37 @@ img.item{
     0 {transform: translate(0,0);}
     50% {transform: translate(0,15px);}
     100% {transform: translate(0,0);}
+}
+.span-right{
+    float: right;
+}
+.vk-switch{
+    background-color: #bccde0;
+    width: 28px;
+    height: 9px;
+    border-radius: 45px;
+    float: right;
+    margin-top: 3px;
+}
+.vk-switch::after{
+    background-color: #5181b8;
+    left: 13px;
+    content: '';
+    float: left;
+    position: relative;
+    width: 13px;
+    height: 13px;
+    border-radius: 50%;
+    border: 1px solid #5181b8;
+    top: -3px;
+    transition: left 0.3s ease;
+}
+.vk-switch-left::after{
+    border: 1px solid #b4bfcc;
+    background-color: #fff;
+    left: 0;
+}
+.vk-switch-container{
+    margin: 2px;
+    margin-left: 10px;
 }

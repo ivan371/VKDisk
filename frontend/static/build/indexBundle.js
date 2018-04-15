@@ -136,6 +136,9 @@ var urls = exports.urls = {
     docs: {
         docsUrl: '/api/v1/documents/',
         unsortedDocsUrl: '/api/v1/documents/?root'
+    },
+    elastic: {
+        customSearchUsl: '/api/v1/list?'
     }
 };
 
@@ -208,6 +211,31 @@ var makeUrls = exports.makeUrls = {
     }
 };
 
+var makeElasticUrls = exports.makeElasticUrls = {
+    makeFilterSortDocs: function makeFilterSortDocs(id, sort, filter, reverse) {
+        return urls.elastic.customSearchUsl + 'search=' + filter + '&ordering=' + (reverse ? '-' : '') + sort + '&folder_id=' + id;
+    },
+    makeFilterSortDocsRoot: function makeFilterSortDocsRoot(sort, filter, reverse) {
+        return urls.elastic.customSearchUsl + 'search=' + filter + '&ordering=' + (reverse ? '-' : '') + sort + '&folder_type=chat';
+    }
+};
+
+var makeElastic = exports.makeElastic = {
+    makeFolderElastic: function makeFolderElastic(id, filter, value, sort, reverse, isElastic) {
+        if (isElastic) {
+            return makeElasticUrls.makeFilterSortDocs(id, sort, filter, reverse);
+        } else {
+            return makeUrls.makeFilterSortDocs(id, filter, value, sort, reverse);
+        }
+    },
+    makeRootElastic: function makeRootElastic(filter, value, sort, reverse, isElastic) {
+        if (isElastic) {
+            return makeElasticUrls.makeFilterSortDocsRoot(sort, filter, reverse);
+        } else {
+            return makeUrls.makeFilterRootSortDocs(filter, value, sort, reverse);
+        }
+    }
+};
 var apps = exports.apps = {
     modal: 'modal',
     folder: 'folder',
@@ -245,11 +273,14 @@ var format = exports.format = {
     docx: '/static/img/formats/docx.png',
     rtf: '/static/img/formats/docx.png',
     pdf: '/static/img/formats/pdf.png',
+    PDF: '/static/img/formats/pdf.png',
     pptx: '/static/img/formats/pptx.png',
     ppt: '/static/img/formats/pptx.png',
+    PPT: '/static/img/formats/pptx.png',
     xls: '/static/img/formats/xls.png',
     xlsx: '/static/img/formats/xls.png',
     jpg: '/static/img/formats/jpg.png',
+    JPG: '/static/img/formats/jpg.png',
     png: '/static/img/formats/png.png',
     txt: '/static/img/formats/txt.png',
     tex: '/static/img/formats/tex.png',
@@ -277,7 +308,9 @@ var items = exports.items = {
     colTable: '/static/img/row-table.png',
     calendar: '/static/img/calendar.png',
     arrow: '/static/img/arrow.png',
-    arrowRight: '/static/img/arrowRight.png'
+    arrowRight: '/static/img/arrowRight.png',
+    on: '/static/img/on.png',
+    off: '/static/img/off.png'
 };
 
 function makeFormat(fileUrl) {
@@ -310,37 +343,37 @@ var tags = exports.tags = [{
 }, {
     id: 1,
     name: 'pdf',
-    value: 'pdf',
+    value: '.pdf',
     type: 'filter',
     filterName: 'name'
 }, {
     id: 2,
     name: 'doc',
-    value: 'doc',
+    value: '.doc',
     type: 'filter',
     filterName: 'name'
 }, {
     id: 3,
     name: 'jpg',
-    value: 'jpg',
+    value: '.jpg',
     type: 'filter',
     filterName: 'name'
 }, {
     id: 4,
     name: 'png',
-    value: 'png',
+    value: '.png',
     type: 'filter',
     filterName: 'name'
 }, {
     id: 5,
     name: 'tex',
-    value: 'tex',
+    value: '.tex',
     type: 'filter',
     filterName: 'name'
 }, {
     id: 7,
     name: 'ppt',
-    value: 'ppt',
+    value: '.ppt',
     type: 'filter',
     filterName: 'name'
 }];
@@ -350,8 +383,8 @@ var tagType = exports.tagType = {
 };
 
 var sort = exports.sort = {
-    name: 'name',
-    date: 'date'
+    name: 'title',
+    date: 'created'
 };
 
 /***/ }),
@@ -1293,12 +1326,14 @@ exports.setSort = setSort;
 exports.setLink = setLink;
 exports.changeView = changeView;
 exports.changeSortDirection = changeSortDirection;
+exports.setElastic = setElastic;
 var SET_FILTER = exports.SET_FILTER = 'SET_FILTER';
 var SET_SORT = exports.SET_SORT = 'SET_SORT';
 var SET_LINK = exports.SET_LINK = 'SET_LINK';
 var CLEAR_FILTER = exports.CLEAR_FILTER = 'CLEAR_FILTER';
 var CHANGE_VIEW = exports.CHANGE_VIEW = 'CHANGE_VIEW';
 var SORT_DIRECTION = exports.SORT_DIRECTION = 'SORT_DIRECTION';
+var SET_ELASTIC = exports.SET_ELASTIC = 'SET_ELASTIC';
 
 function setFilter(filter, filterSelect, app) {
     return {
@@ -1342,6 +1377,12 @@ function changeSortDirection(app) {
     return {
         type: SORT_DIRECTION,
         app: app
+    };
+}
+
+function setElastic() {
+    return {
+        type: SET_ELASTIC
     };
 }
 
@@ -50746,11 +50787,11 @@ var initalStore = {
     },
     sort: {
         folder: {
-            name: 'date',
+            name: 'created',
             isDirect: true
         },
         docs: {
-            name: 'date',
+            name: 'created',
             isDirect: true
         }
     },
@@ -50762,6 +50803,7 @@ var initalStore = {
         global: '',
         modal: ''
     },
+    isElastic: false,
     view: _constants.view.row
 };
 
@@ -50824,6 +50866,12 @@ function page() {
             return (0, _reactAddonsUpdate2.default)(store, {
                 view: {
                     $set: _constants.view.row
+                }
+            });
+        case _page.SET_ELASTIC:
+            return (0, _reactAddonsUpdate2.default)(store, {
+                isElastic: {
+                    $set: !store.isElastic
                 }
             });
         default:
@@ -51898,42 +51946,29 @@ var DocsComponent = function (_React$Component) {
         value: function componentWillReceiveProps(nextProps) {
             var _this3 = this;
 
-            if (nextProps.params.hasOwnProperty('id')) {
-                if (this.props.params.id !== nextProps.params.id) {
-                    this.props.loadDocs(_constants.makeUrls.makeFilterDocsFolder(nextProps.params.id));
-                    this.props.filterFolders(parseInt(nextProps.params.id));
-                    this.props.loadRecursiveFolders(_constants.makeUrls.makeFolderRecursive(nextProps.params.id));
-                    if (this.props.checkList.length) {
-                        this.props.checkAll();
+            if (!nextProps.params.hasOwnProperty('id')) {
+                if (this.props.folder !== nextProps.folder) {
+                    if (nextProps.folder === _constants.folderType.root) {
+                        this.props.loadDocs(_constants.urls.docs.unsortedDocsUrl).then(this.scrollStart).then(function () {
+                            return _this3.props.loadRoot();
+                        });
                     }
-                    this.props.clearFilter(_constants.apps.docs);
-                } else if (this.props.filterType !== nextProps.filterType || this.props.filter !== nextProps.filter) {
-                    this.props.loadDocs(_constants.makeUrls.makeFilterSortDocs(nextProps.params.id, nextProps.filter, nextProps.filterType, this.props.sort, !this.props.sortDirect));
-                } else if (this.props.sort !== nextProps.sort) {
-                    this.props.loadDocs(_constants.makeUrls.makeFilterSortDocs(nextProps.params.id, this.props.filter, this.props.filterType, nextProps.sort, !this.props.sortDirect));
-                } else if (this.props.sortDirect !== nextProps.sortDirect) {
-                    this.props.loadDocs(_constants.makeUrls.makeFilterSortDocs(nextProps.params.id, this.props.filter, this.props.filterType, this.props.sort, !nextProps.sortDirect));
-                }
-            } else if (this.props.folder !== nextProps.folder) {
-                if (nextProps.folder === _constants.folderType.root) {
-                    this.props.loadDocs(_constants.urls.docs.unsortedDocsUrl).then(this.scrollStart).then(function () {
-                        return _this3.props.loadRoot();
-                    });
-                }
-            }
-            if (this.props.folder === _constants.folderType.root) {
-                if (this.props.filterType !== nextProps.filterType || this.props.filter !== nextProps.filter) {
-                    this.props.loadDocs(_constants.makeUrls.makeFilterRootSortDocs(nextProps.filter, nextProps.filterType, this.props.sort, !this.props.sortDirect));
-                } else if (this.props.sort !== nextProps.sort) {
-                    this.props.loadDocs(_constants.makeUrls.makeFilterRootSortDocs(this.props.filter, this.props.filterType, nextProps.sort, !this.props.sortDirect));
-                } else if (this.props.sortDirect !== nextProps.sortDirect) {
-                    this.props.loadDocs(_constants.makeUrls.makeFilterRootSortDocs(this.props.filter, this.props.filterType, this.props.sort, !nextProps.sortDirect));
                 }
             }
         }
     }, {
         key: 'componentDidUpdate',
         value: function componentDidUpdate(prevProps) {
+            if (this.props.params.hasOwnProperty('id')) {
+                if (prevProps.sortDirect !== this.props.sortDirect || prevProps.sort !== this.props.sort || prevProps.filterType !== this.props.filterType || prevProps.filter !== this.props.filter || prevProps.isElastic !== this.props.isElastic || prevProps.params.id !== this.props.params.id) {
+                    this.props.loadDocs(_constants.makeElastic.makeFolderElastic(this.props.params.id, this.props.filter, this.props.filterType, this.props.sort, !this.props.sortDirect, this.props.isElastic));
+                }
+            }
+            if (this.props.folder === _constants.folderType.root) {
+                if (prevProps.sortDirect !== this.props.sortDirect || prevProps.sort !== this.props.sort || prevProps.filterType !== this.props.filterType || prevProps.filter !== this.props.filter || prevProps.isElastic !== this.props.isElastic) {
+                    this.props.loadDocs(_constants.makeElastic.makeRootElastic(this.props.filter, this.props.filterType, this.props.sort, !this.props.sortDirect, this.props.isElastic));
+                }
+            }
             if (!this.props.params.hasOwnProperty('id') && prevProps.params.hasOwnProperty('id')) {
                 this.props.docsUnMount();
                 this.scrollStart();
@@ -51995,7 +52030,8 @@ DocsComponent.propTypes = {
     folder: _propTypes2.default.string.isRequired,
     view: _propTypes2.default.string.isRequired,
     loadRoot: _propTypes2.default.func.isRequired,
-    sortDirect: _propTypes2.default.bool.isRequired
+    sortDirect: _propTypes2.default.bool.isRequired,
+    isElastic: _propTypes2.default.bool.isRequired
 };
 
 
@@ -52010,7 +52046,8 @@ var mapStoreToProps = function mapStoreToProps(state) {
         sortDirect: state.page.sort.docs.isDirect,
         checkList: state.document.checkList,
         view: state.page.view,
-        isLoadingMore: state.document.isLoadingMore
+        isLoadingMore: state.document.isLoadingMore,
+        isElastic: state.page.isElastic
     };
 };
 
@@ -52316,7 +52353,9 @@ var DocsHeaderComponent = function (_React$Component) {
                 return _react2.default.createElement(_DocsFilterHeader2.default, {
                     setFilter: this.props.setFilter,
                     onFilter: this.handleFilter,
-                    filter: this.props.filter
+                    filter: this.props.filter,
+                    isElastic: this.props.isElastic,
+                    setElastic: this.props.setElastic
                 });
             }
             if (this.state.isDate) {
@@ -52400,7 +52439,9 @@ DocsHeaderComponent.propTypes = {
     setSort: _propTypes2.default.func.isRequired,
     sort: _propTypes2.default.string.isRequired,
     sortDirect: _propTypes2.default.bool.isRequired,
-    changeSortDirection: _propTypes2.default.func.isRequired
+    changeSortDirection: _propTypes2.default.func.isRequired,
+    setElastic: _propTypes2.default.func.isRequired,
+    isElastic: _propTypes2.default.bool.isRequired
 };
 
 
@@ -52419,7 +52460,8 @@ var mapStoreToProps = function mapStoreToProps(state) {
         countCheck: state.document.countCheck,
         countCheckFolder: state.folder.countCheck,
         isOpen: state.modal.isOpen,
-        view: state.page.view
+        view: state.page.view,
+        isElastic: state.page.isElastic
     };
 };
 
@@ -52436,7 +52478,8 @@ var mapDispatchToProps = function mapDispatchToProps(dispatch) {
         clearFilter: _page.clearFilter,
         renameDoc: _document.renameDoc,
         renameFolder: _folder.renameFolder,
-        changeSortDirection: _page.changeSortDirection
+        changeSortDirection: _page.changeSortDirection,
+        setElastic: _page.setElastic
     }, dispatch));
 };
 
@@ -52960,10 +53003,30 @@ var DocsFilterHeader = function (_React$Component) {
             }
         }, _this.handleChange = function (e) {
             _this.setState(_defineProperty({}, e.target.name, e.target.value));
+        }, _this.handleCheck = function () {
+            _this.props.setElastic();
         }, _temp), _possibleConstructorReturn(_this, _ret);
     }
 
     _createClass(DocsFilterHeader, [{
+        key: 'renderSwitchImage',
+        value: function renderSwitchImage() {
+            return _react2.default.createElement(
+                _react2.default.Fragment,
+                null,
+                _react2.default.createElement(
+                    'div',
+                    { className: 'item-right vk-switch-container', onClick: this.handleCheck },
+                    _react2.default.createElement('div', { className: 'vk-switch ' + (this.props.isElastic ? '' : 'vk-switch-left') })
+                ),
+                _react2.default.createElement(
+                    'div',
+                    { className: 'item-name span-right' },
+                    'include content'
+                )
+            );
+        }
+    }, {
         key: 'render',
         value: function render() {
             return _react2.default.createElement(
@@ -52980,6 +53043,7 @@ var DocsFilterHeader = function (_React$Component) {
                     { className: 'vk-button', onClick: this.handleFilterStart },
                     'Search'
                 ),
+                this.renderSwitchImage(),
                 _react2.default.createElement('input', {
                     className: 'content-item__input search',
                     type: 'list',
@@ -53018,7 +53082,9 @@ var DocsFilterHeader = function (_React$Component) {
 DocsFilterHeader.propTypes = {
     setFilter: _propTypes2.default.func.isRequired,
     onFilter: _propTypes2.default.func.isRequired,
-    filter: _propTypes2.default.string.isRequired
+    filter: _propTypes2.default.string.isRequired,
+    setElastic: _propTypes2.default.func.isRequired,
+    isElastic: _propTypes2.default.bool.isRequired
 };
 exports.default = DocsFilterHeader;
 
@@ -54286,7 +54352,7 @@ exports = module.exports = __webpack_require__(309)(false);
 
 
 // module
-exports.push([module.i, "body {\n  background-color: #EDEEF0;\n  margin: 0;\n  font-family: -apple-system,BlinkMacSystemFont,Roboto,Helvetica Neue,sans-serif;\n}\n\na {\n  text-decoration: none;\n  cursor: pointer;\n}\n\n.page-header {\n  height: 42px;\n  background-color: #4A76A8;\n}\n\n.page-content {\n  margin: 0 auto;\n  width: 960px;\n  display: flex;\n  height: 100%;\n  position: sticky;\n}\n\n.page-header-content {\n  margin: 0 auto;\n  width: 960px;\n}\n\n.page-header-content-logo {\n  width: 139px;\n}\n\n.page-header-content h2 {\n  margin: 0;\n  padding-top: 5px;\n  color: white;\n}\n\n.page-content-navigation {\n  margin-top: 15px;\n  width: 139px;\n}\n\n.page-content-content {\n  padding-top: 15px;\n  padding-bottom: 2px;\n  min-width: 400px;\n  display: flex;\n}\n\n.page-content-content-wrap {\n  width: 300px;\n  background-color: white;\n  max-height: 100%;\n  border-radius: 2px 2px 0 0;\n  box-shadow: 0 1px 0 0 #d7d8db, 0 0 0 1px #e3e4e8;\n  overflow-y: auto;\n}\n\n.page-content-content-wrap a {\n  color: #285473;\n}\n\n.page-content-content-content {\n  background-color: white;\n  max-height: 100%;\n  border-radius: 2px 2px 0 0;\n  box-shadow: 0 1px 0 0 #d7d8db, 0 0 0 1px #e3e4e8;\n}\n\n.page-content-link {\n  display: block;\n  white-space: nowrap;\n  padding: 10px;\n  color: #285473;\n}\n\n.page-content-link:hover {\n  background-color: #E1E5EB;\n}\n\n.content-item {\n  padding: 10px;\n  height: 30px;\n  box-shadow: 0 1px 0 0 #d7d8db;\n}\n\n.page-content-link-item {\n  display: flex;\n  height: 20px;\n}\n\n.page-content-link-item:hover {\n  background-color: #EDEEF0;\n  cursor: pointer;\n}\n\n.content-item input {\n  border: 0px;\n}\n\ninput[type=\"text\"]:focus {\n  outline: none;\n}\n\n.content-flex {\n  display: flex;\n}\n\n.content-flex-row {\n  align-content: start;\n  flex-wrap: wrap;\n  overflow-y: auto;\n}\n\n.content-flex-column {\n  flex-direction: column;\n  overflow-y: auto;\n}\n\n@media screen and (min-height: 0px) and (max-height: 720px) {\n  .content-flex {\n    height: 480px;\n  }\n  .page-content-content {\n    height: 540px;\n  }\n  .page-content-content-content {\n    width: 520px;\n  }\n}\n\n@media screen and (min-height: 700px) and (max-height: 1500px) {\n  .content-flex {\n    height: 640px;\n  }\n  .page-content-content {\n    height: 700px;\n  }\n  .page-content-content-content {\n    width: 680px;\n  }\n}\n\n.content-flex-modal {\n  display: flex;\n  align-content: start;\n  flex-wrap: wrap;\n  overflow-y: auto;\n  height: 220px;\n}\n\n.content-flex-item {\n  padding-top: 10px;\n  padding-bottom: 10px;\n  height: 80px;\n  width: 100px;\n  text-align: center;\n}\n\n.content-flex-item a {\n  color: black;\n}\n\n.content-flex-item:hover {\n  background-color: #E1E5EB;\n}\n\n.content-flex-item-column {\n  width: 480px;\n  text-align: left;\n  height: 30px;\n  padding: 10px;\n}\n\nimg.icon {\n  width: 50px;\n  height: 50px;\n  cursor: pointer;\n}\n\nimg.item {\n  width: 20px;\n  height: 20px;\n  margin-right: 5px;\n}\n\n.modal-container {\n  position: fixed;\n  left: 0;\n  top: 0;\n  text-align: center;\n  background-color: rgba(0, 0, 0, 0.7);\n  width: 100%;\n  height: 100%;\n  z-index: 10;\n}\n\n.modal {\n  cursor: auto;\n  z-index: 100;\n  height: 336px;\n  width: 500px;\n  background-color: white;\n  margin: 116px auto;\n  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.35);\n  outline: none;\n  border-radius: 5px;\n}\n\n.modal-header {\n  border-radius: 5px 5px 0 0;\n  width: 100%;\n  height: 54px;\n  background-color: #4A76A8;\n}\n\n.modal-header-title {\n  padding: 1px;\n}\n\n.modal-header-title p {\n  color: white;\n}\n\n.modal-content {\n  padding: 20px;\n  height: 240px;\n  background-color: #F7F7F7;\n}\n\n.modal-content__img img {\n  width: 100px;\n}\n\n.vk-button {\n  background-color: #5b88bd;\n  text-decoration: none;\n  float: right;\n  padding: 7px 16px 8px;\n  margin-left: 10px;\n  font-size: 12.5px;\n  display: inline-block;\n  zoom: 1;\n  cursor: pointer;\n  white-space: nowrap;\n  outline: none;\n  font-family: -apple-system,BlinkMacSystemFont,Roboto,Helvetica Neue,sans-serif;\n  vertical-align: top;\n  line-height: 15px;\n  text-align: center;\n  color: #fff;\n  border: 0;\n  border-radius: 4px;\n  box-sizing: border-box;\n}\n\n.vk-input {\n  background: #fff;\n  color: #000;\n  border: 1px solid #c0cad5 !important;\n  padding: 5px;\n  vertical-align: top;\n  margin: 0;\n  overflow: auto;\n  outline: 0;\n  line-height: 150%;\n  word-wrap: break-word;\n  width: 200px;\n  cursor: text;\n}\n\n.modal-footer {\n  margin-top: 80px;\n}\n\n.content-item__title {\n  cursor: text;\n  text-align: center;\n  max-width: 90px;\n  margin: 0 auto;\n  max-height: 38px;\n  text-overflow: ellipsis;\n  white-space: pre-wrap;\n  overflow: hidden;\n}\n\n.content-item__title:hover {\n  white-space: normal;\n  overflow: visible;\n}\n\n.content-item__title-col {\n  font-size: 1em;\n  float: left;\n  max-width: 300px;\n  text-align: left;\n}\n\n.content-item__input {\n  border: 1px solid #c0cad5;\n  cursor: text;\n  margin-top: 4px;\n  width: 100%;\n  outline: 0;\n  line-height: 150%;\n}\n\n.page-content-item__input {\n  width: 100px;\n  border: 1px solid #c0cad5;\n  cursor: text;\n  outline: 0;\n  line-height: 150%;\n}\n\n.item-right {\n  cursor: pointer;\n  padding: 5px;\n  width: 20px;\n  height: 20px;\n  float: right;\n  vertical-align: top;\n}\n\n.item-left {\n  cursor: pointer;\n  padding: 5px;\n  width: 20px;\n  height: 20px;\n  float: left;\n  vertical-align: top;\n}\n\n.item-name {\n  float: left;\n  padding: 5px;\n  height: 20px;\n}\n\n.checked {\n  background-color: #E1E5EB;\n}\n\n.button-secondary {\n  background-color: #e5ebf1;\n  color: #55677d;\n}\n\n.node-layout {\n  margin-left: 10px;\n}\n\n.search {\n  width: 150px;\n}\n\n.tags {\n  margin: 5px;\n  display: flex;\n  flex-wrap: wrap;\n  justify-content: space-between;\n}\n\n.tag-button {\n  margin-bottom: 5px;\n  margin-left: 2px;\n}\n\n.sort-button {\n  text-decoration: none;\n  float: left;\n  padding: 7px 16px 8px;\n  font-size: 12.5px;\n  display: inline-block;\n  zoom: 1;\n  cursor: pointer;\n  white-space: nowrap;\n  outline: none;\n  font-family: -apple-system,BlinkMacSystemFont,Roboto,Helvetica Neue,sans-serif;\n  vertical-align: top;\n  line-height: 15px;\n  text-align: center;\n  border: 0;\n  box-sizing: border-box;\n  background-color: white;\n}\n\n.sort-button-selected {\n  border-bottom: #5b88bd 2px solid;\n}\n\n.line {\n  display: inline-block;\n  width: 10px;\n  height: 10px;\n  border-radius: 10px;\n  margin: 2px;\n  background-color: black;\n}\n\n.load {\n  margin: auto;\n}\n\n.load .line:nth-last-child(1) {\n  animation: loadingC .6s .1s linear infinite;\n}\n\n.load .line:nth-last-child(2) {\n  animation: loadingC .6s .2s linear infinite;\n}\n\n.load .line:nth-last-child(3) {\n  animation: loadingC .6s .3s linear infinite;\n}\n\n@keyframes loadingC {\n  0 {\n    transform: translate(0, 0);\n  }\n  50% {\n    transform: translate(0, 15px);\n  }\n  100% {\n    transform: translate(0, 0);\n  }\n}\n", ""]);
+exports.push([module.i, "body {\n  background-color: #EDEEF0;\n  margin: 0;\n  font-family: -apple-system,BlinkMacSystemFont,Roboto,Helvetica Neue,sans-serif;\n}\n\na {\n  text-decoration: none;\n  cursor: pointer;\n}\n\n.page-header {\n  height: 42px;\n  background-color: #4A76A8;\n}\n\n.page-content {\n  margin: 0 auto;\n  width: 960px;\n  display: flex;\n  height: 100%;\n  position: sticky;\n}\n\n.page-header-content {\n  margin: 0 auto;\n  width: 960px;\n}\n\n.page-header-content-logo {\n  width: 139px;\n}\n\n.page-header-content h2 {\n  margin: 0;\n  padding-top: 5px;\n  color: white;\n}\n\n.page-content-navigation {\n  margin-top: 15px;\n  width: 139px;\n}\n\n.page-content-content {\n  padding-top: 15px;\n  padding-bottom: 2px;\n  min-width: 400px;\n  display: flex;\n}\n\n.page-content-content-wrap {\n  width: 300px;\n  background-color: white;\n  max-height: 100%;\n  border-radius: 2px 2px 0 0;\n  box-shadow: 0 1px 0 0 #d7d8db, 0 0 0 1px #e3e4e8;\n  overflow-y: auto;\n}\n\n.page-content-content-wrap a {\n  color: #285473;\n}\n\n.page-content-content-content {\n  background-color: white;\n  max-height: 100%;\n  border-radius: 2px 2px 0 0;\n  box-shadow: 0 1px 0 0 #d7d8db, 0 0 0 1px #e3e4e8;\n}\n\n.page-content-link {\n  display: block;\n  white-space: nowrap;\n  padding: 10px;\n  color: #285473;\n}\n\n.page-content-link:hover {\n  background-color: #E1E5EB;\n}\n\n.content-item {\n  padding: 10px;\n  height: 30px;\n  box-shadow: 0 1px 0 0 #d7d8db;\n}\n\n.page-content-link-item {\n  display: flex;\n  height: 20px;\n}\n\n.page-content-link-item:hover {\n  background-color: #EDEEF0;\n  cursor: pointer;\n}\n\n.content-item input {\n  border: 0px;\n}\n\ninput[type=\"text\"]:focus {\n  outline: none;\n}\n\n.content-flex {\n  display: flex;\n}\n\n.content-flex-row {\n  align-content: start;\n  flex-wrap: wrap;\n  overflow-y: auto;\n}\n\n.content-flex-column {\n  flex-direction: column;\n  overflow-y: auto;\n}\n\n@media screen and (min-height: 0px) and (max-height: 720px) {\n  .content-flex {\n    height: 480px;\n  }\n  .page-content-content {\n    height: 540px;\n  }\n  .page-content-content-content {\n    width: 520px;\n  }\n}\n\n@media screen and (min-height: 700px) and (max-height: 1500px) {\n  .content-flex {\n    height: 640px;\n  }\n  .page-content-content {\n    height: 700px;\n  }\n  .page-content-content-content {\n    width: 680px;\n  }\n}\n\n.content-flex-modal {\n  display: flex;\n  align-content: start;\n  flex-wrap: wrap;\n  overflow-y: auto;\n  height: 220px;\n}\n\n.content-flex-item {\n  padding-top: 10px;\n  padding-bottom: 10px;\n  height: 80px;\n  width: 100px;\n  text-align: center;\n}\n\n.content-flex-item a {\n  color: black;\n}\n\n.content-flex-item:hover {\n  background-color: #E1E5EB;\n}\n\n.content-flex-item-column {\n  width: 480px;\n  text-align: left;\n  height: 30px;\n  padding: 10px;\n}\n\nimg.icon {\n  width: 50px;\n  height: 50px;\n  cursor: pointer;\n}\n\nimg.item {\n  width: 20px;\n  height: 20px;\n  margin-right: 5px;\n}\n\n.modal-container {\n  position: fixed;\n  left: 0;\n  top: 0;\n  text-align: center;\n  background-color: rgba(0, 0, 0, 0.7);\n  width: 100%;\n  height: 100%;\n  z-index: 10;\n}\n\n.modal {\n  cursor: auto;\n  z-index: 100;\n  height: 336px;\n  width: 500px;\n  background-color: white;\n  margin: 116px auto;\n  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.35);\n  outline: none;\n  border-radius: 5px;\n}\n\n.modal-header {\n  border-radius: 5px 5px 0 0;\n  width: 100%;\n  height: 54px;\n  background-color: #4A76A8;\n}\n\n.modal-header-title {\n  padding: 1px;\n}\n\n.modal-header-title p {\n  color: white;\n}\n\n.modal-content {\n  padding: 20px;\n  height: 240px;\n  background-color: #F7F7F7;\n}\n\n.modal-content__img img {\n  width: 100px;\n}\n\n.vk-button {\n  background-color: #5b88bd;\n  text-decoration: none;\n  float: right;\n  padding: 7px 16px 8px;\n  margin-left: 10px;\n  font-size: 12.5px;\n  display: inline-block;\n  zoom: 1;\n  cursor: pointer;\n  white-space: nowrap;\n  outline: none;\n  font-family: -apple-system,BlinkMacSystemFont,Roboto,Helvetica Neue,sans-serif;\n  vertical-align: top;\n  line-height: 15px;\n  text-align: center;\n  color: #fff;\n  border: 0;\n  border-radius: 4px;\n  box-sizing: border-box;\n}\n\n.vk-input {\n  background: #fff;\n  color: #000;\n  border: 1px solid #c0cad5 !important;\n  padding: 5px;\n  vertical-align: top;\n  margin: 0;\n  overflow: auto;\n  outline: 0;\n  line-height: 150%;\n  word-wrap: break-word;\n  width: 200px;\n  cursor: text;\n}\n\n.modal-footer {\n  margin-top: 80px;\n}\n\n.content-item__title {\n  cursor: text;\n  text-align: center;\n  max-width: 90px;\n  margin: 0 auto;\n  max-height: 38px;\n  text-overflow: ellipsis;\n  white-space: pre-wrap;\n  overflow: hidden;\n}\n\n.content-item__title:hover {\n  white-space: normal;\n  overflow: visible;\n}\n\n.content-item__title-col {\n  font-size: 1em;\n  float: left;\n  max-width: 300px;\n  text-align: left;\n}\n\n.content-item__input {\n  border: 1px solid #c0cad5;\n  cursor: text;\n  margin-top: 4px;\n  width: 100%;\n  outline: 0;\n  line-height: 150%;\n}\n\n.page-content-item__input {\n  width: 100px;\n  border: 1px solid #c0cad5;\n  cursor: text;\n  outline: 0;\n  line-height: 150%;\n}\n\n.item-right {\n  cursor: pointer;\n  padding: 5px;\n  width: 20px;\n  height: 20px;\n  float: right;\n  vertical-align: top;\n}\n\n.item-left {\n  cursor: pointer;\n  padding: 5px;\n  width: 20px;\n  height: 20px;\n  float: left;\n  vertical-align: top;\n}\n\n.item-name {\n  float: left;\n  padding: 5px;\n  height: 20px;\n}\n\n.checked {\n  background-color: #E1E5EB;\n}\n\n.button-secondary {\n  background-color: #e5ebf1;\n  color: #55677d;\n}\n\n.node-layout {\n  margin-left: 10px;\n}\n\n.search {\n  width: 120px;\n}\n\n.tags {\n  margin: 5px;\n  display: flex;\n  flex-wrap: wrap;\n  justify-content: space-between;\n}\n\n.tag-button {\n  margin-bottom: 5px;\n  margin-left: 2px;\n}\n\n.sort-button {\n  text-decoration: none;\n  float: left;\n  padding: 7px 16px 8px;\n  font-size: 12.5px;\n  display: inline-block;\n  zoom: 1;\n  cursor: pointer;\n  white-space: nowrap;\n  outline: none;\n  font-family: -apple-system,BlinkMacSystemFont,Roboto,Helvetica Neue,sans-serif;\n  vertical-align: top;\n  line-height: 15px;\n  text-align: center;\n  border: 0;\n  box-sizing: border-box;\n  background-color: white;\n}\n\n.sort-button-selected {\n  border-bottom: #5b88bd 2px solid;\n}\n\n.line {\n  display: inline-block;\n  width: 10px;\n  height: 10px;\n  border-radius: 10px;\n  margin: 2px;\n  background-color: black;\n}\n\n.load {\n  margin: auto;\n}\n\n.load .line:nth-last-child(1) {\n  animation: loadingC .6s .1s linear infinite;\n}\n\n.load .line:nth-last-child(2) {\n  animation: loadingC .6s .2s linear infinite;\n}\n\n.load .line:nth-last-child(3) {\n  animation: loadingC .6s .3s linear infinite;\n}\n\n@keyframes loadingC {\n  0 {\n    transform: translate(0, 0);\n  }\n  50% {\n    transform: translate(0, 15px);\n  }\n  100% {\n    transform: translate(0, 0);\n  }\n}\n\n.span-right {\n  float: right;\n}\n\n.vk-switch {\n  background-color: #bccde0;\n  width: 28px;\n  height: 9px;\n  border-radius: 45px;\n  float: right;\n  margin-top: 3px;\n}\n\n.vk-switch::after {\n  background-color: #5181b8;\n  left: 13px;\n  content: '';\n  float: left;\n  position: relative;\n  width: 13px;\n  height: 13px;\n  border-radius: 50%;\n  border: 1px solid #5181b8;\n  top: -3px;\n  transition: left 0.3s ease;\n}\n\n.vk-switch-left::after {\n  border: 1px solid #b4bfcc;\n  background-color: #fff;\n  left: 0;\n}\n\n.vk-switch-container {\n  margin: 2px;\n  margin-left: 10px;\n}\n", ""]);
 
 // exports
 

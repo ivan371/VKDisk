@@ -4,6 +4,7 @@ export const SET_LINK = 'SET_LINK';
 export const CLEAR_FILTER = 'CLEAR_FILTER';
 export const CHANGE_VIEW = 'CHANGE_VIEW';
 export const SORT_DIRECTION = 'SORT_DIRECTION';
+export const SET_ELASTIC = 'SET_ELASTIC';
 
 export function setFilter(filter, filterSelect, app) {
     return {
@@ -48,4 +49,10 @@ export function changeSortDirection(app) {
         type: SORT_DIRECTION,
         app,
     };
+}
+
+export function setElastic() {
+    return {
+        type: SET_ELASTIC,
+    }
 }

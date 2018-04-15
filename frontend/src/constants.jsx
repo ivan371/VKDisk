@@ -41,10 +41,27 @@ export const makeUrls = {
 };
 
 export const makeElasticUrls = {
-    makeFilterSortDocs: (id, sort, filter, page) => `search=${filter}&page=${page}&ordering=${sort}&folder_id=${id}`,
-    makeFilterSortDocsRoot: (sort, filter, page) => `search=${filter}&page=${page}&ordering=${sort}&folder_type=chat`,
+    makeFilterSortDocs: (id, sort, filter, reverse) => `${urls.elastic.customSearchUsl}search=${filter}&ordering=${reverse ? '-' : ''}${sort}&folder_id=${id}`,
+    makeFilterSortDocsRoot: (sort, filter, reverse) => `${urls.elastic.customSearchUsl}search=${filter}&ordering=${reverse ? '-' : ''}${sort}&folder_type=chat`,
 };
 
+
+export const makeElastic = {
+    makeFolderElastic: (id, filter, value, sort, reverse, isElastic) => {
+        if (isElastic) {
+            return makeElasticUrls.makeFilterSortDocs(id, sort, filter, reverse);
+        } else {
+            return makeUrls.makeFilterSortDocs(id, filter, value, sort, reverse);
+        }
+    },
+    makeRootElastic: (filter, value, sort, reverse, isElastic) => {
+        if (isElastic) {
+            return makeElasticUrls.makeFilterSortDocsRoot(sort, filter, reverse);
+        } else {
+            return makeUrls.makeFilterRootSortDocs(filter, value, sort, reverse);
+        }
+    }
+};
 export const apps = {
     modal: 'modal',
     folder: 'folder',
@@ -82,11 +99,14 @@ export const format = {
     docx: '/static/img/formats/docx.png',
     rtf: '/static/img/formats/docx.png',
     pdf: '/static/img/formats/pdf.png',
+    PDF: '/static/img/formats/pdf.png',
     pptx: '/static/img/formats/pptx.png',
     ppt: '/static/img/formats/pptx.png',
+    PPT: '/static/img/formats/pptx.png',
     xls: '/static/img/formats/xls.png',
     xlsx: '/static/img/formats/xls.png',
     jpg: '/static/img/formats/jpg.png',
+    JPG: '/static/img/formats/jpg.png',
     png: '/static/img/formats/png.png',
     txt: '/static/img/formats/txt.png',
     tex: '/static/img/formats/tex.png',
@@ -115,6 +135,8 @@ export const items = {
     calendar: '/static/img/calendar.png',
     arrow: '/static/img/arrow.png',
     arrowRight: '/static/img/arrowRight.png',
+    on: '/static/img/on.png',
+    off: '/static/img/off.png'
 };
 
 export function makeFormat(fileUrl) {
@@ -147,42 +169,42 @@ export const tags = [
     {
         id: 1,
         name: 'pdf',
-        value: 'pdf',
+        value: '.pdf',
         type: 'filter',
         filterName: 'name',
     },
     {
         id: 2,
         name: 'doc',
-        value: 'doc',
+        value: '.doc',
         type: 'filter',
         filterName: 'name',
     },
     {
         id: 3,
         name: 'jpg',
-        value: 'jpg',
+        value: '.jpg',
         type: 'filter',
         filterName: 'name',
     },
     {
         id: 4,
         name: 'png',
-        value: 'png',
+        value: '.png',
         type: 'filter',
         filterName: 'name',
     },
     {
         id: 5,
         name: 'tex',
-        value: 'tex',
+        value: '.tex',
         type: 'filter',
         filterName: 'name',
     },
     {
         id: 7,
         name: 'ppt',
-        value: 'ppt',
+        value: '.ppt',
         type: 'filter',
         filterName: 'name',
     },
@@ -193,6 +215,6 @@ export const tagType = {
 };
 
 export const sort = {
-    name: 'name',
-    date: 'date',
+    name: 'title',
+    date: 'created',
 };
