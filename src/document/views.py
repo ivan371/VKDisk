@@ -188,10 +188,11 @@ class DocumentView(es_views.ListElasticAPIView):
         ("title.raw", "title"),
     )
     es_filter_fields = (
-        es_filters.ESFieldFilter('id_elastic', 'id_elastic.raw'),
         es_filters.ESFieldFilter('text', 'text.raw'),
         es_filters.ESFieldFilter('title', 'title.raw'),
+        es_filters.ESFieldFilter('author_id', 'author.id.raw'),
         es_filters.ESFieldFilter('folder_id', 'folder.id.raw'),
+        es_filters.ESFieldFilter('folder_title', 'folder.title.raw'),
         es_filters.ESFieldFilter('folder_type', 'folder.typeForElasticSearchPleaseDontTouchMe.raw'),
         es_filters.ESFieldFilter('created', 'created')
     )

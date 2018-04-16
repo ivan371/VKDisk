@@ -1,4 +1,6 @@
 from __future__ import absolute_import
+
+from core.models import User
 from folder.serializers import FolderSimpleSerializer
 
 from folder.models import Folder
@@ -56,13 +58,31 @@ class DocumentBulkSerializer(serializers.ModelSerializer):
 class ElasticFolderSerializer(serializers.ModelSerializer):
     class Meta:
         model = Folder
-        fields = ('id', 'typeForElasticSearchPleaseDontTouchMe')
+        fields = ('id', 'title', 'typeForElasticSearchPleaseDontTouchMe')
+
+
+class ElasticUserSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = User
+        fields = ('id',)
 
 
 class DocumentDataSerializer(ElasticModelSerializer):
+    vk_url = fields.SerializerMethodField('get_url')
+    author = ElasticUserSerializer()
     folder = ElasticFolderSerializer()
 
     class Meta:
         model = Document
         es_model = DocumentIndex
-        fields = ('id', 'id_elastic', 'title', 'text', 'created', 'folder')
+        fields = ('id', 'title', 'text', 'created', 'folder', 'author', 'vk_url')
+
+    def get_url(self, obj):
+        base, query = obj.vk_doc.url.split("?")
+        query = query.split("&")
+        for i in range(len(query)):
+            if "no_preview" in query[i]:
+                query.pop(i)
+                break
+        query = "&".join(query)
+        return base + "?" + query

@@ -13,8 +13,6 @@ logger = logging.getLogger(__name__)
 def update_es_record(sender, instance, **kwargs):
     try:
         obj = DocumentDataSerializer(instance)
-        obj.id_elastic = str(instance.id)
-        print(obj.id_elastic, instance.id, instance.pk, instance, obj)
         obj.save(using=es_client)
     except Exception as ex:
         logger.error("Exception on update_es_record", ex)
