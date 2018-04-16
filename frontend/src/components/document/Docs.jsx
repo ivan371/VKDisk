@@ -119,9 +119,24 @@ class DocsComponent extends React.Component {
 
     handleLoadMore = (e) => {
         if (this.props.folder === folderType.root) {
-            this.props.loadDocsMore(makeUrls.makeDocsRootMore(this.props.page, this.props.filterType, this.props.filter));
+            this.props.loadDocsMore(makeElastic.makeRootElasticMore(
+                this.props.filter,
+                this.props.filterType,
+                this.props.sort,
+                !this.props.sortDirect,
+                this.props.isElastic,
+                this.props.page
+            ));
         } else {
-            this.props.loadDocsMore(makeUrls.makeDocsMore(this.props.params.id, this.props.page, this.props.filterType, this.props.filter));
+            this.props.loadDocsMore(makeElastic.makeFolderElasticMore(
+                this.props.params.id,
+                this.props.filter,
+                this.props.filterType,
+                this.props.sort,
+                !this.props.sortDirect,
+                this.props.isElastic,
+                this.props.page
+            ));
         }
     };
 

@@ -1,6 +1,7 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import { modalType, items, makeUrls, folderType, apps, sort } from '../../constants';
+import {language} from '../language';
 
 export default class DocsSortHeader extends React.Component {
     static propTypes = {
@@ -9,6 +10,7 @@ export default class DocsSortHeader extends React.Component {
         clearSort: PropTypes.func.isRequired,
         sortDirect: PropTypes.bool.isRequired,
         changeSortDirection: PropTypes.func.isRequired,
+        lang: PropTypes.string.isRequired,
     };
 
     handleSetSort = (e) => {
@@ -40,7 +42,7 @@ export default class DocsSortHeader extends React.Component {
 
     render() {
         return (<React.Fragment>
-            <button className="vk-button button-secondary" onClick={ this.handleSort }>Cancel</button>
+            <button className="vk-button button-secondary" onClick={ this.handleSort }>{language.cancel[this.props.lang]}</button>
             <button className={ `sort-button${this.props.sort === sort.name ? ' sort-button-selected' : ''}` } value={sort.name} onClick={ this.handleSetSort }>Name</button>
             <img className="item-left" src={this.renderSortNameDirection()} />
             <button className={ `sort-button${this.props.sort === sort.date ? ' sort-button-selected' : ''}` } value={sort.date} onClick={ this.handleSetSort }>Date</button>

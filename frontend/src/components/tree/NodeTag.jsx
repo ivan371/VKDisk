@@ -7,11 +7,13 @@ import { folderType, format, items } from '../../constants';
 import Node from './Node';
 import Tags from '../tag/Tags';
 import {tagOpen} from "../../actions/tag";
+import {language} from '../language';
 
 class NodeTagComponent extends React.Component {
     static propTypes = {
         isOpen: PropTypes.bool.isRequired,
         tagOpen: PropTypes.func.isRequired,
+        lang: PropTypes.string.isRequired,
     };
 
     handleOpen = () => {
@@ -34,7 +36,7 @@ class NodeTagComponent extends React.Component {
             <a>
                 <div className="content-item page-content-link-item" onClick={ this.handleOpen }>
                     <div><img className="item" src={ this.renderImage() } /></div>
-                    <div>Tags</div>
+                    <div>{language.tags[this.props.lang]}</div>
                 </div>
                 <div className="node-layout">
                     { this.renderTags() }
@@ -46,6 +48,7 @@ class NodeTagComponent extends React.Component {
 
 const mapStoreToProps = (state, props) => ({
     isOpen: state.tag.isOpen,
+    lang: state.page.lang,
 });
 
 const mapDispatchToProps = dispatch => ({

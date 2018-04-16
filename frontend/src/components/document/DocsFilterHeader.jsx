@@ -1,6 +1,7 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import { modalType, items, makeUrls, folderType, apps } from '../../constants';
+import {language} from '../language';
 
 export default class DocsFilterHeader extends React.Component {
     static propTypes = {
@@ -9,6 +10,7 @@ export default class DocsFilterHeader extends React.Component {
         filter: PropTypes.string.isRequired,
         setElastic: PropTypes.func.isRequired,
         isElastic: PropTypes.bool.isRequired,
+        lang: PropTypes.string.isRequired,
     };
 
     state = {
@@ -39,21 +41,21 @@ export default class DocsFilterHeader extends React.Component {
             <div className="item-right vk-switch-container" onClick={ this.handleCheck }>
                 <div className={`vk-switch ${this.props.isElastic ? '' : 'vk-switch-left'}`} />
             </div>
-            <div className="item-name span-right">include content</div>
+            <div className="item-name span-right">{language.includeContent[this.props.lang]}</div>
         </React.Fragment>
     }
 
     render() {
         return (<React.Fragment>
             <img className="item-left" onClick={ this.handleFilter } src={ items.filter } />
-            <button className="vk-button button-secondary" onClick={ this.props.onFilter }>Cancel</button>
-            <button className="vk-button" onClick={ this.handleFilterStart }>Search</button>
+            <button className="vk-button button-secondary" onClick={ this.props.onFilter }>{language.cancel[this.props.lang]}</button>
+            <button className="vk-button" onClick={ this.handleFilterStart }>{language.search[this.props.lang]}</button>
             {this.renderSwitchImage()}
             <input
                 className="content-item__input search"
                 type="list"
                 list="extension-list"
-                placeholder="Search"
+                placeholder={language.search[this.props.lang]}
                 onChange={ this.handleChange }
                 onKeyDown={ this.handleFilterEnter }
                 name="filter"

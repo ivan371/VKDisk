@@ -39,7 +39,7 @@ a{
 }
 .page-content-navigation{
     margin-top: 15px;
-    width: $navigation-width;
+    //width: $navigation-width;
 }
 .page-content-content{
     padding-top: 15px;
@@ -113,7 +113,7 @@ input[type="text"]:focus {
         height: 540px;
     }
     .page-content-content-content{
-        width: 520px;
+        width: 680px;
     }
 }
 @media screen and (min-height: 700px) and (max-height: 1500px){
@@ -124,7 +124,7 @@ input[type="text"]:focus {
         height: 700px;
     }
     .page-content-content-content{
-        width: 680px;
+        width: 740px;
     }
 }
 .content-flex-modal{

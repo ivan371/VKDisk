@@ -11,7 +11,7 @@ import { apps, dragSource, folderType, items, makeUrls, urls } from '../../const
 import Docs from '../document/Docs';
 import { dropOver } from '../../actions/drag';
 import { deleteDocs } from '../../actions/document';
-import {setFilter, setSort} from '../../actions/page';
+import {loadUser, setFilter, setSort} from '../../actions/page';
 import NodeChat from '../tree/NodeChat';
 import NodeRoot from '../tree/NodeRoot';
 import NodeTag from '../tree/NodeTag';
@@ -41,6 +41,7 @@ class CustomRowComponent extends React.Component {
         filterFolders: PropTypes.func.isRequired,
         setSort: PropTypes.func.isRequired,
         sort: PropTypes.string.isRequired,
+        lang: PropTypes.string.isRequired,
     };
 
     state = {
@@ -48,6 +49,7 @@ class CustomRowComponent extends React.Component {
     };
 
     componentDidMount() {
+        this.props.loadUser(urls.user.currentUserUrl);
         if (this.props.params.hasOwnProperty('id')) {
             if (this.props.folder === folderType.chat) {
                 this.props.loadUnTreeFolders(urls.folder.chatFolderUrl).then(this.scrollStart);
@@ -123,6 +125,7 @@ class CustomRowComponent extends React.Component {
                         setSort={this.props.setSort}
                         sort={this.props.sort}
                         root={parseInt(this.props.params.id) || null}
+                        lang={this.props.lang}
                     />
                     <div className="content-flex content-flex-column" onScroll={ this.handleScroll }>
                         {this.renderNodeList()}
@@ -147,6 +150,7 @@ const mapStoreToProps = state => ({
     sort: state.page.sort.folder.name,
     filterSelect: state.page.filterSelect.folder,
     isLoadingMore: state.folder.isLoadingMore,
+    lang: state.page.lang,
 });
 
 const mapDispatchToProps = dispatch => ({
@@ -161,6 +165,7 @@ const mapDispatchToProps = dispatch => ({
         loadFilterFolders,
         filterFolders,
         setSort,
+        loadUser,
     }, dispatch),
 });
 
