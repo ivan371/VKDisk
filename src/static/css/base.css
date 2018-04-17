@@ -57,6 +57,7 @@ h1{
     border: 0;
     border-radius: 4px;
     box-sizing: border-box;
+    margin-right: 5px;
 }
 .vk-button__span{
     float: right;
