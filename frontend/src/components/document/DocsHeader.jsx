@@ -3,17 +3,21 @@ import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
 import { withRouter } from 'react-router-dom';
 import PropTypes from 'prop-types';
-import { modalType, items, folderType, apps, view } from '../../constants';
+import {modalType, items, folderType, apps, view, makeUrls} from '../../constants';
 import AddFolder from '../folder/AddFolder';
 import { modalOpen, setModal } from '../../actions/modal';
 import { checkAll, loadDocs, renameDoc } from '../../actions/document';
-import {changeSortDirection, changeView, clearFilter, setFilter, setSort} from '../../actions/page';
+import {
+    changeSortDirection, changeView, clearFilter, loadLang, setElastic, setFilter, setSort,
+    switchLang
+} from '../../actions/page';
 import Modal from '../Modal';
 import DocsFilterHeader from './DocsFilterHeader';
 import DocsCheckHeader from './DocsCheckHeader';
 import DocsDateHeader from './DocsDateHeader';
 import { checkAllFolders, renameFolder } from '../../actions/folder';
 import DocsSortHeader from './DocsSortHeader';
+import {language} from '../language';
 
 class DocsHeaderComponent extends React.Component {
     static propTypes = {
@@ -39,12 +43,18 @@ class DocsHeaderComponent extends React.Component {
         sort: PropTypes.string.isRequired,
         sortDirect: PropTypes.bool.isRequired,
         changeSortDirection: PropTypes.func.isRequired,
+        setElastic: PropTypes.func.isRequired,
+        isElastic: PropTypes.bool.isRequired,
+        lang: PropTypes.string.isRequired,
+        switchLang: PropTypes.func.isRequired,
+        loadLang: PropTypes.func.isRequired,
     };
 
     state = {
         isSort: false,
         isFilter: false,
         isDate: false,
+        isLang: false,
     };
 
     componentWillReceiveProps(nextProps) {
@@ -56,6 +66,10 @@ class DocsHeaderComponent extends React.Component {
     }
     handleChange = (e) => {
         this.setState({ [e.target.name]: e.target.value });
+    };
+
+    handleLang = () => {
+        this.setState({ isLang: !this.state.isLang });
     };
 
     handleSort = () => {
@@ -97,20 +111,40 @@ class DocsHeaderComponent extends React.Component {
         this.props.changeView();
     };
 
+    handleSwitchLang = () => {
+        if (this.props.lang === 'ru') {
+            this.props.switchLang('en');
+            this.props.loadLang(makeUrls.makeUserUrl(this.props.id), 'en');
+        } else {
+            this.props.switchLang('ru');
+            this.props.loadLang(makeUrls.makeUserUrl(this.props.id), 'ru');
+        }
+    };
+
     renderMenu() {
         let type = null;
         let title = null;
         if (this.props.folder === folderType.root) {
             type = 'root';
             title = (<React.Fragment>
-                <div className="item-name">You have {this.props.count} files</div>
+                <div className="item-name">{language.yourHave[this.props.lang](this.props.count)}</div>
             </React.Fragment>);
         } else {
             type = this.props.folders[parseInt(this.props.params.id)].type;
             title = (<React.Fragment>
                 <img src={ items.back } className="item-left" onClick={ this.handleGoBack } />
-                <div className="item-name">{this.props.folders[this.props.params.id].title} ({this.props.count} files)</div>
+                <div className="item-name">{this.props.folders[this.props.params.id].title} ({language.files[this.props.lang](this.props.count)})</div>
             </React.Fragment>);
+        }
+        if (this.state.isLang) {
+            return <React.Fragment>
+                <button className="vk-button button-secondary" onClick={ this.handleLang }>{language.cancel[this.props.lang]}</button>
+                <div className="item-name span-right">eng</div>
+                <div className="item-right vk-switch-container" onClick={ this.handleSwitchLang }>
+                    <div className={`vk-switch ${this.props.lang === 'en' ? '' : 'vk-switch-left'}`} />
+                </div>
+                <div className="item-name span-right">rus</div>
+            </React.Fragment>
         }
         if (this.state.isSort) {
             return (<DocsSortHeader
@@ -119,6 +153,7 @@ class DocsHeaderComponent extends React.Component {
                 clearSort={this.handleSort}
                 sortDirect={this.props.sortDirect}
                 changeSortDirection={this.props.changeSortDirection}
+                lang={ this.props.lang }
             />);
         }
         if (this.state.isFilter) {
@@ -126,6 +161,9 @@ class DocsHeaderComponent extends React.Component {
                 setFilter={ this.props.setFilter }
                 onFilter={ this.handleFilter }
                 filter={ this.props.filter }
+                isElastic={ this.props.isElastic }
+                setElastic={ this.props.setElastic }
+                lang={ this.props.lang }
             />);
         }
         if (this.state.isDate) {
@@ -146,6 +184,7 @@ class DocsHeaderComponent extends React.Component {
                 checkAllFolders={ this.props.checkAllFolders }
                 renameDoc={ this.props.renameDoc }
                 renameFolder={ this.props.renameFolder }
+                lang={ this.props.lang }
             />);
         }
 
@@ -155,6 +194,7 @@ class DocsHeaderComponent extends React.Component {
             {type === 'sorted' || type === 'folder' || type === 'root' ?
                 <AddFolder id={ parseInt(this.props.params.id) } folder={ this.props.folder } />
                 : null}
+            <img className="item-right" onClick={ this.handleLang } src={ items.settings}/>
             <img className="item-right" onClick={ this.handleSort } src={ items.sort } />
             <img className="item-right" onClick={ this.handleDate } src={ items.calendar } />
             <img className="item-right" onClick={ this.handleFilter } src={ items.filter } />
@@ -195,6 +235,9 @@ const mapStoreToProps = state => ({
     countCheckFolder: state.folder.countCheck,
     isOpen: state.modal.isOpen,
     view: state.page.view,
+    isElastic: state.page.isElastic,
+    lang: state.page.lang,
+    id: state.page.id,
 });
 
 const mapDispatchToProps = dispatch => ({
@@ -211,6 +254,9 @@ const mapDispatchToProps = dispatch => ({
         renameDoc,
         renameFolder,
         changeSortDirection,
+        setElastic,
+        switchLang,
+        loadLang,
     }, dispatch),
 });
 

@@ -3,7 +3,7 @@ import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
 import { withRouter } from 'react-router-dom';
 import PropTypes from 'prop-types';
-import { apps, folderType, makeUrls, urls, view } from '../../constants';
+import {apps, folderType, makeUrls, urls, view, makeElasticUrls, makeElastic} from '../../constants';
 import { checkAll, docsUnMount, loadDocs, loadDocsMore } from '../../actions/document';
 import { filterFolders, loadFilterFolders, loadRecursiveFolders, loadRoot } from '../../actions/folder';
 import { modalOpen, setModal } from '../../actions/modal';
@@ -34,6 +34,7 @@ class DocsComponent extends React.Component {
         view: PropTypes.string.isRequired,
         loadRoot: PropTypes.func.isRequired,
         sortDirect: PropTypes.bool.isRequired,
+        isElastic: PropTypes.bool.isRequired,
     };
 
     state = {
@@ -58,73 +59,51 @@ class DocsComponent extends React.Component {
         }
     }
     componentWillReceiveProps(nextProps) {
-        if (nextProps.params.hasOwnProperty('id')) {
-            if (this.props.params.id !== nextProps.params.id) {
-                this.props.loadDocs(makeUrls.makeFilterDocsFolder(nextProps.params.id));
-                this.props.filterFolders(parseInt(nextProps.params.id));
-                this.props.loadRecursiveFolders(makeUrls.makeFolderRecursive(nextProps.params.id));
-                if (this.props.checkList.length) {
-                    this.props.checkAll();
+        if (!nextProps.params.hasOwnProperty('id')) {
+            if(this.props.folder !== nextProps.folder) {
+                if (nextProps.folder === folderType.root) {
+                    this.props.loadDocs(urls.docs.unsortedDocsUrl)
+                        .then(this.scrollStart)
+                        .then(() => this.props.loadRoot());
                 }
-                this.props.clearFilter(apps.docs);
-            } else if (this.props.filterType !== nextProps.filterType || this.props.filter !== nextProps.filter) {
-                this.props.loadDocs(makeUrls.makeFilterSortDocs(
-                    nextProps.params.id,
-                    nextProps.filter,
-                    nextProps.filterType,
-                    this.props.sort,
-                    !this.props.sortDirect
-                ));
-            } else if (this.props.sort !== nextProps.sort) {
-                this.props.loadDocs(makeUrls.makeFilterSortDocs(
-                    nextProps.params.id,
-                    this.props.filter,
-                    this.props.filterType,
-                    nextProps.sort,
-                    !this.props.sortDirect
-                ));
-            } else if (this.props.sortDirect !== nextProps.sortDirect) {
-                this.props.loadDocs(makeUrls.makeFilterSortDocs(
-                    nextProps.params.id,
-                    this.props.filter,
-                    this.props.filterType,
-                    this.props.sort,
-                    !nextProps.sortDirect
-                ));
-            }
-        } else if(this.props.folder !== nextProps.folder) {
-            if (nextProps.folder === folderType.root) {
-                this.props.loadDocs(urls.docs.unsortedDocsUrl)
-                    .then(this.scrollStart)
-                    .then(() => this.props.loadRoot());
-            }
-        }
-        if (this.props.folder === folderType.root) {
-            if (this.props.filterType !== nextProps.filterType || this.props.filter !== nextProps.filter) {
-                this.props.loadDocs(makeUrls.makeFilterRootSortDocs(
-                    nextProps.filter,
-                    nextProps.filterType,
-                    this.props.sort,
-                    !this.props.sortDirect
-                ));
-            } else if (this.props.sort !== nextProps.sort) {
-                this.props.loadDocs(makeUrls.makeFilterRootSortDocs(
-                    this.props.filter,
-                    this.props.filterType,
-                    nextProps.sort,
-                    !this.props.sortDirect
-                ));
-            } else if (this.props.sortDirect !== nextProps.sortDirect) {
-                this.props.loadDocs(makeUrls.makeFilterRootSortDocs(
-                    this.props.filter,
-                    this.props.filterType,
-                    this.props.sort,
-                    !nextProps.sortDirect
-                ));
             }
         }
     }
     componentDidUpdate(prevProps) {
+        if (this.props.params.hasOwnProperty('id')) {
+            if(prevProps.sortDirect !== this.props.sortDirect
+                || prevProps.sort !== this.props.sort
+                || prevProps.filterType !== this.props.filterType
+                || prevProps.filter !== this.props.filter
+                || prevProps.isElastic !== this.props.isElastic
+                || prevProps.params.id !== this.props.params.id
+            ) {
+                this.props.loadDocs(makeElastic.makeFolderElastic(
+                    this.props.params.id,
+                    this.props.filter,
+                    this.props.filterType,
+                    this.props.sort,
+                    !this.props.sortDirect,
+                    this.props.isElastic
+                ));
+            }
+        }
+        if (this.props.folder === folderType.root) {
+            if(prevProps.sortDirect !== this.props.sortDirect
+                || prevProps.sort !== this.props.sort
+                || prevProps.filterType !== this.props.filterType
+                || prevProps.filter !== this.props.filter
+                || prevProps.isElastic !== this.props.isElastic
+            ) {
+                this.props.loadDocs(makeElastic.makeRootElastic(
+                    this.props.filter,
+                    this.props.filterType,
+                    this.props.sort,
+                    !this.props.sortDirect,
+                    this.props.isElastic
+                ));
+            }
+        }
         if (!this.props.params.hasOwnProperty('id') && prevProps.params.hasOwnProperty('id')) {
             this.props.docsUnMount();
             this.scrollStart();
@@ -140,9 +119,24 @@ class DocsComponent extends React.Component {
 
     handleLoadMore = (e) => {
         if (this.props.folder === folderType.root) {
-            this.props.loadDocsMore(makeUrls.makeDocsRootMore(this.props.page, this.props.filterType, this.props.filter));
+            this.props.loadDocsMore(makeElastic.makeRootElasticMore(
+                this.props.filter,
+                this.props.filterType,
+                this.props.sort,
+                !this.props.sortDirect,
+                this.props.isElastic,
+                this.props.page
+            ));
         } else {
-            this.props.loadDocsMore(makeUrls.makeDocsMore(this.props.params.id, this.props.page, this.props.filterType, this.props.filter));
+            this.props.loadDocsMore(makeElastic.makeFolderElasticMore(
+                this.props.params.id,
+                this.props.filter,
+                this.props.filterType,
+                this.props.sort,
+                !this.props.sortDirect,
+                this.props.isElastic,
+                this.props.page
+            ));
         }
     };
 
@@ -189,6 +183,7 @@ const mapStoreToProps = state => ({
     checkList: state.document.checkList,
     view: state.page.view,
     isLoadingMore: state.document.isLoadingMore,
+    isElastic: state.page.isElastic,
 });
 
 const mapDispatchToProps = dispatch => ({

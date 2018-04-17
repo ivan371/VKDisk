@@ -1,6 +1,7 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import { modalType, items } from '../../constants';
+import {language} from '../language';
 
 export default class DocsCheckHeader extends React.Component {
     static propTypes = {
@@ -13,6 +14,7 @@ export default class DocsCheckHeader extends React.Component {
         type: PropTypes.string.isRequired,
         renameDoc: PropTypes.func.isRequired,
         renameFolder: PropTypes.func.isRequired,
+        lang: PropTypes.string.isRequired,
     };
 
     handleOpenCopy = () => {
@@ -49,7 +51,7 @@ export default class DocsCheckHeader extends React.Component {
     renderCountCheckFiles() {
         if (this.props.countCheckFile) {
             return (<React.Fragment>
-                <div className="item-name">{this.props.countCheckFile} files</div>
+                <div className="item-name">{language.files[this.props.lang](this.props.countCheckFile)}</div>
                 <img src={ items.clear } className="item-left" onClick={ this.handleClearAllFiles } />
             </React.Fragment>);
         }
@@ -59,7 +61,7 @@ export default class DocsCheckHeader extends React.Component {
     renderCountCheckFolders() {
         if (this.props.countCheckFolder) {
             return (<React.Fragment>
-                <div className="item-name">{this.props.countCheckFolder} folders</div>
+                <div className="item-name">{language.files[this.props.lang](this.props.countCheckFolder)}</div>
                 <img src={ items.clear } className="item-left" onClick={ this.handleClearAllFolders } />
             </React.Fragment>);
         }
@@ -72,22 +74,22 @@ export default class DocsCheckHeader extends React.Component {
                 {this.renderCountCheckFiles()} {this.renderCountCheckFolders()}
                 {!this.props.countCheckFolder ?
                     <React.Fragment>
-                        <button className="vk-button" onClick={ this.handleOpenCopy }>Copy</button>
-                        <button className="vk-button" onClick={ this.handleOpenReplace }>Replace</button>
-                        <button className="vk-button" onClick={ this.handleOpenDelete }>Delete</button>
+                        <button className="vk-button" onClick={ this.handleOpenCopy }>{language.copy[this.props.lang]}</button>
+                        <button className="vk-button" onClick={ this.handleOpenReplace }>{language.replace[this.props.lang]}</button>
+                        <button className="vk-button" onClick={ this.handleOpenDelete }>{language.delete[this.props.lang]}</button>
                     </React.Fragment> : null}
-                { this.props.countCheckFile === 1 && !this.props.countCheckFolder ? <button className="vk-button" onClick={ this.handleRenameDoc }>Rename</button> : null }
-                { this.props.countCheckFolder === 1 && !this.props.countCheckFile ? <button className="vk-button" onClick={ this.handleRenameFolder }>Rename</button> : null }
+                { this.props.countCheckFile === 1 && !this.props.countCheckFolder ? <button className="vk-button" onClick={ this.handleRenameDoc }>{language.rename[this.props.lang]}</button> : null }
+                { this.props.countCheckFolder === 1 && !this.props.countCheckFile ? <button className="vk-button" onClick={ this.handleRenameFolder }>{language.rename[this.props.lang]}</button> : null }
             </React.Fragment>);
         }
         return (<React.Fragment>
             {this.renderCountCheckFiles()} {this.renderCountCheckFolders()}
             {!this.props.countCheckFolder ?
                 <React.Fragment>
-                    <button className="vk-button" onClick={ this.handleOpenCopy }>Copy</button>
+                    <button className="vk-button" onClick={ this.handleOpenCopy }>{language.copy[this.props.lang]}</button>
                 </React.Fragment> : null}
-            { this.props.countCheckFile === 1 && !this.props.countCheckFolder ? <button className="vk-button" onClick={ this.handleRenameDoc }>Rename</button> : null }
-            { this.props.countCheckFolder === 1 && !this.props.countCheckFile ? <button className="vk-button" onClick={ this.handleRenameFolder }>Rename</button> : null }
+            { this.props.countCheckFile === 1 && !this.props.countCheckFolder ? <button className="vk-button" onClick={ this.handleRenameDoc }>{language.rename[this.props.lang]}</button> : null }
+            { this.props.countCheckFolder === 1 && !this.props.countCheckFile ? <button className="vk-button" onClick={ this.handleRenameFolder }>{language.rename[this.props.lang]}</button> : null }
         </React.Fragment>);
     }
 }
