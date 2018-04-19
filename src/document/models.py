@@ -15,6 +15,7 @@ class Document(Named, Authored, Dated):
     folder = models.ForeignKey(Folder, on_delete=models.CASCADE, null=True, blank=True, verbose_name=_(u"folder"))
     text = models.TextField(null=True)
     vk_doc = models.ForeignKey(DocAttachment, on_delete=models.CASCADE)
+    is_owner = models.BooleanField(default=False)
 
     def __str__(self):
         return u'[{}] {}'.format(self.pk, self.title)
