@@ -1,6 +1,7 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import {apps, dragSource, folderType, items, makeUrls} from '../../constants';
+import {language} from '../language';
 
 export default class RowHeaderComponent extends React.Component {
     static propTypes = {
@@ -15,6 +16,7 @@ export default class RowHeaderComponent extends React.Component {
         source: PropTypes.string,
         id: PropTypes.number,
         root: PropTypes.number,
+        lang: PropTypes.string.isRequired,
     };
 
     state = {
@@ -80,7 +82,7 @@ export default class RowHeaderComponent extends React.Component {
                 onKeyDown={this.handleFilter}
             />);
         } else {
-            return <div className="item-name">Your folders</div>;
+            return <div className="item-name">{language.yourFolder[this.props.lang]}</div>;
         }
     }
 
@@ -95,7 +97,7 @@ export default class RowHeaderComponent extends React.Component {
         if (this.state.isSort) {
             return (
                 <div className="content-item">
-                    <button className="vk-button button-secondary" onClick={ this.handleSortOpen }>Cancel</button>
+                    <button className="vk-button button-secondary" onClick={ this.handleSortOpen }>{language.cancel[this.props.lang]}</button>
                     <button className={ `sort-button${this.props.sort === 'name' ? ' sort-button-selected' : ''}` } value="name" onClick={ this.handleSetSort }>Name</button>
                     <button className={ `sort-button${this.props.sort === 'date' ? ' sort-button-selected' : ''}` } value="date" onClick={ this.handleSetSort }>Date</button>
                 </div>

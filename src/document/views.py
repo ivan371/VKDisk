@@ -162,12 +162,12 @@ class DocumentViewSet(viewsets.ModelViewSet):
                 if self.request.query_params['name']:
                     q = q.filter(title__icontains=self.request.query_params['name'])
         if 'sort' in self.request.query_params:
-            if self.request.query_params['sort'] == 'name':
+            if self.request.query_params['sort'] == 'title':
                 if 'reverse' in self.request.query_params:
                     q = q.order_by('-title')
                 else:
                     q = q.order_by('title')
-            if self.request.query_params['sort'] == 'date':
+            if self.request.query_params['sort'] == 'created':
                 if 'reverse' in self.request.query_params:
                     q = q.order_by('-created')
                 else:
@@ -180,11 +180,21 @@ class DocumentView(es_views.ListElasticAPIView):
     es_model = DocumentIndex
     es_filter_backends = (
         es_filters.ElasticFieldsFilter,
+        es_filters.ElasticOrderingFilter,
         es_filters.ElasticSearchFilter
     )
+    es_ordering_fields = (
+        "created",
+        ("title.raw", "title"),
+    )
     es_filter_fields = (
-        es_filters.ESFieldFilter('text', 'text'),
-        es_filters.ESFieldFilter('title', 'title')
+        es_filters.ESFieldFilter('text', 'text.raw'),
+        es_filters.ESFieldFilter('title', 'title.raw'),
+        es_filters.ESFieldFilter('author_id', 'author.id.raw'),
+        es_filters.ESFieldFilter('folder_id', 'folder.id.raw'),
+        es_filters.ESFieldFilter('folder_title', 'folder.title.raw'),
+        es_filters.ESFieldFilter('folder_type', 'folder.typeForElasticSearchPleaseDontTouchMe.raw'),
+        es_filters.ESFieldFilter('created', 'created')
     )
     es_search_fields = (
         'text',

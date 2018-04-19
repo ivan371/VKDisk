@@ -13,3 +13,5 @@ collected_static
 Thumbs.db
 *.pdf
 *.pptx
+=======
+*.rdb

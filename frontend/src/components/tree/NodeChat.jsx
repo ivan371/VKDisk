@@ -5,11 +5,13 @@ import PropTypes from 'prop-types';
 import { Link } from 'react-router-dom';
 import { folderType, format, items } from '../../constants';
 import Node from './Node';
+import {language} from '../language';
 
 class NodeChatComponent extends React.Component {
     static propTypes = {
         isLoading: PropTypes.bool.isRequired,
         folder: PropTypes.string.isRequired,
+        lang: PropTypes.string.isRequired,
     };
 
     renderImage() {
@@ -36,7 +38,7 @@ class NodeChatComponent extends React.Component {
                 <Link to={ link }>
                     <div className="content-item page-content-link-item">
                         <div><img className="item" src={ this.renderImage() } /></div>
-                        <div>Dialogs</div>
+                        <div>{language.dialogs[this.props.lang]}</div>
                     </div>
                 </Link>
                 <div className="node-layout">
@@ -52,6 +54,7 @@ const mapStoreToProps = (state, props) => ({
     isLoading: state.folder.isLoading,
     folderList: state.folder.folderUnTreeList,
     folders: state.folder.folders,
+    lang: state.page.lang,
 });
 
 const mapDispatchToProps = dispatch => ({

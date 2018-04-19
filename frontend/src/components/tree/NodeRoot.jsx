@@ -5,6 +5,7 @@ import PropTypes from 'prop-types';
 import { Link } from 'react-router-dom';
 import { folderType, format, items } from '../../constants';
 import Node from './Node';
+import {language} from '../language';
 
 class NodeRootComponent extends React.Component {
     static propTypes = {
@@ -12,6 +13,7 @@ class NodeRootComponent extends React.Component {
         folder: PropTypes.string.isRequired,
         folderList: PropTypes.array,
         foldersRecursiveList: PropTypes.array,
+        lang: PropTypes.string.isRequired,
     };
 
     renderImage() {
@@ -43,7 +45,7 @@ class NodeRootComponent extends React.Component {
                 <Link to={ link }>
                     <div className="content-item page-content-link-item">
                         <div><img className="item" src={ this.renderImage() } /></div>
-                        <div>All items</div>
+                        <div>{language.allItems[this.props.lang]}</div>
                     </div>
                 </Link>
                 <div className="node-layout">
@@ -59,6 +61,7 @@ const mapStoreToProps = (state, props) => ({
     folders: state.folder.folders,
     foldersRecursiveList: state.folder.foldersRecursiveList,
     folderList: state.folder.folderList,
+    lang: state.page.lang,
 });
 
 const mapDispatchToProps = dispatch => ({
