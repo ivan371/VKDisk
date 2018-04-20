@@ -88,6 +88,14 @@ class FolderViewSet(viewsets.ModelViewSet):
                 if self.request.query_params['name']:
                     q = q.filter(title__istartswith=self.request.query_params['name'])
         if 'sort' in self.request.query_params:
-            if self.request.query_params['sort'] == 'name':
-                q = q.order_by('title')
+            if self.request.query_params['sort'] == 'title':
+                if 'reverse' in self.request.query_params:
+                    q = q.order_by('-title')
+                else:
+                    q = q.order_by('title')
+            if self.request.query_params['sort'] == 'created':
+                if 'reverse' in self.request.query_params:
+                    q = q.order_by('-id')
+                else:
+                    q = q.order_by('id')
         return q
