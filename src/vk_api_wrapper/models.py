@@ -59,6 +59,9 @@ class BaseAttachment(models.Model):
     def parse_item(item):
         raise NotImplementedError()
 
+    def is_ownered_by(self, vk_uid):
+        raise NotImplementedError()
+
 
 class VkAttachmentFactory:
     type_dict = {}
@@ -121,6 +124,9 @@ class DocAttachment(BaseAttachment, models.Model):
         attach.type = doc['type']
         attach.vk_access_key = doc.get('access_key', None)
         return attach
+
+    def is_ownered_by(self, vk_uid):
+        return self.vk_owner_id == vk_uid
 
 
 VkAttachmentFactory.register('doc', DocAttachment)

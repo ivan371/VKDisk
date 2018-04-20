@@ -172,6 +172,8 @@ class DocumentViewSet(viewsets.ModelViewSet):
                     q = q.order_by('-created')
                 else:
                     q = q.order_by('created')
+        else:
+            q = q.order_by('-created')
         return q
 
 

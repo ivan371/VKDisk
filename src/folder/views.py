@@ -98,4 +98,6 @@ class FolderViewSet(viewsets.ModelViewSet):
                     q = q.order_by('-id')
                 else:
                     q = q.order_by('id')
+        else:
+            q = q.order_by('-pk')
         return q
