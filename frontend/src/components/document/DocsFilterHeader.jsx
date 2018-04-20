@@ -48,7 +48,7 @@ export default class DocsFilterHeader extends React.Component {
     render() {
         return (<React.Fragment>
             <img className="item-left" onClick={ this.handleFilter } src={ items.filter } />
-            <button className="vk-button button-secondary" onClick={ this.props.onFilter }>{language.cancel[this.props.lang]}</button>
+            <button className="vk-button button-secondary" onClick={ this.props.onFilter }>{language.back[this.props.lang]}</button>
             <button className="vk-button" onClick={ this.handleFilterStart }>{language.search[this.props.lang]}</button>
             {this.renderSwitchImage()}
             <input

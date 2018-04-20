@@ -204,11 +204,11 @@ var makeUrls = exports.makeUrls = {
     makeChatsMore: function makeChatsMore(page) {
         return urls.folder.chatFolderUrl + '&&page=' + page;
     },
-    makeFilterSortChats: function makeFilterSortChats(name, sort) {
-        return urls.folder.chatFolderUrl + 'filter&name=' + name + '&sort=' + sort;
+    makeFilterSortChats: function makeFilterSortChats(name, sort, reverse) {
+        return urls.folder.chatFolderUrl + 'filter&name=' + name + '&sort=' + sort + '&' + (reverse ? 'reverse' : '');
     },
-    makeFilterChatsSortMore: function makeFilterChatsSortMore(page, name, sort) {
-        return urls.folder.chatFolderUrl + 'filter&name=' + name + '&page=' + page + '&sort=' + sort;
+    makeFilterChatsSortMore: function makeFilterChatsSortMore(page, name, sort, reverse) {
+        return urls.folder.chatFolderUrl + 'filter&name=' + name + '&page=' + page + '&sort=' + sort + '&' + (reverse ? 'reverse' : '');
     },
     makeTransferFolder: function makeTransferFolder(id) {
         return urls.folder.customFolderUrl + id + '/?replace';
@@ -1086,7 +1086,7 @@ function loadUser(url) {
 Object.defineProperty(exports, "__esModule", {
     value: true
 });
-exports.RENAME_DOC = exports.DELETE_DOCS_ERROR = exports.DELETE_DOCS_SUCCESS = exports.DELETE_DOCS = exports.CHECK_ALL = exports.DOCS_BULK_UPDATE_SUCCESS = exports.DOCS_BULK_UPDATE = exports.DOCS_BULK_CREATE_SUCCESS = exports.DOCS_BULK_CREATE = exports.CHECK_FILE = exports.UPDATE_DOC = exports.LOAD_DOC_ERROR = exports.LOAD_DOC = exports.DOCS_UNMOUNT = exports.LOAD_DOCS_ERROR = exports.LOAD_DOCS_MORE = exports.LOAD_DOCS_MORE_START = exports.LOAD_DOCS_SUCCESS = exports.LOAD_DOCS = undefined;
+exports.LOAD_CHAT_ROOT = exports.RENAME_DOC = exports.DELETE_DOCS_ERROR = exports.DELETE_DOCS_SUCCESS = exports.DELETE_DOCS = exports.CHECK_ALL = exports.DOCS_BULK_UPDATE_SUCCESS = exports.DOCS_BULK_UPDATE = exports.DOCS_BULK_CREATE_SUCCESS = exports.DOCS_BULK_CREATE = exports.CHECK_FILE = exports.UPDATE_DOC = exports.LOAD_DOC_ERROR = exports.LOAD_DOC = exports.DOCS_UNMOUNT = exports.LOAD_DOCS_ERROR = exports.LOAD_DOCS_MORE = exports.LOAD_DOCS_MORE_START = exports.LOAD_DOCS_SUCCESS = exports.LOAD_DOCS = undefined;
 exports.renameDoc = renameDoc;
 exports.loadDocs = loadDocs;
 exports.loadDocsMore = loadDocsMore;
@@ -1098,6 +1098,7 @@ exports.deleteDocs = deleteDocs;
 exports.docsUnMount = docsUnMount;
 exports.checkFile = checkFile;
 exports.checkAll = checkAll;
+exports.loadChatRoot = loadChatRoot;
 
 var _load = __webpack_require__(80);
 
@@ -1122,6 +1123,7 @@ var DELETE_DOCS = exports.DELETE_DOCS = 'DELETE_DOCS';
 var DELETE_DOCS_SUCCESS = exports.DELETE_DOCS_SUCCESS = 'DELETE_DOCS_SUCCESS';
 var DELETE_DOCS_ERROR = exports.DELETE_DOCS_ERROR = 'DELETE_DOCS_ERROR';
 var RENAME_DOC = exports.RENAME_DOC = 'RENAME_DOC';
+var LOAD_CHAT_ROOT = exports.LOAD_CHAT_ROOT = 'LOAD_CHAT_ROOT';
 
 function renameDoc() {
     return {
@@ -1182,6 +1184,12 @@ function checkFile(id) {
 function checkAll() {
     return {
         type: CHECK_ALL
+    };
+}
+
+function loadChatRoot() {
+    return {
+        type: LOAD_CHAT_ROOT
     };
 }
 
@@ -1521,6 +1529,10 @@ var language = exports.language = {
         ru: 'Отменить',
         en: 'Cancel'
     },
+    back: {
+        ru: 'Назад',
+        en: 'Back'
+    },
     name: {
         ru: 'Имя',
         en: 'Name'
@@ -1544,6 +1556,18 @@ var language = exports.language = {
     copyFiles: {
         ru: 'Копировать файлы',
         en: 'Copy files'
+    },
+    deleteFiles: {
+        ru: 'Удалить файлы',
+        en: 'Delete files'
+    },
+    reallyDeleteFiles: {
+        ru: function ru(count) {
+            return '\u0412\u044B \u0434\u0435\u0439\u0441\u0442\u0432\u0438\u0442\u0435\u043B\u044C\u043D\u043E \u0445\u043E\u0442\u0438\u0442\u0435 \u0443\u0434\u0430\u043B\u0438\u0442\u044C ' + count + ' \u0444\u0430\u0439\u043B?';
+        },
+        en: function en(count) {
+            return 'Are you really want to delete ' + count + ' files?';
+        }
     }
 };
 
@@ -25067,6 +25091,8 @@ var _RowHeader = __webpack_require__(306);
 
 var _RowHeader2 = _interopRequireDefault(_RowHeader);
 
+var _modal = __webpack_require__(16);
+
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
@@ -25092,7 +25118,7 @@ var CustomRowComponent = function (_React$Component) {
         return _ret = (_temp = (_this = _possibleConstructorReturn(this, (_ref = CustomRowComponent.__proto__ || Object.getPrototypeOf(CustomRowComponent)).call.apply(_ref, [this].concat(args))), _this), _this.state = {
             scroll: null
         }, _this.handleLoadMore = function (e) {
-            _this.props.loadFoldersMore(_constants.makeUrls.makeFilterChatsSortMore(_this.props.page, _this.props.filter, _this.props.sort));
+            _this.props.loadFoldersMore(_constants.makeUrls.makeFilterChatsSortMore(_this.props.page, _this.props.filter, _this.props.sort, !_this.props.sortDirect));
         }, _this.handleScroll = function () {
             if (!_this.props.isLoadingMore && _this.props.isLoading && _this.props.count > 15 * (_this.props.page - 1)) {
                 var scroll = _this.state.scroll;
@@ -25122,6 +25148,7 @@ var CustomRowComponent = function (_React$Component) {
                 }
             } else {
                 if (this.props.folder === _constants.folderType.chat) {
+                    this.props.loadChatRoot();
                     this.props.loadUnTreeFolders(_constants.urls.folder.chatFolderUrl).then(this.scrollStart);
                 }
                 if (this.props.folder === _constants.folderType.root) {
@@ -25135,10 +25162,13 @@ var CustomRowComponent = function (_React$Component) {
         key: 'componentWillReceiveProps',
         value: function componentWillReceiveProps(nextProps) {
             if (this.props.filter !== nextProps.filter && this.props.folder === _constants.folderType.chat) {
-                this.props.loadUnTreeFolders(_constants.makeUrls.makeFilterSortChats(nextProps.filter, this.props.sort));
+                this.props.loadUnTreeFolders(_constants.makeUrls.makeFilterSortChats(nextProps.filter, this.props.sort, !this.props.sortDirect));
             }
             if (this.props.sort !== nextProps.sort && this.props.folder === _constants.folderType.chat) {
-                this.props.loadUnTreeFolders(_constants.makeUrls.makeFilterSortChats(this.props.filter, nextProps.sort));
+                this.props.loadUnTreeFolders(_constants.makeUrls.makeFilterSortChats(this.props.filter, nextProps.sort, !this.props.sortDirect));
+            }
+            if (this.props.sortDirect !== nextProps.sortDirect && this.props.folder === _constants.folderType.chat) {
+                this.props.loadUnTreeFolders(_constants.makeUrls.makeFilterSortChats(this.props.filter, this.props.sort, !nextProps.sortDirect));
             }
         }
     }, {
@@ -25174,7 +25204,12 @@ var CustomRowComponent = function (_React$Component) {
                         setSort: this.props.setSort,
                         sort: this.props.sort,
                         root: parseInt(this.props.params.id) || null,
-                        lang: this.props.lang
+                        lang: this.props.lang,
+                        modalOpen: this.props.modalOpen,
+                        setModal: this.props.setModal,
+                        countDocs: this.props.countDocs,
+                        sortDirect: this.props.sortDirect,
+                        changeSortDirection: this.props.changeSortDirection
                     }),
                     _react2.default.createElement(
                         'div',
@@ -25212,7 +25247,13 @@ CustomRowComponent.propTypes = {
     filterFolders: _propTypes2.default.func.isRequired,
     setSort: _propTypes2.default.func.isRequired,
     sort: _propTypes2.default.string.isRequired,
-    lang: _propTypes2.default.string.isRequired
+    lang: _propTypes2.default.string.isRequired,
+    modalOpen: _propTypes2.default.func.isRequired,
+    setModal: _propTypes2.default.func.isRequired,
+    countDocs: _propTypes2.default.number.isRequired,
+    loadChatRoot: _propTypes2.default.func.isRequired,
+    sortDirect: _propTypes2.default.bool.isRequired,
+    changeSortDirection: _propTypes2.default.func.isRequired
 };
 
 
@@ -25230,7 +25271,9 @@ var mapStoreToProps = function mapStoreToProps(state) {
         sort: state.page.sort.folder.name,
         filterSelect: state.page.filterSelect.folder,
         isLoadingMore: state.folder.isLoadingMore,
-        lang: state.page.lang
+        lang: state.page.lang,
+        countDocs: state.document.countCheck,
+        sortDirect: state.page.sort.folder.isDirect
     };
 };
 
@@ -25246,7 +25289,11 @@ var mapDispatchToProps = function mapDispatchToProps(dispatch) {
         loadFilterFolders: _folder.loadFilterFolders,
         filterFolders: _folder.filterFolders,
         setSort: _page.setSort,
-        loadUser: _page.loadUser
+        loadUser: _page.loadUser,
+        modalOpen: _modal.modalOpen,
+        setModal: _modal.setModal,
+        loadChatRoot: _document.loadChatRoot,
+        changeSortDirection: _page.changeSortDirection
     }, dispatch));
 };
 
@@ -49658,6 +49705,12 @@ function folder() {
                 //     $set: [],
                 // },
             });
+        case _document.LOAD_CHAT_ROOT:
+            return (0, _reactAddonsUpdate2.default)(store, {
+                isTileLoading: {
+                    $set: false
+                }
+            });
         case _folder.TRANSFER_UNMOUNT:
             return (0, _reactAddonsUpdate2.default)(store, {
                 checkedFolder: {
@@ -50744,6 +50797,12 @@ function document() {
             return (0, _reactAddonsUpdate2.default)(store, {
                 isLoading: {
                     $set: false
+                }
+            });
+        case _document.LOAD_CHAT_ROOT:
+            return (0, _reactAddonsUpdate2.default)(store, {
+                isLoading: {
+                    $set: true
                 }
             });
         case _document.LOAD_DOCS_SUCCESS:
@@ -52547,7 +52606,7 @@ var DocsHeaderComponent = function (_React$Component) {
                     _react2.default.createElement(
                         'button',
                         { className: 'vk-button button-secondary', onClick: this.handleLang },
-                        _language.language.cancel[this.props.lang]
+                        _language.language.back[this.props.lang]
                     ),
                     _react2.default.createElement(
                         'div',
@@ -53077,6 +53136,8 @@ var _document = __webpack_require__(15);
 
 var _constants = __webpack_require__(2);
 
+var _language = __webpack_require__(21);
+
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
@@ -53122,7 +53183,7 @@ var DocsDeleteComponent = function (_React$Component) {
                         _react2.default.createElement(
                             'p',
                             null,
-                            'Delete files'
+                            _language.language.deleteFiles[this.props.lang]
                         )
                     )
                 ),
@@ -53135,20 +53196,18 @@ var DocsDeleteComponent = function (_React$Component) {
                         _react2.default.createElement(
                             'p',
                             null,
-                            'Are you realy want to delete ',
-                            this.props.count,
-                            ' files?'
+                            _language.language.reallyDeleteFiles[this.props.lang](this.props.count)
                         )
                     ),
                     _react2.default.createElement(
                         'button',
                         { className: 'vk-button', onClick: this.handleBulkDelete },
-                        'Delete'
+                        _language.language.delete[this.props.lang]
                     ),
                     _react2.default.createElement(
                         'button',
                         { className: 'vk-button', onClick: this.handleClose },
-                        'Cancel'
+                        _language.language.cancel[this.props.lang]
                     )
                 )
             );
@@ -53162,14 +53221,16 @@ DocsDeleteComponent.propTypes = {
     count: _propTypes2.default.number.isRequired,
     modalOpen: _propTypes2.default.func.isRequired,
     bulkUpdateDocs: _propTypes2.default.func.isRequired,
-    checkList: _propTypes2.default.array.isRequired
+    checkList: _propTypes2.default.array.isRequired,
+    lang: _propTypes2.default.string.isRequired
 };
 
 
 var mapStoreToProps = function mapStoreToProps(state) {
     return {
         count: state.document.countCheck,
-        checkList: state.document.checkList
+        checkList: state.document.checkList,
+        lang: state.page.lang
     };
 };
 
@@ -53275,7 +53336,7 @@ var DocsFilterHeader = function (_React$Component) {
                 _react2.default.createElement(
                     'button',
                     { className: 'vk-button button-secondary', onClick: this.props.onFilter },
-                    _language.language.cancel[this.props.lang]
+                    _language.language.back[this.props.lang]
                 ),
                 _react2.default.createElement(
                     'button',
@@ -53451,11 +53512,6 @@ var DocsCheckHeader = function (_React$Component) {
                             'button',
                             { className: 'vk-button', onClick: this.handleOpenReplace },
                             _language.language.replace[this.props.lang]
-                        ),
-                        _react2.default.createElement(
-                            'button',
-                            { className: 'vk-button', onClick: this.handleOpenDelete },
-                            _language.language.delete[this.props.lang]
                         )
                     ) : null,
                     this.props.countCheckFile === 1 && !this.props.countCheckFolder ? _react2.default.createElement(
@@ -53716,20 +53772,20 @@ var DocsSortHeader = function (_React$Component) {
                 _react2.default.createElement(
                     'button',
                     { className: 'vk-button button-secondary', onClick: this.handleSort },
-                    _language.language.cancel[this.props.lang]
+                    _language.language.back[this.props.lang]
                 ),
                 _react2.default.createElement(
                     'button',
                     { className: 'sort-button' + (this.props.sort === _constants.sort.name ? ' sort-button-selected' : ''), value: _constants.sort.name, onClick: this.handleSetSort },
                     'Name'
                 ),
-                _react2.default.createElement('img', { className: 'item-left', src: this.renderSortNameDirection() }),
+                _react2.default.createElement('img', { className: 'item-left sort-row', src: this.renderSortNameDirection() }),
                 _react2.default.createElement(
                     'button',
                     { className: 'sort-button' + (this.props.sort === _constants.sort.date ? ' sort-button-selected' : ''), value: _constants.sort.date, onClick: this.handleSetSort },
                     'Date'
                 ),
-                _react2.default.createElement('img', { className: 'item-left', src: this.renderSortDateDirection() })
+                _react2.default.createElement('img', { className: 'item-left sort-row', src: this.renderSortDateDirection() })
             );
         }
     }]);
@@ -54376,6 +54432,11 @@ var RowHeaderComponent = function (_React$Component) {
             filter: _this.props.filter,
             filterSelect: _this.props.filterSelect,
             isSort: false
+        }, _this.handleOpenDelete = function () {
+            if (_this.props.countDocs) {
+                _this.props.modalOpen();
+                _this.props.setModal(_constants.modalType.documentDelete);
+            }
         }, _this.handleSortOpen = function () {
             _this.setState({ isSort: !_this.state.isSort });
         }, _this.handleDragOver = function (e) {
@@ -54398,7 +54459,11 @@ var RowHeaderComponent = function (_React$Component) {
                 _this.props.setFilter(_this.state.filter, _this.state.filterSelect, _constants.apps.folder);
             }
         }, _this.handleSetSort = function (e) {
-            _this.props.setSort(e.target.value, _constants.apps.folder);
+            if (_this.props.sort === e.target.value) {
+                _this.props.changeSortDirection(_constants.apps.folder);
+            } else {
+                _this.props.setSort(e.target.value, _constants.apps.folder);
+            }
         }, _temp), _possibleConstructorReturn(_this, _ret);
     }
 
@@ -54420,7 +54485,7 @@ var RowHeaderComponent = function (_React$Component) {
                 return _react2.default.createElement('input', {
                     className: 'content-item__input search',
                     type: 'text',
-                    placeholder: 'Search',
+                    placeholder: _language.language.search[this.props.lang],
                     name: 'filter',
                     value: this.state.filter,
                     onChange: this.handleChange,
@@ -54433,6 +54498,22 @@ var RowHeaderComponent = function (_React$Component) {
                     _language.language.yourFolder[this.props.lang]
                 );
             }
+        }
+    }, {
+        key: 'renderSortNameDirection',
+        value: function renderSortNameDirection() {
+            if (!this.props.sortDirect && this.props.sort === _constants.sort.name) {
+                return _constants.items.sortReverse;
+            }
+            return _constants.items.sortDirect;
+        }
+    }, {
+        key: 'renderSortDateDirection',
+        value: function renderSortDateDirection() {
+            if (!this.props.sortDirect && this.props.sort === _constants.sort.date) {
+                return _constants.items.sortReverse;
+            }
+            return _constants.items.sortDirect;
         }
     }, {
         key: 'renderSort',
@@ -54452,25 +54533,32 @@ var RowHeaderComponent = function (_React$Component) {
                     _react2.default.createElement(
                         'button',
                         { className: 'vk-button button-secondary', onClick: this.handleSortOpen },
-                        _language.language.cancel[this.props.lang]
+                        _language.language.back[this.props.lang]
                     ),
                     _react2.default.createElement(
                         'button',
-                        { className: 'sort-button' + (this.props.sort === 'name' ? ' sort-button-selected' : ''), value: 'name', onClick: this.handleSetSort },
+                        { className: 'sort-button' + (this.props.sort === 'title' ? ' sort-button-selected' : ''), value: 'title', onClick: this.handleSetSort },
                         'Name'
                     ),
+                    _react2.default.createElement('img', { className: 'item-left sort-row', src: this.renderSortNameDirection() }),
                     _react2.default.createElement(
                         'button',
-                        { className: 'sort-button' + (this.props.sort === 'date' ? ' sort-button-selected' : ''), value: 'date', onClick: this.handleSetSort },
+                        { className: 'sort-button' + (this.props.sort === 'created' ? ' sort-button-selected' : ''), value: 'created', onClick: this.handleSetSort },
                         'Date'
-                    )
+                    ),
+                    _react2.default.createElement('img', { className: 'item-left sort-row', src: this.renderSortDateDirection() })
                 );
             }
             return _react2.default.createElement(
                 'div',
                 { className: 'content-item' },
                 this.renderSearch(),
-                _react2.default.createElement('img', { className: 'item-right', src: this.renderTrash(), onDragOver: this.handleDragOver, onDrop: this.handleDrop }),
+                _react2.default.createElement('img', { className: 'item-right',
+                    src: this.renderTrash(),
+                    onDragOver: this.handleDragOver,
+                    onDrop: this.handleDrop,
+                    onClick: this.handleOpenDelete
+                }),
                 this.renderSort()
             );
         }
@@ -54496,7 +54584,13 @@ RowHeaderComponent.propTypes = {
     source: _propTypes2.default.string,
     id: _propTypes2.default.number,
     root: _propTypes2.default.number,
-    lang: _propTypes2.default.string.isRequired
+    lang: _propTypes2.default.string.isRequired,
+    modalOpen: _propTypes2.default.func.isRequired,
+    setModal: _propTypes2.default.func.isRequired,
+    countDocs: _propTypes2.default.number.isRequired,
+    sortDirect: _propTypes2.default.bool.isRequired,
+    changeSortDirection: _propTypes2.default.func.isRequired,
+    sort: _propTypes2.default.string.isRequired
 };
 exports.default = RowHeaderComponent;
 
@@ -54611,7 +54705,7 @@ exports = module.exports = __webpack_require__(310)(false);
 
 
 // module
-exports.push([module.i, "body {\n  background-color: #EDEEF0;\n  margin: 0;\n  font-family: -apple-system,BlinkMacSystemFont,Roboto,Helvetica Neue,sans-serif;\n}\n\na {\n  text-decoration: none;\n  cursor: pointer;\n}\n\n.page-header {\n  height: 42px;\n  background-color: #4A76A8;\n}\n\n.page-content {\n  margin: 0 auto;\n  width: 960px;\n  display: flex;\n  height: 100%;\n  position: sticky;\n}\n\n.page-header-content {\n  margin: 0 auto;\n  width: 960px;\n}\n\n.page-header-content-logo {\n  width: 139px;\n}\n\n.page-header-content h2 {\n  margin: 0;\n  padding-top: 5px;\n  color: white;\n}\n\n.page-content-navigation {\n  margin-top: 15px;\n}\n\n.page-content-content {\n  padding-top: 15px;\n  padding-bottom: 2px;\n  min-width: 400px;\n  display: flex;\n}\n\n.page-content-content-wrap {\n  width: 300px;\n  background-color: white;\n  max-height: 100%;\n  border-radius: 2px 2px 0 0;\n  box-shadow: 0 1px 0 0 #d7d8db, 0 0 0 1px #e3e4e8;\n  overflow-y: auto;\n}\n\n.page-content-content-wrap a {\n  color: #285473;\n}\n\n.page-content-content-content {\n  background-color: white;\n  max-height: 100%;\n  border-radius: 2px 2px 0 0;\n  box-shadow: 0 1px 0 0 #d7d8db, 0 0 0 1px #e3e4e8;\n}\n\n.page-content-link {\n  display: block;\n  white-space: nowrap;\n  padding: 10px;\n  color: #285473;\n}\n\n.page-content-link:hover {\n  background-color: #E1E5EB;\n}\n\n.content-item {\n  padding: 10px;\n  height: 30px;\n  box-shadow: 0 1px 0 0 #d7d8db;\n}\n\n.page-content-link-item {\n  display: flex;\n  height: 20px;\n}\n\n.page-content-link-item:hover {\n  background-color: #EDEEF0;\n  cursor: pointer;\n}\n\n.content-item input {\n  border: 0px;\n}\n\ninput[type=\"text\"]:focus {\n  outline: none;\n}\n\n.content-flex {\n  display: flex;\n}\n\n.content-flex-row {\n  align-content: start;\n  flex-wrap: wrap;\n  overflow-y: auto;\n}\n\n.content-flex-column {\n  flex-direction: column;\n  overflow-y: auto;\n}\n\n@media screen and (min-height: 0px) and (max-height: 720px) {\n  .content-flex {\n    height: 480px;\n  }\n  .page-content-content {\n    height: 540px;\n  }\n  .page-content-content-content {\n    width: 680px;\n  }\n}\n\n@media screen and (min-height: 700px) and (max-height: 1500px) {\n  .content-flex {\n    height: 640px;\n  }\n  .page-content-content {\n    height: 700px;\n  }\n  .page-content-content-content {\n    width: 740px;\n  }\n}\n\n.content-flex-modal {\n  display: flex;\n  align-content: start;\n  flex-wrap: wrap;\n  overflow-y: auto;\n  height: 220px;\n}\n\n.content-flex-item {\n  padding-top: 10px;\n  padding-bottom: 10px;\n  height: 80px;\n  width: 100px;\n  text-align: center;\n}\n\n.content-flex-item a {\n  color: black;\n}\n\n.content-flex-item:hover {\n  background-color: #E1E5EB;\n}\n\n.content-flex-item-column {\n  width: 480px;\n  text-align: left;\n  height: 30px;\n  padding: 10px;\n}\n\nimg.icon {\n  width: 50px;\n  height: 50px;\n  cursor: pointer;\n}\n\nimg.item {\n  width: 20px;\n  height: 20px;\n  margin-right: 5px;\n}\n\n.modal-container {\n  position: fixed;\n  left: 0;\n  top: 0;\n  text-align: center;\n  background-color: rgba(0, 0, 0, 0.7);\n  width: 100%;\n  height: 100%;\n  z-index: 10;\n}\n\n.modal {\n  cursor: auto;\n  z-index: 100;\n  height: 336px;\n  width: 500px;\n  background-color: white;\n  margin: 116px auto;\n  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.35);\n  outline: none;\n  border-radius: 5px;\n}\n\n.modal-header {\n  border-radius: 5px 5px 0 0;\n  width: 100%;\n  height: 54px;\n  background-color: #4A76A8;\n}\n\n.modal-header-title {\n  padding: 1px;\n}\n\n.modal-header-title p {\n  color: white;\n}\n\n.modal-content {\n  padding: 20px;\n  height: 240px;\n  background-color: #F7F7F7;\n}\n\n.modal-content__img img {\n  width: 100px;\n}\n\n.vk-button {\n  background-color: #5b88bd;\n  text-decoration: none;\n  float: right;\n  padding: 7px 16px 8px;\n  margin-left: 10px;\n  font-size: 12.5px;\n  display: inline-block;\n  zoom: 1;\n  cursor: pointer;\n  white-space: nowrap;\n  outline: none;\n  font-family: -apple-system,BlinkMacSystemFont,Roboto,Helvetica Neue,sans-serif;\n  vertical-align: top;\n  line-height: 15px;\n  text-align: center;\n  color: #fff;\n  border: 0;\n  border-radius: 4px;\n  box-sizing: border-box;\n}\n\n.vk-input {\n  background: #fff;\n  color: #000;\n  border: 1px solid #c0cad5 !important;\n  padding: 5px;\n  vertical-align: top;\n  margin: 0;\n  overflow: auto;\n  outline: 0;\n  line-height: 150%;\n  word-wrap: break-word;\n  width: 200px;\n  cursor: text;\n}\n\n.modal-footer {\n  margin-top: 80px;\n}\n\n.content-item__title {\n  cursor: text;\n  text-align: center;\n  max-width: 90px;\n  margin: 0 auto;\n  max-height: 38px;\n  text-overflow: ellipsis;\n  white-space: pre-wrap;\n  overflow: hidden;\n}\n\n.content-item__title:hover {\n  white-space: normal;\n  overflow: visible;\n}\n\n.content-item__title-col {\n  font-size: 1em;\n  float: left;\n  max-width: 300px;\n  text-align: left;\n}\n\n.content-item__input {\n  border: 1px solid #c0cad5;\n  cursor: text;\n  margin-top: 4px;\n  width: 100%;\n  outline: 0;\n  line-height: 150%;\n}\n\n.page-content-item__input {\n  width: 100px;\n  border: 1px solid #c0cad5;\n  cursor: text;\n  outline: 0;\n  line-height: 150%;\n}\n\n.item-right {\n  cursor: pointer;\n  padding: 5px;\n  width: 20px;\n  height: 20px;\n  float: right;\n  vertical-align: top;\n}\n\n.item-left {\n  cursor: pointer;\n  padding: 5px;\n  width: 20px;\n  height: 20px;\n  float: left;\n  vertical-align: top;\n}\n\n.item-name {\n  float: left;\n  padding: 5px;\n  height: 20px;\n}\n\n.checked {\n  background-color: #E1E5EB;\n}\n\n.button-secondary {\n  background-color: #e5ebf1;\n  color: #55677d;\n}\n\n.node-layout {\n  margin-left: 10px;\n}\n\n.search {\n  width: 120px;\n}\n\n.tags {\n  margin: 5px;\n  display: flex;\n  flex-wrap: wrap;\n  justify-content: space-between;\n}\n\n.tag-button {\n  margin-bottom: 5px;\n  margin-left: 2px;\n}\n\n.sort-button {\n  text-decoration: none;\n  float: left;\n  padding: 7px 16px 8px;\n  font-size: 12.5px;\n  display: inline-block;\n  zoom: 1;\n  cursor: pointer;\n  white-space: nowrap;\n  outline: none;\n  font-family: -apple-system,BlinkMacSystemFont,Roboto,Helvetica Neue,sans-serif;\n  vertical-align: top;\n  line-height: 15px;\n  text-align: center;\n  border: 0;\n  box-sizing: border-box;\n  background-color: white;\n}\n\n.sort-button-selected {\n  border-bottom: #5b88bd 2px solid;\n}\n\n.line {\n  display: inline-block;\n  width: 10px;\n  height: 10px;\n  border-radius: 10px;\n  margin: 2px;\n  background-color: black;\n}\n\n.load {\n  margin: auto;\n}\n\n.load .line:nth-last-child(1) {\n  animation: loadingC .6s .1s linear infinite;\n}\n\n.load .line:nth-last-child(2) {\n  animation: loadingC .6s .2s linear infinite;\n}\n\n.load .line:nth-last-child(3) {\n  animation: loadingC .6s .3s linear infinite;\n}\n\n@keyframes loadingC {\n  0 {\n    transform: translate(0, 0);\n  }\n  50% {\n    transform: translate(0, 15px);\n  }\n  100% {\n    transform: translate(0, 0);\n  }\n}\n\n.span-right {\n  float: right;\n}\n\n.vk-switch {\n  background-color: #bccde0;\n  width: 28px;\n  height: 9px;\n  border-radius: 45px;\n  float: right;\n  margin-top: 3px;\n}\n\n.vk-switch::after {\n  background-color: #5181b8;\n  left: 13px;\n  content: '';\n  float: left;\n  position: relative;\n  width: 13px;\n  height: 13px;\n  border-radius: 50%;\n  border: 1px solid #5181b8;\n  top: -3px;\n  transition: left 0.3s ease;\n}\n\n.vk-switch-left::after {\n  border: 1px solid #b4bfcc;\n  background-color: #fff;\n  left: 0;\n}\n\n.vk-switch-container {\n  margin: 2px;\n  margin-left: 10px;\n}\n", ""]);
+exports.push([module.i, "body {\n  background-color: #EDEEF0;\n  margin: 0;\n  font-family: -apple-system,BlinkMacSystemFont,Roboto,Helvetica Neue,sans-serif;\n}\n\na {\n  text-decoration: none;\n  cursor: pointer;\n}\n\n.page-header {\n  height: 42px;\n  background-color: #4A76A8;\n}\n\n.page-content {\n  margin: 0 auto;\n  width: 960px;\n  display: flex;\n  height: 100%;\n  position: sticky;\n}\n\n.page-header-content {\n  margin: 0 auto;\n  width: 960px;\n}\n\n.page-header-content-logo {\n  width: 139px;\n}\n\n.page-header-content h2 {\n  margin: 0;\n  padding-top: 5px;\n  color: white;\n}\n\n.page-content-navigation {\n  margin-top: 15px;\n}\n\n.page-content-content {\n  padding-top: 15px;\n  padding-bottom: 2px;\n  min-width: 400px;\n  display: flex;\n}\n\n.page-content-content-wrap {\n  width: 300px;\n  background-color: white;\n  max-height: 100%;\n  border-radius: 2px 2px 0 0;\n  box-shadow: 0 1px 0 0 #d7d8db, 0 0 0 1px #e3e4e8;\n  overflow-y: auto;\n}\n\n.page-content-content-wrap a {\n  color: #285473;\n}\n\n.page-content-content-content {\n  background-color: white;\n  max-height: 100%;\n  border-radius: 2px 2px 0 0;\n  box-shadow: 0 1px 0 0 #d7d8db, 0 0 0 1px #e3e4e8;\n}\n\n.page-content-link {\n  display: block;\n  white-space: nowrap;\n  padding: 10px;\n  color: #285473;\n}\n\n.page-content-link:hover {\n  background-color: #E1E5EB;\n}\n\n.content-item {\n  padding: 10px;\n  height: 30px;\n  box-shadow: 0 1px 0 0 #d7d8db;\n}\n\n.page-content-link-item {\n  display: flex;\n  height: 20px;\n}\n\n.page-content-link-item:hover {\n  background-color: #EDEEF0;\n  cursor: pointer;\n}\n\n.content-item input {\n  border: 0px;\n}\n\ninput[type=\"text\"]:focus {\n  outline: none;\n}\n\n.content-flex {\n  display: flex;\n}\n\n.content-flex-row {\n  align-content: start;\n  flex-wrap: wrap;\n  overflow-y: auto;\n}\n\n.content-flex-column {\n  flex-direction: column;\n  overflow-y: auto;\n}\n\n@media screen and (min-height: 0px) and (max-height: 720px) {\n  .content-flex {\n    height: 480px;\n  }\n  .page-content-content {\n    height: 540px;\n  }\n  .page-content-content-content {\n    width: 680px;\n  }\n}\n\n@media screen and (min-height: 700px) and (max-height: 1500px) {\n  .content-flex {\n    height: 640px;\n  }\n  .page-content-content {\n    height: 700px;\n  }\n  .page-content-content-content {\n    width: 740px;\n  }\n}\n\n.content-flex-modal {\n  display: flex;\n  align-content: start;\n  flex-wrap: wrap;\n  overflow-y: auto;\n  height: 220px;\n}\n\n.content-flex-item {\n  padding-top: 10px;\n  padding-bottom: 10px;\n  height: 80px;\n  width: 100px;\n  text-align: center;\n}\n\n.content-flex-item a {\n  color: black;\n}\n\n.content-flex-item:hover {\n  background-color: #E1E5EB;\n  cursor: pointer;\n}\n\n.content-flex-item-column {\n  width: 480px;\n  text-align: left;\n  height: 30px;\n  padding: 10px;\n}\n\nimg.icon {\n  width: 50px;\n  height: 50px;\n  cursor: pointer;\n}\n\nimg.item {\n  width: 20px;\n  height: 20px;\n  margin-right: 5px;\n}\n\n.modal-container {\n  position: fixed;\n  left: 0;\n  top: 0;\n  text-align: center;\n  background-color: rgba(0, 0, 0, 0.7);\n  width: 100%;\n  height: 100%;\n  z-index: 10;\n}\n\n.modal {\n  cursor: auto;\n  z-index: 100;\n  height: 336px;\n  width: 500px;\n  background-color: white;\n  margin: 116px auto;\n  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.35);\n  outline: none;\n  border-radius: 5px;\n}\n\n.modal-header {\n  border-radius: 5px 5px 0 0;\n  width: 100%;\n  height: 54px;\n  background-color: #4A76A8;\n}\n\n.modal-header-title {\n  padding: 1px;\n}\n\n.modal-header-title p {\n  color: white;\n}\n\n.modal-content {\n  padding: 20px;\n  height: 240px;\n  background-color: #F7F7F7;\n}\n\n.modal-content__img img {\n  width: 100px;\n}\n\n.vk-button {\n  background-color: #5b88bd;\n  text-decoration: none;\n  float: right;\n  padding: 7px 16px 8px;\n  margin-left: 10px;\n  font-size: 12.5px;\n  display: inline-block;\n  zoom: 1;\n  cursor: pointer;\n  white-space: nowrap;\n  outline: none;\n  font-family: -apple-system,BlinkMacSystemFont,Roboto,Helvetica Neue,sans-serif;\n  vertical-align: top;\n  line-height: 15px;\n  text-align: center;\n  color: #fff;\n  border: 0;\n  border-radius: 4px;\n  box-sizing: border-box;\n}\n\n.vk-input {\n  background: #fff;\n  color: #000;\n  border: 1px solid #c0cad5 !important;\n  padding: 5px;\n  vertical-align: top;\n  margin: 0;\n  overflow: auto;\n  outline: 0;\n  line-height: 150%;\n  word-wrap: break-word;\n  width: 200px;\n  cursor: text;\n}\n\n.modal-footer {\n  margin-top: 80px;\n}\n\n.content-item__title {\n  cursor: text;\n  text-align: center;\n  max-width: 90px;\n  margin: 0 auto;\n  max-height: 38px;\n  text-overflow: ellipsis;\n  white-space: pre-wrap;\n  overflow: hidden;\n}\n\n.content-item__title:hover {\n  white-space: normal;\n  overflow: visible;\n  word-break: break-all;\n}\n\n.content-item__title-col {\n  font-size: 1em;\n  float: left;\n  max-width: 300px;\n  text-align: left;\n}\n\n.content-item__input {\n  border: 1px solid #c0cad5;\n  cursor: text;\n  margin-top: 4px;\n  width: 100%;\n  outline: 0;\n  line-height: 150%;\n}\n\n.page-content-item__input {\n  width: 100px;\n  border: 1px solid #c0cad5;\n  cursor: text;\n  outline: 0;\n  line-height: 150%;\n}\n\n.item-right {\n  cursor: pointer;\n  padding: 5px;\n  width: 20px;\n  height: 20px;\n  float: right;\n  vertical-align: top;\n}\n\n.item-left {\n  cursor: pointer;\n  padding: 5px;\n  width: 20px;\n  height: 20px;\n  float: left;\n  vertical-align: top;\n}\n\n.item-name {\n  float: left;\n  padding: 5px;\n  height: 20px;\n}\n\n.checked {\n  background-color: #E1E5EB;\n}\n\n.button-secondary {\n  background-color: #e5ebf1;\n  color: #55677d;\n}\n\n.node-layout {\n  margin-left: 10px;\n}\n\n.search {\n  width: 120px;\n}\n\n.tags {\n  margin: 5px;\n  display: flex;\n  flex-wrap: wrap;\n  justify-content: space-between;\n}\n\n.tag-button {\n  margin-bottom: 5px;\n  margin-left: 2px;\n}\n\n.sort-button {\n  text-decoration: none;\n  float: left;\n  padding: 7px 16px 8px;\n  font-size: 12.5px;\n  display: inline-block;\n  zoom: 1;\n  cursor: pointer;\n  white-space: nowrap;\n  outline: none;\n  font-family: -apple-system,BlinkMacSystemFont,Roboto,Helvetica Neue,sans-serif;\n  vertical-align: top;\n  line-height: 15px;\n  text-align: center;\n  border: 0;\n  box-sizing: border-box;\n  background-color: white;\n}\n\n.sort-button-selected {\n  border-bottom: #5b88bd 2px solid;\n}\n\n.line {\n  display: inline-block;\n  width: 10px;\n  height: 10px;\n  border-radius: 10px;\n  margin: 2px;\n  background-color: black;\n}\n\n.load {\n  margin: auto;\n}\n\n.load .line:nth-last-child(1) {\n  animation: loadingC .6s .1s linear infinite;\n}\n\n.load .line:nth-last-child(2) {\n  animation: loadingC .6s .2s linear infinite;\n}\n\n.load .line:nth-last-child(3) {\n  animation: loadingC .6s .3s linear infinite;\n}\n\n@keyframes loadingC {\n  0 {\n    transform: translate(0, 0);\n  }\n  50% {\n    transform: translate(0, 15px);\n  }\n  100% {\n    transform: translate(0, 0);\n  }\n}\n\n.span-right {\n  float: right;\n}\n\n.vk-switch {\n  background-color: #bccde0;\n  width: 28px;\n  height: 9px;\n  border-radius: 45px;\n  float: right;\n  margin-top: 3px;\n}\n\n.vk-switch::after {\n  background-color: #5181b8;\n  left: 13px;\n  content: '';\n  float: left;\n  position: relative;\n  width: 13px;\n  height: 13px;\n  border-radius: 50%;\n  border: 1px solid #5181b8;\n  top: -3px;\n  transition: left 0.3s ease;\n}\n\n.vk-switch-left::after {\n  border: 1px solid #b4bfcc;\n  background-color: #fff;\n  left: 0;\n}\n\n.vk-switch-container {\n  margin: 2px;\n  margin-left: 10px;\n}\n\n.sort-row {\n  padding-left: 0;\n  padding-right: 0;\n}\n", ""]);
 
 // exports
 

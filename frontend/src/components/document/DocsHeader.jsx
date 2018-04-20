@@ -138,7 +138,7 @@ class DocsHeaderComponent extends React.Component {
         }
         if (this.state.isLang) {
             return <React.Fragment>
-                <button className="vk-button button-secondary" onClick={ this.handleLang }>{language.cancel[this.props.lang]}</button>
+                <button className="vk-button button-secondary" onClick={ this.handleLang }>{language.back[this.props.lang]}</button>
                 <div className="item-name span-right">eng</div>
                 <div className="item-right vk-switch-container" onClick={ this.handleSwitchLang }>
                     <div className={`vk-switch ${this.props.lang === 'en' ? '' : 'vk-switch-left'}`} />
