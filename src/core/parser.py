@@ -8,7 +8,10 @@ from pdfminer.pdfinterp import PDFResourceManager, PDFPageInterpreter
 from pdfminer.converter import TextConverter
 from pdfminer.layout import LAParams
 from pdfminer.pdfpage import PDFPage
-from tesserocr import PyTessBaseAPI
+try:
+    from tesserocr import PyTessBaseAPI
+except:
+    PyTessBaseAPI = None
 from io import StringIO
 
 class Parser:
