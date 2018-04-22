@@ -12,6 +12,8 @@ from django.utils.translation import ugettext_lazy as _
 class User(AbstractUser):
     avatar = models.ImageField(u'фото', blank=True, upload_to=u'avatars', default='avatars/default-avatar.png')
     vk_id = models.IntegerField(verbose_name=(u'vk_id'), null=True)
+    lang = models.CharField(choices=((_(u'en'), u'en'), (_(u'ru'), u'ru')), max_length=8, default=_(u'en'),
+                            verbose_name=u'language')
 
     class Meta:
         verbose_name = _(u'user')

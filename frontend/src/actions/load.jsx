@@ -1,5 +1,6 @@
 import { CALL_API, getJSON } from 'redux-api-middleware';
 import cookie from 'react-cookies';
+import {LOAD_USER_SUCCESS} from './page';
 
 export function apiLoad(url, method, types, body, normalizer, isSimple, id, root) {
     return {

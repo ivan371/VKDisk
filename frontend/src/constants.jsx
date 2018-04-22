@@ -10,9 +10,17 @@ export const urls = {
         docsUrl: '/api/v1/documents/',
         unsortedDocsUrl: '/api/v1/documents/?root',
     },
+    elastic: {
+        customSearchUsl: '/api/v1/list?'
+    },
+    user: {
+        currentUserUrl: '/api/v1/users/current/',
+        userUrl: '/api/v1/users/'
+    }
 };
 
 export const makeUrls = {
+    makeUserUrl: id => `${urls.user.userUrl}${id}/`,
     makeFilterDocsFolder: id => `${urls.docs.docsUrl}?folder=${id}`,
     makeFilterFoldersFolder: id => `${urls.folder.customFolderUrl}?folder=${id}`,
     makeRootFoldersFolder: () => `${urls.folder.customFolderUrl}?root`,
@@ -35,8 +43,48 @@ export const makeUrls = {
     makeFilterChatsSortMore: (page, name, sort) => `${urls.folder.chatFolderUrl}filter&name=${name}&page=${page}&sort=${sort}`,
     makeTransferFolder: id => `${urls.folder.customFolderUrl + id}/?replace`,
     makeFolderRecursive: id => `${urls.folder.customFolderUrl + id}/?recursive`,
+    makeDocsMoreSort: (id, sort, filter, reverse, page, value) => `${urls.docs.docsUrl}?folder=${id}&page=${page}&filter&&${filter}=${value}&sort=${sort}&${reverse ? 'reverse' : ''}`,
+    makeDocsMoreSortRoot: (sort, filter, reverse, page, value) => `${urls.docs.docsUrl}?root&page=${page}&filter&&${filter}=${value}&sort=${sort}&${reverse ? 'reverse' : ''}`,
 };
 
+export const makeElasticUrls = {
+    makeFilterSortDocs: (id, sort, filter, reverse) => `${urls.elastic.customSearchUsl}search=${filter}&ordering=${reverse ? '-' : ''}${sort}&folder_id=${id}`,
+    makeFilterSortDocsRoot: (sort, filter, reverse) => `${urls.elastic.customSearchUsl}search=${filter}&ordering=${reverse ? '-' : ''}${sort}&folder_type=chat`,
+    makeDocsMore: (id, sort, filter, reverse, page) => `${urls.elastic.customSearchUsl}search=${filter}&ordering=${reverse ? '-' : ''}${sort}&folder_id=${id}&page=${page}`,
+    makeDocsMoreRoot: (sort, filter, reverse, page) => `${urls.elastic.customSearchUsl}search=${filter}&ordering=${reverse ? '-' : ''}${sort}&folder_type=chat&page=${page}`
+};
+
+
+export const makeElastic = {
+    makeFolderElastic: (id, filter, value, sort, reverse, isElastic) => {
+        if (isElastic) {
+            return makeElasticUrls.makeFilterSortDocs(id, sort, filter, reverse);
+        } else {
+            return makeUrls.makeFilterSortDocs(id, filter, value, sort, reverse);
+        }
+    },
+    makeRootElastic: (filter, value, sort, reverse, isElastic) => {
+        if (isElastic) {
+            return makeElasticUrls.makeFilterSortDocsRoot(sort, filter, reverse);
+        } else {
+            return makeUrls.makeFilterRootSortDocs(filter, value, sort, reverse);
+        }
+    },
+    makeFolderElasticMore: (id, filter, value, sort, reverse, isElastic, page) => {
+        if (isElastic) {
+            return makeElasticUrls.makeDocsMore(id, sort, filter, reverse, page);
+        } else {
+            return makeUrls.makeDocsMoreSort(id, sort, filter, reverse, page, value);
+        }
+    },
+    makeRootElasticMore: (filter, value, sort, reverse, isElastic, page) => {
+        if (isElastic) {
+            return makeElasticUrls.makeDocsMoreRoot(sort, filter, reverse, page);
+        } else {
+            return makeUrls.makeDocsMoreSortRoot(sort, filter, reverse, page, value);
+        }
+    },
+};
 export const apps = {
     modal: 'modal',
     folder: 'folder',
@@ -74,16 +122,20 @@ export const format = {
     docx: '/static/img/formats/docx.png',
     rtf: '/static/img/formats/docx.png',
     pdf: '/static/img/formats/pdf.png',
+    PDF: '/static/img/formats/pdf.png',
     pptx: '/static/img/formats/pptx.png',
     ppt: '/static/img/formats/pptx.png',
+    PPT: '/static/img/formats/pptx.png',
     xls: '/static/img/formats/xls.png',
     xlsx: '/static/img/formats/xls.png',
     jpg: '/static/img/formats/jpg.png',
+    JPG: '/static/img/formats/jpg.png',
     png: '/static/img/formats/png.png',
     txt: '/static/img/formats/txt.png',
     tex: '/static/img/formats/tex.png',
     py: '/static/img/formats/py.png',
     gif: '/static/img/formats/gif.png',
+    GIF: '/static/img/formats/gif.png',
     zip: '/static/img/formats/zip.png',
     djvu: '/static/img/formats/djvu.png',
     rar: '/static/img/formats/rar.png',
@@ -107,6 +159,9 @@ export const items = {
     calendar: '/static/img/calendar.png',
     arrow: '/static/img/arrow.png',
     arrowRight: '/static/img/arrowRight.png',
+    on: '/static/img/on.png',
+    off: '/static/img/off.png',
+    settings: '/static/img/settings.png'
 };
 
 export function makeFormat(fileUrl) {
@@ -139,42 +194,42 @@ export const tags = [
     {
         id: 1,
         name: 'pdf',
-        value: 'pdf',
+        value: '.pdf',
         type: 'filter',
         filterName: 'name',
     },
     {
         id: 2,
         name: 'doc',
-        value: 'doc',
+        value: '.doc',
         type: 'filter',
         filterName: 'name',
     },
     {
         id: 3,
         name: 'jpg',
-        value: 'jpg',
+        value: '.jpg',
         type: 'filter',
         filterName: 'name',
     },
     {
         id: 4,
         name: 'png',
-        value: 'png',
+        value: '.png',
         type: 'filter',
         filterName: 'name',
     },
     {
         id: 5,
         name: 'tex',
-        value: 'tex',
+        value: '.tex',
         type: 'filter',
         filterName: 'name',
     },
     {
         id: 7,
         name: 'ppt',
-        value: 'ppt',
+        value: '.ppt',
         type: 'filter',
         filterName: 'name',
     },
@@ -185,6 +240,6 @@ export const tagType = {
 };
 
 export const sort = {
-    name: 'name',
-    date: 'date',
+    name: 'title',
+    date: 'created',
 };
