@@ -24,7 +24,6 @@ h1{
     border-radius: 2px 2px 0 0;
     box-shadow: 0 1px 0 0 #d7d8db, 0 0 0 1px #e3e4e8;
     padding: 1.25rem;
-    height: 190px;
 }
 .page-header-content{
     margin: 0 auto;
@@ -41,7 +40,6 @@ h1{
 .vk-button{
     background-color: #5b88bd;
     text-decoration: none;
-    float: left;
     padding: 7px 16px 8px;
     font-size: 12.5px;
     display: inline-block;
@@ -57,6 +55,7 @@ h1{
     border: 0;
     border-radius: 4px;
     box-sizing: border-box;
+    margin-right: 5px;
 }
 .vk-button__span{
     float: right;
@@ -76,6 +75,10 @@ h1{
     background: #fff;
     border-radius: 2px;
     box-shadow: 0 1px 0 0 #d7d8db;
+}
+
+.page-content__comment {
+    font-size: 11px;
 }
 
 hr{
