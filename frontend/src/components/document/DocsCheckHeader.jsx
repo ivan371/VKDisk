@@ -76,7 +76,6 @@ export default class DocsCheckHeader extends React.Component {
                     <React.Fragment>
                         <button className="vk-button" onClick={ this.handleOpenCopy }>{language.copy[this.props.lang]}</button>
                         <button className="vk-button" onClick={ this.handleOpenReplace }>{language.replace[this.props.lang]}</button>
-                        {/*<button className="vk-button" onClick={ this.handleOpenDelete }>{language.delete[this.props.lang]}</button>*/}
                     </React.Fragment> : null}
                 { this.props.countCheckFile === 1 && !this.props.countCheckFolder ? <button className="vk-button" onClick={ this.handleRenameDoc }>{language.rename[this.props.lang]}</button> : null }
                 { this.props.countCheckFolder === 1 && !this.props.countCheckFile ? <button className="vk-button" onClick={ this.handleRenameFolder }>{language.rename[this.props.lang]}</button> : null }

@@ -64,9 +64,6 @@ class DocsHeaderComponent extends React.Component {
             }
         }
     }
-    handleChange = (e) => {
-        this.setState({ [e.target.name]: e.target.value });
-    };
 
     handleLang = () => {
         this.setState({ isLang: !this.state.isLang });
@@ -90,16 +87,6 @@ class DocsHeaderComponent extends React.Component {
                 this.props.clearFilter(apps.docs);
             }
         });
-    };
-
-    handleOpenCopy = () => {
-        this.props.modalOpen();
-        this.props.setModal(modalType.folderTransfer);
-    };
-
-    handleOpenReplace = () => {
-        this.props.modalOpen();
-        this.props.setModal(modalType.folderReplace);
     };
 
 

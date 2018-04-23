@@ -98,4 +98,8 @@ class FolderViewSet(viewsets.ModelViewSet):
                     q = q.order_by('-id')
                 else:
                     q = q.order_by('id')
+            if self.request.query_params['sort'] == 'name':
+                q = q.order_by('title')
+        else:
+            q = q.order_by('id')
         return q

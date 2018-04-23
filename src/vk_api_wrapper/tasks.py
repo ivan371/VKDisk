@@ -1,10 +1,15 @@
 import vk_api
 from celery.task import task
 from django.conf import settings
+from django.contrib.auth import get_user_model
 from django.db import IntegrityError
+from social_django.utils import load_strategy
 
 from core.models import UserRequestLog
 from .models import VkDialogsList, VkDialog, VkMessagesList, VkAttachmentFactory, VkDocsList
+
+
+UserModel = get_user_model()
 
 VK_DIALOG_COUNT = 200
 VK_MESSAGES_COUNT = 200
@@ -91,6 +96,7 @@ def download_dialog_history(access_token, user_id, chat_id, is_group_chat, media
     vk_dialog = VkDialog.objects.select_related('chatfolder').get(user_id=user_id,
                                                                   chat_id=chat_id,
                                                                   is_chat=is_group_chat)
+    user_vk_id = UserModel.objects.filter(pk=user_id).values('vk_id').get()['vk_id']
     vk_messages_history, created = VkMessagesList.objects.get_or_create(dialog=vk_dialog)
     api = get_vk_api(access_token)
     params = {
@@ -116,6 +122,7 @@ def download_dialog_history(access_token, user_id, chat_id, is_group_chat, media
                 attach = VkAttachmentFactory.parse_message(item['attachment'])
                 attach.user_id = user_id
                 attach.vk_dialog = vk_dialog
+                attach.is_owner = attach.is_ownered_by(user_vk_id)
                 attach.save()
             except IntegrityError:
                 pass
@@ -174,14 +181,13 @@ def update_data_on_online_users(time_to_see):
         .prefetch_related('user__social_auth').all()
     )
     for r in requests:
-        data = None
+        access_token = None
         for backend in r.user.social_auth.all():
             if backend.provider == 'vk-oauth2':
-                data = backend.extra_data
+                access_token = backend.get_access_token(load_strategy())
                 break
         else:
             continue
         user_id = r.user.pk
-        access_token = data['access_token']
         download_dialog_list.apply_async(kwargs={'access_token': access_token, 'user_id': user_id})
         download_user_documents.apply_async(kwargs={'access_token': access_token, 'user_id': user_id})
