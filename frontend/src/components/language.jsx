@@ -47,6 +47,10 @@ export const language = {
         ru: 'Отменить',
         en: 'Cancel'
     },
+    back: {
+        ru: 'Назад',
+        en: 'Back'
+    },
     name: {
         ru: 'Имя',
         en: 'Name'
@@ -70,5 +74,13 @@ export const language = {
     copyFiles: {
         ru: 'Копировать файлы',
         en: 'Copy files'
+    },
+    deleteFiles: {
+        ru: 'Удалить файлы',
+        en: 'Delete files'
+    },
+    reallyDeleteFiles: {
+        ru: (count) => `Вы действительно хотите удалить ${count} файл?`,
+        en: (count) => `Are you really want to delete ${count} files?`
     }
 };

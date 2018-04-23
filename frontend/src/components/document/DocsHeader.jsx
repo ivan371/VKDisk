@@ -64,9 +64,6 @@ class DocsHeaderComponent extends React.Component {
             }
         }
     }
-    handleChange = (e) => {
-        this.setState({ [e.target.name]: e.target.value });
-    };
 
     handleLang = () => {
         this.setState({ isLang: !this.state.isLang });
@@ -90,16 +87,6 @@ class DocsHeaderComponent extends React.Component {
                 this.props.clearFilter(apps.docs);
             }
         });
-    };
-
-    handleOpenCopy = () => {
-        this.props.modalOpen();
-        this.props.setModal(modalType.folderTransfer);
-    };
-
-    handleOpenReplace = () => {
-        this.props.modalOpen();
-        this.props.setModal(modalType.folderReplace);
     };
 
 
@@ -138,7 +125,7 @@ class DocsHeaderComponent extends React.Component {
         }
         if (this.state.isLang) {
             return <React.Fragment>
-                <button className="vk-button button-secondary" onClick={ this.handleLang }>{language.cancel[this.props.lang]}</button>
+                <button className="vk-button button-secondary" onClick={ this.handleLang }>{language.back[this.props.lang]}</button>
                 <div className="item-name span-right">eng</div>
                 <div className="item-right vk-switch-container" onClick={ this.handleSwitchLang }>
                     <div className={`vk-switch ${this.props.lang === 'en' ? '' : 'vk-switch-left'}`} />

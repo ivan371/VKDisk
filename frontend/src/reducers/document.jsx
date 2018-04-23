@@ -2,6 +2,7 @@ import update from 'react-addons-update';
 import {
     CHECK_ALL,
     CHECK_FILE, DELETE_DOCS_SUCCESS, DOCS_BULK_CREATE_SUCCESS, DOCS_BULK_UPDATE, DOCS_BULK_UPDATE_SUCCESS, DOCS_UNMOUNT,
+    LOAD_CHAT_ROOT,
     LOAD_DOCS,
     LOAD_DOCS_MORE, LOAD_DOCS_MORE_START,
     LOAD_DOCS_SUCCESS, RENAME_DOC,
@@ -59,6 +60,12 @@ export default function document(store = initalState, action) {
             return update(store, {
                 isLoading: {
                     $set: false,
+                },
+            });
+        case LOAD_CHAT_ROOT:
+            return update(store, {
+                isLoading: {
+                    $set: true,
                 },
             });
         case LOAD_DOCS_SUCCESS:

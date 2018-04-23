@@ -8,7 +8,7 @@ import {
     LOAD_RECURSIVE_FOLDERS_SUCCESS, LOAD_UNTREE_FOLDERS_SUCCESS, LOAD_ROOT, CHECK_FOLDER, CHECK_ALL_FOLDERS,
     RENAME_FOLDER, DELETE_FOLDER_SUCCESS,
 } from '../actions/folder';
-import { DOCS_UNMOUNT } from '../actions/document';
+import {DOCS_UNMOUNT, LOAD_CHAT_ROOT} from '../actions/document';
 import { folderType } from '../constants';
 
 const initalState = {
@@ -283,6 +283,12 @@ export default function folder(store = initalState, action) {
                 // folderList: {
                 //     $set: [],
                 // },
+            });
+        case LOAD_CHAT_ROOT:
+            return update(store, {
+                isTileLoading: {
+                    $set: false,
+                }
             });
         case TRANSFER_UNMOUNT:
             return update(store, {

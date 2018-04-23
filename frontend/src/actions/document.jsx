@@ -20,6 +20,7 @@ export const DELETE_DOCS = 'DELETE_DOCS';
 export const DELETE_DOCS_SUCCESS = 'DELETE_DOCS_SUCCESS';
 export const DELETE_DOCS_ERROR = 'DELETE_DOCS_ERROR';
 export const RENAME_DOC = 'RENAME_DOC';
+export const LOAD_CHAT_ROOT = 'LOAD_CHAT_ROOT';
 
 export function renameDoc() {
     return {
@@ -79,4 +80,10 @@ export function checkAll() {
     return {
         type: CHECK_ALL,
     };
+}
+
+export function loadChatRoot() {
+    return {
+        type: LOAD_CHAT_ROOT,
+    }
 }

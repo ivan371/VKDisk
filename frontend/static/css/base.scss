@@ -146,6 +146,7 @@ input[type="text"]:focus {
 }
 .content-flex-item:hover{
     background-color: $hover-color;
+    cursor: pointer;
 }
 .content-flex-item-column{
     width: 480px;
@@ -257,6 +258,7 @@ img.item{
 .content-item__title:hover{
     white-space: normal;
     overflow: visible;
+    word-break: break-all;
 }
 .content-item__title-col{
     font-size: 1em;
@@ -402,4 +404,8 @@ img.item{
 .vk-switch-container{
     margin: 2px;
     margin-left: 10px;
+}
+.sort-row{
+    padding-left: 0;
+    padding-right: 0;
 }

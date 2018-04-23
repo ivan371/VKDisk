@@ -5,6 +5,7 @@ import PropTypes from 'prop-types';
 import { modalOpen } from '../../actions/modal';
 import { bulkUpdateDocs } from '../../actions/document';
 import { makeUrls } from '../../constants';
+import {language} from '../language';
 
 class DocsDeleteComponent extends React.Component {
     static propTypes = {
@@ -12,6 +13,7 @@ class DocsDeleteComponent extends React.Component {
         modalOpen: PropTypes.func.isRequired,
         bulkUpdateDocs: PropTypes.func.isRequired,
         checkList: PropTypes.array.isRequired,
+        lang: PropTypes.string.isRequired,
     };
 
     handleClose = () => {
@@ -28,15 +30,15 @@ class DocsDeleteComponent extends React.Component {
             <React.Fragment>
                 <div className="modal-header">
                     <div className="modal-header-title">
-                        <p>Delete files</p>
+                        <p>{language.deleteFiles[this.props.lang]}</p>
                     </div>
                 </div>
                 <div className="modal-content">
                     <div className="content-flex-modal">
-                        <p>Are you realy want to delete {this.props.count} files?</p>
+                        <p>{language.reallyDeleteFiles[this.props.lang](this.props.count)}</p>
                     </div>
-                    <button className="vk-button" onClick={ this.handleBulkDelete }>Delete</button>
-                    <button className="vk-button" onClick={ this.handleClose } >Cancel</button>
+                    <button className="vk-button" onClick={ this.handleBulkDelete }>{language.delete[this.props.lang]}</button>
+                    <button className="vk-button" onClick={ this.handleClose } >{language.cancel[this.props.lang]}</button>
                 </div>
             </React.Fragment>
         );
@@ -47,6 +49,7 @@ class DocsDeleteComponent extends React.Component {
 const mapStoreToProps = state => ({
     count: state.document.countCheck,
     checkList: state.document.checkList,
+    lang: state.page.lang,
 });
 
 const mapDispatchToProps = dispatch => ({
