@@ -140,6 +140,8 @@ input[type="text"]:focus {
     height: 80px;
     width: 100px;
     text-align: center;
+    overflow: hidden;
+    position: relative;
 }
 .content-flex-item a{
     color: black;
@@ -148,12 +150,14 @@ input[type="text"]:focus {
     background-color: $hover-color;
     cursor: pointer;
     z-index: 2;
+    overflow: visible;
 }
 .content-flex-item-column{
     width: 480px;
     text-align: left;
     height: 30px;
     padding: 10px;
+    overflow: visible;
 }
 img.icon{
     width: 50px;
@@ -249,16 +253,16 @@ img.item{
 .content-item__title{
     cursor: text;
     text-align: center;
+    padding: 0 5px;
     max-width: 90px;
     margin: 0 auto;
-    max-height: 38px;
     text-overflow: ellipsis;
     white-space: pre-wrap;
     overflow: hidden;
 }
-.content-item__title:hover{
+.content-flex-item:hover .content-item__title{
     white-space: normal;
-    overflow: visible;
+    background: $hover-color;
     word-break: break-all;
 }
 .content-item__title-col{
