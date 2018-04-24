@@ -147,6 +147,7 @@ input[type="text"]:focus {
 .content-flex-item:hover{
     background-color: $hover-color;
     cursor: pointer;
+    z-index: 2;
 }
 .content-flex-item-column{
     width: 480px;
