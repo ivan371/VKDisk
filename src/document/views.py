@@ -173,7 +173,7 @@ class DocumentViewSet(viewsets.ModelViewSet):
                 else:
                     q = q.order_by('created')
         else:
-            q = q.order_by('-created')
+            q = q.order_by('created')
         return q
 
 

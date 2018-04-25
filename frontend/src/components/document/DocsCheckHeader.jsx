@@ -52,7 +52,7 @@ export default class DocsCheckHeader extends React.Component {
         if (this.props.countCheckFile) {
             return (<React.Fragment>
                 <div className="item-name">{language.files[this.props.lang](this.props.countCheckFile)}</div>
-                <img src={ items.clear } className="item-left" onClick={ this.handleClearAllFiles } />
+                <img src={ items.clear } className="item-left cross" onClick={ this.handleClearAllFiles } />
             </React.Fragment>);
         }
         return null;
@@ -62,7 +62,7 @@ export default class DocsCheckHeader extends React.Component {
         if (this.props.countCheckFolder) {
             return (<React.Fragment>
                 <div className="item-name">{language.files[this.props.lang](this.props.countCheckFolder)}</div>
-                <img src={ items.clear } className="item-left" onClick={ this.handleClearAllFolders } />
+                <img src={ items.clear } className="item-left cross" onClick={ this.handleClearAllFolders } />
             </React.Fragment>);
         }
         return null;

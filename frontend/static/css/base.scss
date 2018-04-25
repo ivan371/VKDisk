@@ -79,8 +79,14 @@ a{
     box-shadow: 0 1px 0 0 #d7d8db;
 }
 .page-content-link-item {
-    display: flex;
+    //display: flex;
     height: 20px;
+}
+.page-content-link-item div{
+    float: left;
+}
+.page-content-link-item div:nth-child(3){
+    float: right;
 }
 .page-content-link-item:hover{
     background-color: #EDEEF0;
@@ -413,4 +419,13 @@ img.item{
 .sort-row{
     padding-left: 0;
     padding-right: 0;
+}
+.cross{
+    padding: 10px 0;
+    width: 10px;
+    height: 10px;
+}
+img.cross-right{
+    width: 10px;
+    height: 10px;
 }

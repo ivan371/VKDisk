@@ -47,11 +47,6 @@ export default class DocsSortHeader extends React.Component {
             <img className="item-left sort-row" src={this.renderSortNameDirection()} />
             <button className={ `sort-button${this.props.sort === sort.date ? ' sort-button-selected' : ''}` } value={sort.date} onClick={ this.handleSetSort }>Date</button>
             <img className="item-left sort-row" src={this.renderSortDateDirection()} />
-            <button className="vk-button button-secondary" onClick={ this.handleSort }>{language.cancel[this.props.lang]}</button>
-            <button className={ `sort-button${this.props.sort === sort.name ? ' sort-button-selected' : ''}` } value={sort.name} onClick={ this.handleSetSort }>Name</button>
-            <img className="item-left" src={this.renderSortNameDirection()} />
-            <button className={ `sort-button${this.props.sort === sort.date ? ' sort-button-selected' : ''}` } value={sort.date} onClick={ this.handleSetSort }>Date</button>
-            <img className="item-left" src={this.renderSortDateDirection()} />
         </React.Fragment>)
     }
 }

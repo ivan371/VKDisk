@@ -233,6 +233,13 @@ export const tags = [
         type: 'filter',
         filterName: 'name',
     },
+    {
+        id: 9,
+        name: 'gif',
+        value: '.gif',
+        type: 'filter',
+        filterName: 'name',
+    },
 ];
 
 export const tagType = {
