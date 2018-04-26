@@ -269,6 +269,7 @@ img.item{
 .content-flex-item:hover .content-item__title{
     white-space: normal;
     background: $hover-color;
+    overflow: visible;
     word-break: break-all;
 }
 .content-item__title-col{
