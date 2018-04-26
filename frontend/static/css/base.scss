@@ -79,8 +79,14 @@ a{
     box-shadow: 0 1px 0 0 #d7d8db;
 }
 .page-content-link-item {
-    display: flex;
+    //display: flex;
     height: 20px;
+}
+.page-content-link-item div{
+    float: left;
+}
+.page-content-link-item div:nth-child(3){
+    float: right;
 }
 .page-content-link-item:hover{
     background-color: #EDEEF0;
@@ -140,6 +146,8 @@ input[type="text"]:focus {
     height: 80px;
     width: 100px;
     text-align: center;
+    overflow: hidden;
+    position: relative;
 }
 .content-flex-item a{
     color: black;
@@ -147,12 +155,15 @@ input[type="text"]:focus {
 .content-flex-item:hover{
     background-color: $hover-color;
     cursor: pointer;
+    z-index: 2;
+    overflow: visible;
 }
 .content-flex-item-column{
     width: 480px;
     text-align: left;
     height: 30px;
     padding: 10px;
+    overflow: visible;
 }
 img.icon{
     width: 50px;
@@ -248,15 +259,16 @@ img.item{
 .content-item__title{
     cursor: text;
     text-align: center;
+    padding: 0 5px;
     max-width: 90px;
     margin: 0 auto;
-    max-height: 38px;
     text-overflow: ellipsis;
     white-space: pre-wrap;
     overflow: hidden;
 }
-.content-item__title:hover{
+.content-flex-item:hover .content-item__title{
     white-space: normal;
+    background: $hover-color;
     overflow: visible;
     word-break: break-all;
 }
@@ -408,4 +420,13 @@ img.item{
 .sort-row{
     padding-left: 0;
     padding-right: 0;
+}
+.cross{
+    padding: 10px 0;
+    width: 10px;
+    height: 10px;
+}
+img.cross-right{
+    width: 10px;
+    height: 10px;
 }
