@@ -1,5 +1,8 @@
 import update from 'react-addons-update';
-import {SET_FILTER, SET_SORT, SET_LINK, CHANGE_VIEW, CLEAR_FILTER, SORT_DIRECTION} from '../actions/page';
+import {
+    SET_FILTER, SET_SORT, SET_LINK, CHANGE_VIEW, CLEAR_FILTER, SORT_DIRECTION, SET_ELASTIC,
+    LOAD_USER_SUCCESS, SWITCH_LANG
+} from '../actions/page';
 import { view } from '../constants';
 
 const initalStore = {
@@ -9,11 +12,11 @@ const initalStore = {
     },
     sort: {
         folder: {
-            name: 'date',
+            name: 'created',
             isDirect: true
         },
         docs: {
-            name: 'date',
+            name: 'created',
             isDirect: true,
         },
     },
@@ -25,7 +28,10 @@ const initalStore = {
         global: '',
         modal: '',
     },
+    isElastic: false,
     view: view.row,
+    lang: 'en',
+    id: null,
 };
 
 export default function page(store = initalStore, action) {
@@ -100,6 +106,29 @@ export default function page(store = initalStore, action) {
                     $set: view.row,
                 },
             });
+        case SET_ELASTIC:
+            return update(store, {
+                isElastic: {
+                    $set: !store.isElastic
+                },
+            });
+        case SWITCH_LANG: {
+            return update(store, {
+                lang: {
+                    $set: action.lang,
+                },
+            });
+        }
+        case LOAD_USER_SUCCESS: {
+            return update(store, {
+                lang: {
+                    $set: action.payload.lang,
+                },
+                id: {
+                    $set: action.payload.id,
+                }
+            });
+        }
         default:
             return store;
     }

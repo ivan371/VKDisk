@@ -1,6 +1,7 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import {apps, dragSource, folderType, items, makeUrls} from '../../constants';
+import {apps, dragSource, folderType, items, makeUrls, modalType, sort} from '../../constants';
+import {language} from '../language';
 
 export default class RowHeaderComponent extends React.Component {
     static propTypes = {
@@ -15,12 +16,26 @@ export default class RowHeaderComponent extends React.Component {
         source: PropTypes.string,
         id: PropTypes.number,
         root: PropTypes.number,
+        lang: PropTypes.string.isRequired,
+        modalOpen: PropTypes.func.isRequired,
+        setModal: PropTypes.func.isRequired,
+        countDocs: PropTypes.number.isRequired,
+        sortDirect: PropTypes.bool.isRequired,
+        changeSortDirection: PropTypes.func.isRequired,
+        sort: PropTypes.string.isRequired,
     };
 
     state = {
         filter: this.props.filter,
         filterSelect: this.props.filterSelect,
         isSort: false,
+    };
+
+    handleOpenDelete = () => {
+        if (this.props.countDocs) {
+            this.props.modalOpen();
+            this.props.setModal(modalType.documentDelete);
+        }
     };
 
     handleSortOpen = () => {
@@ -55,7 +70,12 @@ export default class RowHeaderComponent extends React.Component {
     };
 
     handleSetSort = (e) => {
-        this.props.setSort(e.target.value, apps.folder);
+        if(this.props.sort === e.target.value) {
+            this.props.changeSortDirection(apps.folder);
+        }
+        else {
+            this.props.setSort(e.target.value, apps.folder);
+        }
     };
 
     renderTrash() {
@@ -73,15 +93,29 @@ export default class RowHeaderComponent extends React.Component {
             return (<input
                 className="content-item__input search"
                 type="text"
-                placeholder="Search"
+                placeholder={language.search[this.props.lang]}
                 name="filter"
                 value={this.state.filter}
                 onChange={this.handleChange}
                 onKeyDown={this.handleFilter}
             />);
         } else {
-            return <div className="item-name">Your folders</div>;
+            return <div className="item-name">{language.yourFolder[this.props.lang]}</div>;
         }
+    }
+
+    renderSortNameDirection() {
+        if (!this.props.sortDirect && this.props.sort === sort.name) {
+            return items.sortReverse
+        }
+        return items.sortDirect
+    }
+
+    renderSortDateDirection() {
+        if (!this.props.sortDirect && this.props.sort === sort.date) {
+            return items.sortReverse
+        }
+        return items.sortDirect
     }
 
     renderSort() {
@@ -95,16 +129,23 @@ export default class RowHeaderComponent extends React.Component {
         if (this.state.isSort) {
             return (
                 <div className="content-item">
-                    <button className="vk-button button-secondary" onClick={ this.handleSortOpen }>Cancel</button>
-                    <button className={ `sort-button${this.props.sort === 'name' ? ' sort-button-selected' : ''}` } value="name" onClick={ this.handleSetSort }>Name</button>
-                    <button className={ `sort-button${this.props.sort === 'date' ? ' sort-button-selected' : ''}` } value="date" onClick={ this.handleSetSort }>Date</button>
+                    <button className="vk-button button-secondary" onClick={ this.handleSortOpen }>{language.back[this.props.lang]}</button>
+                    <button className={ `sort-button${this.props.sort === 'title' ? ' sort-button-selected' : ''}` } value="title" onClick={ this.handleSetSort }>Name</button>
+                    <img className="item-left sort-row" src={this.renderSortNameDirection()} />
+                    <button className={ `sort-button${this.props.sort === 'created' ? ' sort-button-selected' : ''}` } value="created" onClick={ this.handleSetSort }>Date</button>
+                    <img className="item-left sort-row" src={this.renderSortDateDirection()} />
                 </div>
             );
         }
         return (
             <div className="content-item">
                 {this.renderSearch()}
-                <img className="item-right" src={ this.renderTrash() } onDragOver={ this.handleDragOver } onDrop={ this.handleDrop } />
+                <img className="item-right"
+                     src={ this.renderTrash() }
+                     onDragOver={ this.handleDragOver }
+                     onDrop={ this.handleDrop }
+                     onClick={ this.handleOpenDelete }
+                />
                 {this.renderSort()}
             </div>
         )

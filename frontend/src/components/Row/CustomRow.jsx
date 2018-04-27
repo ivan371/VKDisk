@@ -10,12 +10,13 @@ import {
 import { apps, dragSource, folderType, items, makeUrls, urls } from '../../constants';
 import Docs from '../document/Docs';
 import { dropOver } from '../../actions/drag';
-import { deleteDocs } from '../../actions/document';
-import {setFilter, setSort} from '../../actions/page';
+import {deleteDocs, loadChatRoot} from '../../actions/document';
+import {changeSortDirection, loadUser, setFilter, setSort} from '../../actions/page';
 import NodeChat from '../tree/NodeChat';
 import NodeRoot from '../tree/NodeRoot';
 import NodeTag from '../tree/NodeTag';
 import RowHeader from './RowHeader';
+import {modalOpen, setModal} from '../../actions/modal';
 
 
 class CustomRowComponent extends React.Component {
@@ -41,6 +42,13 @@ class CustomRowComponent extends React.Component {
         filterFolders: PropTypes.func.isRequired,
         setSort: PropTypes.func.isRequired,
         sort: PropTypes.string.isRequired,
+        lang: PropTypes.string.isRequired,
+        modalOpen: PropTypes.func.isRequired,
+        setModal: PropTypes.func.isRequired,
+        countDocs: PropTypes.number.isRequired,
+        loadChatRoot: PropTypes.func.isRequired,
+        sortDirect: PropTypes.bool.isRequired,
+        changeSortDirection: PropTypes.func.isRequired,
     };
 
     state = {
@@ -48,6 +56,7 @@ class CustomRowComponent extends React.Component {
     };
 
     componentDidMount() {
+        this.props.loadUser(urls.user.currentUserUrl);
         if (this.props.params.hasOwnProperty('id')) {
             if (this.props.folder === folderType.chat) {
                 this.props.loadUnTreeFolders(urls.folder.chatFolderUrl).then(this.scrollStart);
@@ -58,6 +67,7 @@ class CustomRowComponent extends React.Component {
             }
         } else {
             if (this.props.folder === folderType.chat) {
+                this.props.loadChatRoot();
                 this.props.loadUnTreeFolders(urls.folder.chatFolderUrl).then(this.scrollStart);
             }
             if (this.props.folder === folderType.root) {
@@ -69,10 +79,13 @@ class CustomRowComponent extends React.Component {
 
     componentWillReceiveProps(nextProps) {
         if (this.props.filter !== nextProps.filter && this.props.folder === folderType.chat) {
-            this.props.loadUnTreeFolders(makeUrls.makeFilterSortChats(nextProps.filter, this.props.sort));
+            this.props.loadUnTreeFolders(makeUrls.makeFilterSortChats(nextProps.filter, this.props.sort, !this.props.sortDirect));
         }
         if (this.props.sort !== nextProps.sort && this.props.folder === folderType.chat) {
-            this.props.loadUnTreeFolders(makeUrls.makeFilterSortChats(this.props.filter, nextProps.sort));
+            this.props.loadUnTreeFolders(makeUrls.makeFilterSortChats(this.props.filter, nextProps.sort, !this.props.sortDirect));
+        }
+        if (this.props.sortDirect !== nextProps.sortDirect && this.props.folder === folderType.chat) {
+            this.props.loadUnTreeFolders(makeUrls.makeFilterSortChats(this.props.filter, this.props.sort, !nextProps.sortDirect));
         }
     }
 
@@ -81,7 +94,7 @@ class CustomRowComponent extends React.Component {
     }
 
     handleLoadMore = (e) => {
-        this.props.loadFoldersMore(makeUrls.makeFilterChatsSortMore(this.props.page, this.props.filter, this.props.sort));
+        this.props.loadFoldersMore(makeUrls.makeFilterChatsSortMore(this.props.page, this.props.filter, this.props.sort, !this.props.sortDirect));
     };
 
     handleScroll = () => {
@@ -123,6 +136,12 @@ class CustomRowComponent extends React.Component {
                         setSort={this.props.setSort}
                         sort={this.props.sort}
                         root={parseInt(this.props.params.id) || null}
+                        lang={this.props.lang}
+                        modalOpen={this.props.modalOpen}
+                        setModal={this.props.setModal}
+                        countDocs={this.props.countDocs}
+                        sortDirect={this.props.sortDirect}
+                        changeSortDirection={this.props.changeSortDirection}
                     />
                     <div className="content-flex content-flex-column" onScroll={ this.handleScroll }>
                         {this.renderNodeList()}
@@ -147,6 +166,9 @@ const mapStoreToProps = state => ({
     sort: state.page.sort.folder.name,
     filterSelect: state.page.filterSelect.folder,
     isLoadingMore: state.folder.isLoadingMore,
+    lang: state.page.lang,
+    countDocs: state.document.countCheck,
+    sortDirect: state.page.sort.folder.isDirect,
 });
 
 const mapDispatchToProps = dispatch => ({
@@ -161,6 +183,11 @@ const mapDispatchToProps = dispatch => ({
         loadFilterFolders,
         filterFolders,
         setSort,
+        loadUser,
+        modalOpen,
+        setModal,
+        loadChatRoot,
+        changeSortDirection
     }, dispatch),
 });
 
