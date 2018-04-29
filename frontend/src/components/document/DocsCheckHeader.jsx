@@ -52,7 +52,7 @@ export default class DocsCheckHeader extends React.Component {
         if (this.props.countCheckFile) {
             return (<React.Fragment>
                 <div className="item-name">{language.files[this.props.lang](this.props.countCheckFile)}</div>
-                <img src={ items.clear } className="item-left" onClick={ this.handleClearAllFiles } />
+                <img src={ items.clear } className="item-left cross" onClick={ this.handleClearAllFiles } />
             </React.Fragment>);
         }
         return null;
@@ -61,8 +61,8 @@ export default class DocsCheckHeader extends React.Component {
     renderCountCheckFolders() {
         if (this.props.countCheckFolder) {
             return (<React.Fragment>
-                <div className="item-name">{language.files[this.props.lang](this.props.countCheckFolder)}</div>
-                <img src={ items.clear } className="item-left" onClick={ this.handleClearAllFolders } />
+                <div className="item-name">{language.folders[this.props.lang](this.props.countCheckFolder)}</div>
+                <img src={ items.clear } className="item-left cross" onClick={ this.handleClearAllFolders } />
             </React.Fragment>);
         }
         return null;
@@ -76,7 +76,6 @@ export default class DocsCheckHeader extends React.Component {
                     <React.Fragment>
                         <button className="vk-button" onClick={ this.handleOpenCopy }>{language.copy[this.props.lang]}</button>
                         <button className="vk-button" onClick={ this.handleOpenReplace }>{language.replace[this.props.lang]}</button>
-                        {/*<button className="vk-button" onClick={ this.handleOpenDelete }>{language.delete[this.props.lang]}</button>*/}
                     </React.Fragment> : null}
                 { this.props.countCheckFile === 1 && !this.props.countCheckFolder ? <button className="vk-button" onClick={ this.handleRenameDoc }>{language.rename[this.props.lang]}</button> : null }
                 { this.props.countCheckFolder === 1 && !this.props.countCheckFile ? <button className="vk-button" onClick={ this.handleRenameFolder }>{language.rename[this.props.lang]}</button> : null }

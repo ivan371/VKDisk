@@ -79,8 +79,14 @@ a{
     box-shadow: 0 1px 0 0 #d7d8db;
 }
 .page-content-link-item {
-    display: flex;
+    //display: flex;
     height: 20px;
+}
+.page-content-link-item div{
+    float: left;
+}
+.page-content-link-item div:nth-child(3){
+    float: right;
 }
 .page-content-link-item:hover{
     background-color: #EDEEF0;
@@ -149,14 +155,15 @@ input[type="text"]:focus {
 .content-flex-item:hover{
     background-color: $hover-color;
     cursor: pointer;
+    z-index: 2;
     overflow: visible;
-    z-index: 5000;
 }
 .content-flex-item-column{
     width: 480px;
     text-align: left;
     height: 30px;
     padding: 10px;
+    overflow: visible;
 }
 img.icon{
     width: 50px;
@@ -259,10 +266,11 @@ img.item{
     white-space: pre-wrap;
     overflow: hidden;
 }
-.content-flex-item:hover .content-item__title {
+.content-flex-item:hover .content-item__title{
     white-space: normal;
-    word-break: break-all;
     background: $hover-color;
+    overflow: visible;
+    word-break: break-all;
 }
 .content-item__title-col{
     font-size: 1em;
@@ -412,4 +420,13 @@ img.item{
 .sort-row{
     padding-left: 0;
     padding-right: 0;
+}
+.cross{
+    padding: 10px 0;
+    width: 10px;
+    height: 10px;
+}
+img.cross-right{
+    width: 10px;
+    height: 10px;
 }

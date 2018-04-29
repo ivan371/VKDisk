@@ -18,7 +18,7 @@ CELERY_APP="application"
 CELERYD_MULTI="multi"
 
 # Extra command-line arguments to the worker
-CELERYD_OPTS="--time-limit=300 -P eventlet --concurrency=4 -Q vk,default"
+CELERYD_OPTS="--time-limit=300 -P eventlet --concurrency=2 -Q text"
 
 # - %n will be replaced with the first part of the nodename.
 # - %I will be replaced with the current child process index

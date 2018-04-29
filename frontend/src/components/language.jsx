@@ -28,8 +28,12 @@ export const language = {
         en: 'Rename'
     },
     files: {
-        ru: (count) =>  `${count} файлов`,
-        en: (count) =>  `${count} files`,
+        ru: (count) =>  `Выбрано ${count} файлов`,
+        en: (count) =>  `Selected ${count} files`,
+    },
+    folders: {
+        ru: (count) =>  `Выбрано ${count} папок`,
+        en: (count) =>  `Selected ${count} folders`,
     },
     yourFolder: {
         ru: 'Ваши папки',

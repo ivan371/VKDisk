@@ -173,7 +173,7 @@ class DocumentViewSet(viewsets.ModelViewSet):
                 else:
                     q = q.order_by('created')
         else:
-            q = q.order_by('-created')
+            q = q.order_by('created')
         return q
 
 
@@ -192,7 +192,6 @@ class DocumentView(es_views.ListElasticAPIView):
     es_filter_fields = (
         es_filters.ESFieldFilter('text', 'text.raw'),
         es_filters.ESFieldFilter('title', 'title.raw'),
-        es_filters.ESFieldFilter('is_owner', 'is_owner.raw'),
         es_filters.ESFieldFilter('author_id', 'author.id.raw'),
         es_filters.ESFieldFilter('folder_id', 'folder.id.raw'),
         es_filters.ESFieldFilter('folder_title', 'folder.title.raw'),
