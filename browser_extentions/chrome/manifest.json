@@ -13,7 +13,8 @@
     "tabs",
     "storage",
     "cookies",
-    "*://vkdisk.faki-mipt.ru/*"
+    "*://vkdisk.faki-mipt.ru/*",
+    "*://localhost/*"
   ],
 
   "background": {

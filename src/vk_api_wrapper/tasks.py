@@ -70,9 +70,11 @@ def download_dialog_list(access_token, user_id):
                     if dialog.chat_id > 0:
                         user_info = get_user_info(api, dialog.chat_id)
                         dialog.title = "{} {}".format(user_info['last_name'], user_info['first_name'])
+                        dialog.photo = user_info['photo_50']
                     else:
                         group_info = get_group_info(api, -dialog.chat_id)
                         dialog.title = group_info['name']
+                        dialog.photo = group_info['photo_50']
                 dialog_info['chat_id'] = dialog.chat_id
                 dialog_info['is_group_chat'] = dialog.is_chat
                 dialog.save()

@@ -12,6 +12,7 @@ class VkDialogsList(models.Model):
 class VkDialog(models.Model):
     user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
     title = models.CharField(max_length=1023,)
+    photo = models.TextField(default=None, null=True)
     chat_id = models.IntegerField(default=None, null=True)
     is_chat = models.BooleanField(default=True)
 
@@ -23,6 +24,7 @@ class VkDialog(models.Model):
         dialog = VkDialog()
         dialog.title = message['title']
         dialog.chat_id = message.get('chat_id', None)
+        dialog.photo = message.get('photo_50', None)
         if dialog.chat_id is None:
             dialog.chat_id = message.get('user_id', None)
             dialog.is_chat = False

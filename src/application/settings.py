@@ -84,6 +84,7 @@ SOCIAL_AUTH_PIPELINE = (
     'social_core.pipeline.social_auth.associate_user',
     'social_core.pipeline.social_auth.load_extra_data',
     'social_core.pipeline.user.user_details',
+    'vk_api_wrapper.pipline.get_user_avatars',
     'vk_api_wrapper.pipline.add_vk_id_to_user',
     'vk_api_wrapper.pipline.load_user_dialogs',
 )
