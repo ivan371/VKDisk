@@ -20,6 +20,7 @@ from django.urls import path, include, re_path
 from django.conf.urls import url, include
 from rest_api.routers import router
 from django.conf import settings
+from django.conf.urls.static import static
 from document.views import DocumentView
 
 ## TODO: CHANGE URLS
@@ -39,6 +40,8 @@ urlpatterns += [
     url(r'^api/v1/', include(router.urls)),
     url(r'^api/v1/list$', view=DocumentView.as_view(), name='document-list'),
 ]
+
+urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
 
 urlpatterns += [
     re_path(r'^', include('core.urls')),
