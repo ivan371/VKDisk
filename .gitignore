@@ -13,4 +13,13 @@ collected_static
 *Thumbs.db
 *.pdf
 *.pptx
-*.rdb
+*.ppt
+*.xls
+*.xlsx
+*.doc
+*.docx
+*.txt
+*.png
+*.jpeg
+*.jpg
+*.gif
