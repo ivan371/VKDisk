@@ -29,7 +29,7 @@ class FolderSerializer(serializers.HyperlinkedModelSerializer):
 
     class Meta:
         model = Folder
-        fields = ('id', 'author', 'title', 'root', 'type', 'folder_set', 'root')
+        fields = ('id', 'author', 'title', 'root', 'type', 'folder_set', 'root', 'icon')
 
 
 class FolderRecursiveSerializer(serializers.ModelSerializer):
