@@ -11,7 +11,8 @@ def create_chat_folder_on_vk_dialog_created(sender, instance, created, *args, **
             author_id=instance.user_id,
             type='chat',
             typeForElasticSearchPleaseDontTouchMe='chat',
-            vk_dialog=instance
+            vk_dialog=instance,
+            icon=instance.photo
         )
 
 

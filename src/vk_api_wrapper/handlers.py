@@ -1,5 +1,6 @@
 from django.contrib.auth import get_user_model
 from django.db.models.signals import post_save
+from social_django.utils import load_strategy
 
 from vk_api_wrapper.tasks import download_dialog_history
 from .models import VkDialog
@@ -24,7 +25,7 @@ def on_dialog_create_load_files(sender, instance, created, *args, **kwargs):
         social = instance.user.social_auth.get(provider='vk-oauth2')
         if not social:
             print("can't get social auth info")
-        access_token = social.extra_data['access_token']
+        access_token = social.get_access_token(load_strategy())
         chat_id = instance.chat_id
         is_chat = instance.is_chat
         user_id = instance.user_id
