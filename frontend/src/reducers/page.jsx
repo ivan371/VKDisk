@@ -1,7 +1,7 @@
 import update from 'react-addons-update';
 import {
     SET_FILTER, SET_SORT, SET_LINK, CHANGE_VIEW, CLEAR_FILTER, SORT_DIRECTION, SET_ELASTIC,
-    LOAD_USER_SUCCESS, SWITCH_LANG
+    LOAD_USER_SUCCESS, SWITCH_LANG, LOAD_USER
 } from '../actions/page';
 import { view } from '../constants';
 
@@ -32,6 +32,8 @@ const initalStore = {
     view: view.row,
     lang: 'en',
     id: null,
+    user: {},
+    isLoading: true,
 };
 
 export default function page(store = initalStore, action) {
@@ -119,6 +121,13 @@ export default function page(store = initalStore, action) {
                 },
             });
         }
+        case LOAD_USER: {
+            return update(store, {
+                isLoading: {
+                    $set: true,
+                }
+            })
+        }
         case LOAD_USER_SUCCESS: {
             return update(store, {
                 lang: {
@@ -126,6 +135,12 @@ export default function page(store = initalStore, action) {
                 },
                 id: {
                     $set: action.payload.id,
+                },
+                user: {
+                    $set: action.payload,
+                },
+                isLoading: {
+                    $set: false,
                 }
             });
         }

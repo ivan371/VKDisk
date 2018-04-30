@@ -42,6 +42,8 @@ class TileComponent extends React.Component {
         checkFolder: PropTypes.func.isRequired,
         countCheckFolder: PropTypes.number.isRequired,
         countCheckFile: PropTypes.number.isRequired,
+        filter: PropTypes.string,
+        isElastic: PropTypes.bool.isRequired,
     };
 
     state = {
@@ -221,6 +223,17 @@ class TileComponent extends React.Component {
         return null;
     }
 
+    renderFilteredTitle() {
+        if(this.props.filter && this.props.type === tileType.file && !this.props.isElastic) {
+            return <React.Fragment>
+                {this.props.title.substr(0, this.props.title.toLowerCase().indexOf(this.props.filter.toLowerCase()))}
+                <span className="filtered">{this.props.filter}</span>
+                {this.props.title.substr(this.props.title.toLowerCase().indexOf(this.props.filter.toLowerCase()) + this.props.filter.length, this.props.title.length)}
+            </React.Fragment>
+        }
+        return this.props.title;
+    }
+
     render() {
         return (
             <div className={ this.renderClassName() } onClick={ this.handleClick } >
@@ -228,7 +241,7 @@ class TileComponent extends React.Component {
                 {!this.isRenamed() ?
                     <div
                         className={ this.props.view === view.col ? 'content-item__title content-item__title-col' : 'content-item__title' }
-                    >{this.props.title}
+                    >{this.renderFilteredTitle()}
                     </div>
                     : <input
                         className="content-item__input"
@@ -255,6 +268,8 @@ const mapStoreToProps = (state, props) => ({
     view: state.page.view,
     renamedIdFile: state.document.renamedId,
     renamedIdFolder: state.folder.renamedId,
+    filter: state.page.filter.docs,
+    isElastic: state.page.isElastic,
 });
 
 const mapDispatchToProps = dispatch => ({
