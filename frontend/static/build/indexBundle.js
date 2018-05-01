@@ -25260,20 +25260,11 @@ var CustomRowComponent = function (_React$Component) {
                         folder: this.props.folder,
                         filter: this.props.filter,
                         filterSelect: this.props.filterSelect,
-                        allowDrag: this.props.allowDrag,
-                        dropOver: this.props.dropOver,
-                        id: this.props.id,
-                        source: this.props.source,
                         setFilter: this.props.setFilter,
-                        deleteDocs: this.props.deleteDocs,
-                        deleteFolders: this.props.deleteFolders,
                         setSort: this.props.setSort,
                         sort: this.props.sort,
                         root: parseInt(this.props.params.id) || null,
                         lang: this.props.lang,
-                        modalOpen: this.props.modalOpen,
-                        setModal: this.props.setModal,
-                        countDocs: this.props.countDocs,
                         sortDirect: this.props.sortDirect,
                         changeSortDirection: this.props.changeSortDirection
                     }),
@@ -25300,12 +25291,6 @@ CustomRowComponent.propTypes = {
     count: _propTypes2.default.number.isRequired,
     page: _propTypes2.default.number.isRequired,
     loadFoldersMore: _propTypes2.default.func.isRequired,
-    source: _propTypes2.default.string,
-    allowDrag: _propTypes2.default.bool.isRequired,
-    dropOver: _propTypes2.default.func.isRequired,
-    deleteDocs: _propTypes2.default.func.isRequired,
-    deleteFolders: _propTypes2.default.func.isRequired,
-    id: _propTypes2.default.number,
     filter: _propTypes2.default.string.isRequired,
     filterSelect: _propTypes2.default.string.isRequired,
     setFilter: _propTypes2.default.func.isRequired,
@@ -25314,8 +25299,6 @@ CustomRowComponent.propTypes = {
     setSort: _propTypes2.default.func.isRequired,
     sort: _propTypes2.default.string.isRequired,
     lang: _propTypes2.default.string.isRequired,
-    modalOpen: _propTypes2.default.func.isRequired,
-    setModal: _propTypes2.default.func.isRequired,
     countDocs: _propTypes2.default.number.isRequired,
     loadChatRoot: _propTypes2.default.func.isRequired,
     sortDirect: _propTypes2.default.bool.isRequired,
@@ -25348,16 +25331,11 @@ var mapDispatchToProps = function mapDispatchToProps(dispatch) {
         loadUnTreeFolders: _folder.loadUnTreeFolders,
         folderUnMount: _folder.folderUnMount,
         loadFoldersMore: _folder.loadFoldersMore,
-        dropOver: _drag.dropOver,
-        deleteDocs: _document.deleteDocs,
-        deleteFolders: _folder.deleteFolders,
         setFilter: _page.setFilter,
         loadFilterFolders: _folder.loadFilterFolders,
         filterFolders: _folder.filterFolders,
         setSort: _page.setSort,
         loadUser: _page.loadUser,
-        modalOpen: _modal.modalOpen,
-        setModal: _modal.setModal,
         loadChatRoot: _document.loadChatRoot,
         changeSortDirection: _page.changeSortDirection
     }, dispatch));
@@ -52628,6 +52606,10 @@ var _DocsSortHeader2 = _interopRequireDefault(_DocsSortHeader);
 
 var _language = __webpack_require__(17);
 
+var _Trash = __webpack_require__(313);
+
+var _Trash2 = _interopRequireDefault(_Trash);
+
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
@@ -52802,6 +52784,7 @@ var DocsHeaderComponent = function (_React$Component) {
                 _react2.default.createElement('img', { className: 'item-right', src: this.props.view === _constants.view.row ? _constants.items.colRow : _constants.items.colTable, onClick: this.handleChangeView }),
                 type === 'sorted' || type === 'folder' || type === 'root' ? _react2.default.createElement(_AddFolder2.default, { id: parseInt(this.props.params.id), folder: this.props.folder }) : null,
                 _react2.default.createElement('img', { className: 'item-right', onClick: this.handleLang, src: _constants.items.settings }),
+                _react2.default.createElement(_Trash2.default, null),
                 _react2.default.createElement('img', { className: 'item-right', onClick: this.handleSort, src: _constants.items.sort }),
                 _react2.default.createElement('img', { className: 'item-right', onClick: this.handleDate, src: _constants.items.calendar }),
                 _react2.default.createElement('img', { className: 'item-right', onClick: this.handleFilter, src: _constants.items.filter })
@@ -53525,6 +53508,10 @@ var _constants = __webpack_require__(2);
 
 var _language = __webpack_require__(17);
 
+var _Trash = __webpack_require__(313);
+
+var _Trash2 = _interopRequireDefault(_Trash);
+
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
@@ -53634,7 +53621,8 @@ var DocsCheckHeader = function (_React$Component) {
                         'button',
                         { className: 'vk-button', onClick: this.handleRenameFolder },
                         _language.language.rename[this.props.lang]
-                    ) : null
+                    ) : null,
+                    _react2.default.createElement(_Trash2.default, null)
                 );
             }
             return _react2.default.createElement(
@@ -53661,7 +53649,8 @@ var DocsCheckHeader = function (_React$Component) {
                     'button',
                     { className: 'vk-button', onClick: this.handleRenameFolder },
                     _language.language.rename[this.props.lang]
-                ) : null
+                ) : null,
+                _react2.default.createElement(_Trash2.default, null)
             );
         }
     }]);
@@ -54577,28 +54566,10 @@ var RowHeaderComponent = function (_React$Component) {
             filter: _this.props.filter,
             filterSelect: _this.props.filterSelect,
             isSort: false
-        }, _this.handleOpenDelete = function () {
-            if (_this.props.countDocs) {
-                _this.props.modalOpen();
-                _this.props.setModal(_constants.modalType.documentDelete);
-            }
         }, _this.handleSortOpen = function () {
             _this.setState({ isSort: !_this.state.isSort });
-        }, _this.handleDragOver = function (e) {
-            if ((_this.props.source === _constants.dragSource.file || _this.props.source === _constants.dragSource.folder) && _this.props.allowDrag) {
-                e.preventDefault();
-            }
         }, _this.handleChange = function (e) {
             _this.setState(_defineProperty({}, e.target.name, e.target.value));
-        }, _this.handleDrop = function (e) {
-            if (_this.props.source === _constants.dragSource.file && _this.props.allowDrag) {
-                _this.props.deleteDocs(_constants.makeUrls.makeCustomFile(_this.props.id), _this.props.id);
-                _this.props.dropOver();
-            }
-            if (_this.props.source === _constants.dragSource.folder && _this.props.allowDrag) {
-                _this.props.deleteFolders(_constants.makeUrls.makeCustomFolder(_this.props.id), _this.props.id, _this.props.root);
-                _this.props.dropOver();
-            }
         }, _this.handleFilter = function (e) {
             if (e.keyCode === 13) {
                 _this.props.setFilter(_this.state.filter, _this.state.filterSelect, _constants.apps.folder);
@@ -54613,17 +54584,6 @@ var RowHeaderComponent = function (_React$Component) {
     }
 
     _createClass(RowHeaderComponent, [{
-        key: 'renderTrash',
-        value: function renderTrash() {
-            if (this.props.source === _constants.dragSource.file || this.props.source === _constants.dragSource.folder) {
-                if (this.props.allowDrag) {
-                    return _constants.items.trashGood;
-                }
-                return _constants.items.trashBad;
-            }
-            return _constants.items.trash;
-        }
-    }, {
         key: 'renderSearch',
         value: function renderSearch() {
             if (this.props.folder === _constants.folderType.chat) {
@@ -54698,12 +54658,6 @@ var RowHeaderComponent = function (_React$Component) {
                 'div',
                 { className: 'content-item' },
                 this.renderSearch(),
-                _react2.default.createElement('img', { className: 'item-right',
-                    src: this.renderTrash(),
-                    onDragOver: this.handleDragOver,
-                    onDrop: this.handleDrop,
-                    onClick: this.handleOpenDelete
-                }),
                 this.renderSort()
             );
         }
@@ -54722,17 +54676,8 @@ RowHeaderComponent.propTypes = {
     filter: _propTypes2.default.string.isRequired,
     filterSelect: _propTypes2.default.string.isRequired,
     setFilter: _propTypes2.default.func.isRequired,
-    allowDrag: _propTypes2.default.bool.isRequired,
-    dropOver: _propTypes2.default.func.isRequired,
-    deleteDocs: _propTypes2.default.func.isRequired,
-    deleteFolders: _propTypes2.default.func.isRequired,
-    source: _propTypes2.default.string,
-    id: _propTypes2.default.number,
     root: _propTypes2.default.number,
     lang: _propTypes2.default.string.isRequired,
-    modalOpen: _propTypes2.default.func.isRequired,
-    setModal: _propTypes2.default.func.isRequired,
-    countDocs: _propTypes2.default.number.isRequired,
     sortDirect: _propTypes2.default.bool.isRequired,
     changeSortDirection: _propTypes2.default.func.isRequired,
     sort: _propTypes2.default.string.isRequired
@@ -55413,6 +55358,157 @@ module.exports = function (css) {
 	return fixedCss;
 };
 
+
+/***/ }),
+/* 313 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+Object.defineProperty(exports, "__esModule", {
+    value: true
+});
+
+var _extends = Object.assign || function (target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i]; for (var key in source) { if (Object.prototype.hasOwnProperty.call(source, key)) { target[key] = source[key]; } } } return target; };
+
+var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+
+var _react = __webpack_require__(0);
+
+var _react2 = _interopRequireDefault(_react);
+
+var _propTypes = __webpack_require__(1);
+
+var _propTypes2 = _interopRequireDefault(_propTypes);
+
+var _constants = __webpack_require__(2);
+
+var _redux = __webpack_require__(4);
+
+var _reactRedux = __webpack_require__(5);
+
+var _document = __webpack_require__(16);
+
+var _drag = __webpack_require__(82);
+
+var _folder = __webpack_require__(21);
+
+var _modal = __webpack_require__(14);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
+
+function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
+
+var TrashComponent = function (_React$Component) {
+    _inherits(TrashComponent, _React$Component);
+
+    function TrashComponent() {
+        var _ref;
+
+        var _temp, _this, _ret;
+
+        _classCallCheck(this, TrashComponent);
+
+        for (var _len = arguments.length, args = Array(_len), _key = 0; _key < _len; _key++) {
+            args[_key] = arguments[_key];
+        }
+
+        return _ret = (_temp = (_this = _possibleConstructorReturn(this, (_ref = TrashComponent.__proto__ || Object.getPrototypeOf(TrashComponent)).call.apply(_ref, [this].concat(args))), _this), _this.handleDragOver = function (e) {
+            if ((_this.props.source === _constants.dragSource.file || _this.props.source === _constants.dragSource.folder) && _this.props.allowDrag) {
+                e.preventDefault();
+            }
+        }, _this.handleDrop = function (e) {
+            if (_this.props.source === _constants.dragSource.file && _this.props.allowDrag) {
+                _this.props.deleteDocs(_constants.makeUrls.makeCustomFile(_this.props.id), _this.props.id);
+                _this.props.dropOver();
+            }
+            if (_this.props.source === _constants.dragSource.folder && _this.props.allowDrag) {
+                _this.props.deleteFolders(_constants.makeUrls.makeCustomFolder(_this.props.id), _this.props.id, _this.props.root);
+                _this.props.dropOver();
+            }
+        }, _this.handleOpenDelete = function () {
+            if (_this.props.countDocs) {
+                _this.props.modalOpen();
+                _this.props.setModal(_constants.modalType.documentDelete);
+            }
+        }, _temp), _possibleConstructorReturn(_this, _ret);
+    }
+
+    _createClass(TrashComponent, [{
+        key: 'renderTrash',
+        value: function renderTrash() {
+            if (this.props.source === _constants.dragSource.file || this.props.source === _constants.dragSource.folder) {
+                if (this.props.allowDrag) {
+                    return _constants.items.trashGood;
+                }
+                return _constants.items.trashBad;
+            }
+            return _constants.items.trash;
+        }
+    }, {
+        key: 'render',
+        value: function render() {
+            return _react2.default.createElement('img', { className: 'item-right',
+                src: this.renderTrash(),
+                onDragOver: this.handleDragOver,
+                onDrop: this.handleDrop,
+                onClick: this.handleOpenDelete
+            });
+        }
+    }]);
+
+    return TrashComponent;
+}(_react2.default.Component);
+
+TrashComponent.propTypes = {
+    deleteDocs: _propTypes2.default.func.isRequired,
+    dropOver: _propTypes2.default.func.isRequired,
+    deleteFolders: _propTypes2.default.func.isRequired,
+    modalOpen: _propTypes2.default.func.isRequired,
+    setModal: _propTypes2.default.func.isRequired,
+    allowDrag: _propTypes2.default.bool.isRequired,
+    source: _propTypes2.default.string,
+    countDocs: _propTypes2.default.number.isRequired,
+    id: _propTypes2.default.number
+};
+
+
+var mapStoreToProps = function mapStoreToProps(state) {
+    return {
+        // isLoading: state.folder.isLoading,
+        // folderList: state.folder.folderList,
+        // folderTileList: state.folder.folderTileList,
+        // page: state.folder.page,
+        // count: state.folder.count,
+        allowDrag: state.drag.allowDrag,
+        source: state.drag.source,
+        id: state.drag.id,
+        // filter: state.page.filter.folder,
+        // sort: state.page.sort.folder.name,
+        // filterSelect: state.page.filterSelect.folder,
+        // isLoadingMore: state.folder.isLoadingMore,
+        // lang: state.page.lang,
+        countDocs: state.document.countCheck
+        // sortDirect: state.page.sort.folder.isDirect,
+    };
+};
+
+var mapDispatchToProps = function mapDispatchToProps(dispatch) {
+    return _extends({}, (0, _redux.bindActionCreators)({
+        deleteDocs: _document.deleteDocs,
+        dropOver: _drag.dropOver,
+        deleteFolders: _folder.deleteFolders,
+        modalOpen: _modal.modalOpen,
+        setModal: _modal.setModal
+    }, dispatch));
+};
+
+exports.default = (0, _reactRedux.connect)(mapStoreToProps, mapDispatchToProps)(TrashComponent);
 
 /***/ })
 /******/ ]);
