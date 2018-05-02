@@ -18,6 +18,7 @@ import DocsDateHeader from './DocsDateHeader';
 import { checkAllFolders, renameFolder } from '../../actions/folder';
 import DocsSortHeader from './DocsSortHeader';
 import {language} from '../language';
+import Trash from '../Trash';
 
 class DocsHeaderComponent extends React.Component {
     static propTypes = {
@@ -182,6 +183,7 @@ class DocsHeaderComponent extends React.Component {
                 <AddFolder id={ parseInt(this.props.params.id) } folder={ this.props.folder } />
                 : null}
             <img className="item-right" onClick={ this.handleLang } src={ items.settings}/>
+            <Trash />
             <img className="item-right" onClick={ this.handleSort } src={ items.sort } />
             <img className="item-right" onClick={ this.handleDate } src={ items.calendar } />
             <img className="item-right" onClick={ this.handleFilter } src={ items.filter } />

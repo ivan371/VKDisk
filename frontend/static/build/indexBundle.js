@@ -21337,6 +21337,22 @@ var NodeComponent = function (_React$Component) {
             return _constants.items.arrowRight;
         }
     }, {
+        key: 'renderAvatar',
+        value: function renderAvatar() {
+            if (this.props.folder === _constants.folderType.chat) {
+                if (this.props.icon) return _react2.default.createElement(
+                    'div',
+                    null,
+                    _react2.default.createElement('img', { className: 'item-avatar', src: this.props.icon })
+                );else return _react2.default.createElement(
+                    'div',
+                    null,
+                    _react2.default.createElement('img', { className: 'item-avatar', src: _constants.format.folder })
+                );
+            }
+            return null;
+        }
+    }, {
         key: 'render',
         value: function render() {
             var _this2 = this;
@@ -21363,6 +21379,7 @@ var NodeComponent = function (_React$Component) {
                         folder: _this2.props.folder,
                         folders: _this2.props.folders,
                         title: _this2.props.folders[nodeId].title,
+                        icon: _this2.props.folders[nodeId].icon,
                         foldersRecursiveList: _this2.props.foldersRecursiveList,
                         nodeList: _this2.props.folders[nodeId].hasOwnProperty('folder_set') && _this2.props.foldersRecursiveList.indexOf(nodeId) !== -1 ? _this2.props.folders[nodeId].folder_set : []
                     });
@@ -21382,9 +21399,10 @@ var NodeComponent = function (_React$Component) {
                             null,
                             _react2.default.createElement('img', { className: 'item', src: this.renderImage() })
                         ),
+                        this.renderAvatar(),
                         _react2.default.createElement(
                             'div',
-                            null,
+                            { className: 'item-title' },
                             this.props.title
                         )
                     )
@@ -21405,6 +21423,7 @@ NodeComponent.propTypes = {
     id: _propTypes2.default.number.isRequired,
     folder: _propTypes2.default.string.isRequired,
     title: _propTypes2.default.string.isRequired,
+    icon: _propTypes2.default.string,
     nodeList: _propTypes2.default.array,
     folders: _propTypes2.default.object,
     foldersRecursiveList: _propTypes2.default.array
@@ -25241,20 +25260,11 @@ var CustomRowComponent = function (_React$Component) {
                         folder: this.props.folder,
                         filter: this.props.filter,
                         filterSelect: this.props.filterSelect,
-                        allowDrag: this.props.allowDrag,
-                        dropOver: this.props.dropOver,
-                        id: this.props.id,
-                        source: this.props.source,
                         setFilter: this.props.setFilter,
-                        deleteDocs: this.props.deleteDocs,
-                        deleteFolders: this.props.deleteFolders,
                         setSort: this.props.setSort,
                         sort: this.props.sort,
                         root: parseInt(this.props.params.id) || null,
                         lang: this.props.lang,
-                        modalOpen: this.props.modalOpen,
-                        setModal: this.props.setModal,
-                        countDocs: this.props.countDocs,
                         sortDirect: this.props.sortDirect,
                         changeSortDirection: this.props.changeSortDirection
                     }),
@@ -25281,12 +25291,6 @@ CustomRowComponent.propTypes = {
     count: _propTypes2.default.number.isRequired,
     page: _propTypes2.default.number.isRequired,
     loadFoldersMore: _propTypes2.default.func.isRequired,
-    source: _propTypes2.default.string,
-    allowDrag: _propTypes2.default.bool.isRequired,
-    dropOver: _propTypes2.default.func.isRequired,
-    deleteDocs: _propTypes2.default.func.isRequired,
-    deleteFolders: _propTypes2.default.func.isRequired,
-    id: _propTypes2.default.number,
     filter: _propTypes2.default.string.isRequired,
     filterSelect: _propTypes2.default.string.isRequired,
     setFilter: _propTypes2.default.func.isRequired,
@@ -25295,8 +25299,6 @@ CustomRowComponent.propTypes = {
     setSort: _propTypes2.default.func.isRequired,
     sort: _propTypes2.default.string.isRequired,
     lang: _propTypes2.default.string.isRequired,
-    modalOpen: _propTypes2.default.func.isRequired,
-    setModal: _propTypes2.default.func.isRequired,
     countDocs: _propTypes2.default.number.isRequired,
     loadChatRoot: _propTypes2.default.func.isRequired,
     sortDirect: _propTypes2.default.bool.isRequired,
@@ -25329,16 +25331,11 @@ var mapDispatchToProps = function mapDispatchToProps(dispatch) {
         loadUnTreeFolders: _folder.loadUnTreeFolders,
         folderUnMount: _folder.folderUnMount,
         loadFoldersMore: _folder.loadFoldersMore,
-        dropOver: _drag.dropOver,
-        deleteDocs: _document.deleteDocs,
-        deleteFolders: _folder.deleteFolders,
         setFilter: _page.setFilter,
         loadFilterFolders: _folder.loadFilterFolders,
         filterFolders: _folder.filterFolders,
         setSort: _page.setSort,
         loadUser: _page.loadUser,
-        modalOpen: _modal.modalOpen,
-        setModal: _modal.setModal,
         loadChatRoot: _document.loadChatRoot,
         changeSortDirection: _page.changeSortDirection
     }, dispatch));
@@ -52609,6 +52606,10 @@ var _DocsSortHeader2 = _interopRequireDefault(_DocsSortHeader);
 
 var _language = __webpack_require__(17);
 
+var _Trash = __webpack_require__(313);
+
+var _Trash2 = _interopRequireDefault(_Trash);
+
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
@@ -52783,6 +52784,7 @@ var DocsHeaderComponent = function (_React$Component) {
                 _react2.default.createElement('img', { className: 'item-right', src: this.props.view === _constants.view.row ? _constants.items.colRow : _constants.items.colTable, onClick: this.handleChangeView }),
                 type === 'sorted' || type === 'folder' || type === 'root' ? _react2.default.createElement(_AddFolder2.default, { id: parseInt(this.props.params.id), folder: this.props.folder }) : null,
                 _react2.default.createElement('img', { className: 'item-right', onClick: this.handleLang, src: _constants.items.settings }),
+                _react2.default.createElement(_Trash2.default, null),
                 _react2.default.createElement('img', { className: 'item-right', onClick: this.handleSort, src: _constants.items.sort }),
                 _react2.default.createElement('img', { className: 'item-right', onClick: this.handleDate, src: _constants.items.calendar }),
                 _react2.default.createElement('img', { className: 'item-right', onClick: this.handleFilter, src: _constants.items.filter })
@@ -53506,6 +53508,10 @@ var _constants = __webpack_require__(2);
 
 var _language = __webpack_require__(17);
 
+var _Trash = __webpack_require__(313);
+
+var _Trash2 = _interopRequireDefault(_Trash);
+
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
@@ -53615,7 +53621,8 @@ var DocsCheckHeader = function (_React$Component) {
                         'button',
                         { className: 'vk-button', onClick: this.handleRenameFolder },
                         _language.language.rename[this.props.lang]
-                    ) : null
+                    ) : null,
+                    _react2.default.createElement(_Trash2.default, null)
                 );
             }
             return _react2.default.createElement(
@@ -53642,7 +53649,8 @@ var DocsCheckHeader = function (_React$Component) {
                     'button',
                     { className: 'vk-button', onClick: this.handleRenameFolder },
                     _language.language.rename[this.props.lang]
-                ) : null
+                ) : null,
+                _react2.default.createElement(_Trash2.default, null)
             );
         }
     }]);
@@ -53970,6 +53978,7 @@ var NodeChatComponent = function (_React$Component) {
                         key: nodeId,
                         folders: _this2.props.folders,
                         title: _this2.props.folders[nodeId].title,
+                        icon: _this2.props.folders[nodeId].icon,
                         folder: _this2.props.folder
                     });
                 });
@@ -54557,28 +54566,10 @@ var RowHeaderComponent = function (_React$Component) {
             filter: _this.props.filter,
             filterSelect: _this.props.filterSelect,
             isSort: false
-        }, _this.handleOpenDelete = function () {
-            if (_this.props.countDocs) {
-                _this.props.modalOpen();
-                _this.props.setModal(_constants.modalType.documentDelete);
-            }
         }, _this.handleSortOpen = function () {
             _this.setState({ isSort: !_this.state.isSort });
-        }, _this.handleDragOver = function (e) {
-            if ((_this.props.source === _constants.dragSource.file || _this.props.source === _constants.dragSource.folder) && _this.props.allowDrag) {
-                e.preventDefault();
-            }
         }, _this.handleChange = function (e) {
             _this.setState(_defineProperty({}, e.target.name, e.target.value));
-        }, _this.handleDrop = function (e) {
-            if (_this.props.source === _constants.dragSource.file && _this.props.allowDrag) {
-                _this.props.deleteDocs(_constants.makeUrls.makeCustomFile(_this.props.id), _this.props.id);
-                _this.props.dropOver();
-            }
-            if (_this.props.source === _constants.dragSource.folder && _this.props.allowDrag) {
-                _this.props.deleteFolders(_constants.makeUrls.makeCustomFolder(_this.props.id), _this.props.id, _this.props.root);
-                _this.props.dropOver();
-            }
         }, _this.handleFilter = function (e) {
             if (e.keyCode === 13) {
                 _this.props.setFilter(_this.state.filter, _this.state.filterSelect, _constants.apps.folder);
@@ -54593,17 +54584,6 @@ var RowHeaderComponent = function (_React$Component) {
     }
 
     _createClass(RowHeaderComponent, [{
-        key: 'renderTrash',
-        value: function renderTrash() {
-            if (this.props.source === _constants.dragSource.file || this.props.source === _constants.dragSource.folder) {
-                if (this.props.allowDrag) {
-                    return _constants.items.trashGood;
-                }
-                return _constants.items.trashBad;
-            }
-            return _constants.items.trash;
-        }
-    }, {
         key: 'renderSearch',
         value: function renderSearch() {
             if (this.props.folder === _constants.folderType.chat) {
@@ -54678,12 +54658,6 @@ var RowHeaderComponent = function (_React$Component) {
                 'div',
                 { className: 'content-item' },
                 this.renderSearch(),
-                _react2.default.createElement('img', { className: 'item-right',
-                    src: this.renderTrash(),
-                    onDragOver: this.handleDragOver,
-                    onDrop: this.handleDrop,
-                    onClick: this.handleOpenDelete
-                }),
                 this.renderSort()
             );
         }
@@ -54702,17 +54676,8 @@ RowHeaderComponent.propTypes = {
     filter: _propTypes2.default.string.isRequired,
     filterSelect: _propTypes2.default.string.isRequired,
     setFilter: _propTypes2.default.func.isRequired,
-    allowDrag: _propTypes2.default.bool.isRequired,
-    dropOver: _propTypes2.default.func.isRequired,
-    deleteDocs: _propTypes2.default.func.isRequired,
-    deleteFolders: _propTypes2.default.func.isRequired,
-    source: _propTypes2.default.string,
-    id: _propTypes2.default.number,
     root: _propTypes2.default.number,
     lang: _propTypes2.default.string.isRequired,
-    modalOpen: _propTypes2.default.func.isRequired,
-    setModal: _propTypes2.default.func.isRequired,
-    countDocs: _propTypes2.default.number.isRequired,
     sortDirect: _propTypes2.default.bool.isRequired,
     changeSortDirection: _propTypes2.default.func.isRequired,
     sort: _propTypes2.default.string.isRequired
@@ -54830,7 +54795,7 @@ exports = module.exports = __webpack_require__(310)(false);
 
 
 // module
-exports.push([module.i, "body {\n  background-color: #EDEEF0;\n  margin: 0;\n  font-family: -apple-system,BlinkMacSystemFont,Roboto,Helvetica Neue,sans-serif;\n}\n\na {\n  text-decoration: none;\n  cursor: pointer;\n}\n\n.page-header {\n  height: 42px;\n  background-color: #4A76A8;\n}\n\n.page-content {\n  margin: 0 auto;\n  width: 960px;\n  display: flex;\n  height: 100%;\n  position: sticky;\n}\n\n.page-header-content {\n  margin: 0 auto;\n  width: 960px;\n  display: flex;\n  justify-content: space-between;\n}\n\n.page-header-content-logo {\n  float: left;\n}\n\n.page-header-content h2 {\n  margin: 0;\n  padding-top: 5px;\n  color: white;\n}\n\n.page-content-navigation {\n  margin-top: 15px;\n}\n\n.page-content-content {\n  padding-top: 15px;\n  padding-bottom: 2px;\n  min-width: 400px;\n  display: flex;\n}\n\n.page-content-content-wrap {\n  width: 300px;\n  background-color: white;\n  max-height: 100%;\n  border-radius: 2px 2px 0 0;\n  box-shadow: 0 1px 0 0 #d7d8db, 0 0 0 1px #e3e4e8;\n  overflow-y: auto;\n}\n\n.page-content-content-wrap a {\n  color: #285473;\n}\n\n.page-content-content-content {\n  background-color: white;\n  max-height: 100%;\n  border-radius: 2px 2px 0 0;\n  box-shadow: 0 1px 0 0 #d7d8db, 0 0 0 1px #e3e4e8;\n}\n\n.page-content-link {\n  display: block;\n  white-space: nowrap;\n  padding: 10px;\n  color: #285473;\n}\n\n.page-content-link:hover {\n  background-color: #E1E5EB;\n}\n\n.content-item {\n  padding: 10px;\n  height: 30px;\n  box-shadow: 0 1px 0 0 #d7d8db;\n}\n\n.page-content-link-item {\n  height: 20px;\n}\n\n.page-content-link-item div {\n  float: left;\n}\n\n.page-content-link-item div:nth-child(3) {\n  float: right;\n}\n\n.page-content-link-item:hover {\n  background-color: #EDEEF0;\n  cursor: pointer;\n}\n\n.content-item input {\n  border: 0px;\n}\n\ninput[type=\"text\"]:focus {\n  outline: none;\n}\n\n.content-flex {\n  display: flex;\n}\n\n.content-flex-row {\n  align-content: start;\n  flex-wrap: wrap;\n  overflow-y: auto;\n}\n\n.content-flex-column {\n  flex-direction: column;\n  overflow-y: auto;\n}\n\n@media screen and (min-height: 0px) and (max-height: 720px) {\n  .content-flex {\n    height: 480px;\n  }\n  .page-content-content {\n    height: 540px;\n  }\n  .page-content-content-content {\n    width: 680px;\n  }\n}\n\n@media screen and (min-height: 700px) and (max-height: 1500px) {\n  .content-flex {\n    height: 640px;\n  }\n  .page-content-content {\n    height: 700px;\n  }\n  .page-content-content-content {\n    width: 740px;\n  }\n}\n\n.content-flex-modal {\n  display: flex;\n  align-content: start;\n  flex-wrap: wrap;\n  overflow-y: auto;\n  height: 220px;\n}\n\n.content-flex-item {\n  padding-top: 10px;\n  padding-bottom: 10px;\n  height: 80px;\n  width: 100px;\n  text-align: center;\n  overflow: hidden;\n  position: relative;\n}\n\n.content-flex-item a {\n  color: black;\n}\n\n.content-flex-item:hover {\n  background-color: #E1E5EB;\n  cursor: pointer;\n  z-index: 2;\n  overflow: visible;\n}\n\n.content-flex-item-column {\n  width: 480px;\n  text-align: left;\n  height: 30px;\n  padding: 10px;\n  overflow: visible;\n}\n\nimg.icon {\n  width: 50px;\n  height: 50px;\n  cursor: pointer;\n}\n\nimg.item {\n  width: 20px;\n  height: 20px;\n  margin-right: 5px;\n}\n\n.modal-container {\n  position: fixed;\n  left: 0;\n  top: 0;\n  text-align: center;\n  background-color: rgba(0, 0, 0, 0.7);\n  width: 100%;\n  height: 100%;\n  z-index: 10;\n}\n\n.modal {\n  cursor: auto;\n  z-index: 100;\n  height: 336px;\n  width: 500px;\n  background-color: white;\n  margin: 116px auto;\n  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.35);\n  outline: none;\n  border-radius: 5px;\n}\n\n.modal-header {\n  border-radius: 5px 5px 0 0;\n  width: 100%;\n  height: 54px;\n  background-color: #4A76A8;\n}\n\n.modal-header-title {\n  padding: 1px;\n}\n\n.modal-header-title p {\n  color: white;\n}\n\n.modal-content {\n  padding: 20px;\n  height: 240px;\n  background-color: #F7F7F7;\n}\n\n.modal-content__img img {\n  width: 100px;\n}\n\n.vk-button {\n  background-color: #5b88bd;\n  text-decoration: none;\n  float: right;\n  padding: 7px 16px 8px;\n  margin-left: 10px;\n  font-size: 12.5px;\n  display: inline-block;\n  zoom: 1;\n  cursor: pointer;\n  white-space: nowrap;\n  outline: none;\n  font-family: -apple-system,BlinkMacSystemFont,Roboto,Helvetica Neue,sans-serif;\n  vertical-align: top;\n  line-height: 15px;\n  text-align: center;\n  color: #fff;\n  border: 0;\n  border-radius: 4px;\n  box-sizing: border-box;\n}\n\n.vk-input {\n  background: #fff;\n  color: #000;\n  border: 1px solid #c0cad5 !important;\n  padding: 5px;\n  vertical-align: top;\n  margin: 0;\n  overflow: auto;\n  outline: 0;\n  line-height: 150%;\n  word-wrap: break-word;\n  width: 200px;\n  cursor: text;\n}\n\n.modal-footer {\n  margin-top: 80px;\n}\n\n.content-item__title {\n  cursor: text;\n  text-align: center;\n  padding: 0 5px;\n  max-width: 90px;\n  margin: 0 auto;\n  text-overflow: ellipsis;\n  white-space: pre-wrap;\n  overflow: hidden;\n}\n\n.content-flex-item:hover .content-item__title {\n  white-space: normal;\n  background: #E1E5EB;\n  overflow: visible;\n  word-break: break-all;\n}\n\n.content-item__title-col {\n  font-size: 1em;\n  float: left;\n  max-width: 300px;\n  text-align: left;\n}\n\n.content-item__input {\n  border: 1px solid #c0cad5;\n  cursor: text;\n  margin-top: 4px;\n  width: 100%;\n  outline: 0;\n  line-height: 150%;\n}\n\n.page-content-item__input {\n  width: 100px;\n  border: 1px solid #c0cad5;\n  cursor: text;\n  outline: 0;\n  line-height: 150%;\n}\n\n.item-right {\n  cursor: pointer;\n  padding: 5px;\n  width: 20px;\n  height: 20px;\n  float: right;\n  vertical-align: top;\n}\n\n.item-left {\n  cursor: pointer;\n  padding: 5px;\n  width: 20px;\n  height: 20px;\n  float: left;\n  vertical-align: top;\n}\n\n.item-name {\n  float: left;\n  padding: 5px;\n  height: 20px;\n}\n\n.checked {\n  background-color: #E1E5EB;\n}\n\n.button-secondary {\n  background-color: #e5ebf1;\n  color: #55677d;\n}\n\n.node-layout {\n  margin-left: 10px;\n}\n\n.search {\n  width: 120px;\n}\n\n.tags {\n  margin: 5px;\n  display: flex;\n  flex-wrap: wrap;\n  justify-content: space-between;\n}\n\n.tag-button {\n  margin-bottom: 5px;\n  margin-left: 2px;\n}\n\n.sort-button {\n  text-decoration: none;\n  float: left;\n  padding: 7px 16px 8px;\n  font-size: 12.5px;\n  display: inline-block;\n  zoom: 1;\n  cursor: pointer;\n  white-space: nowrap;\n  outline: none;\n  font-family: -apple-system,BlinkMacSystemFont,Roboto,Helvetica Neue,sans-serif;\n  vertical-align: top;\n  line-height: 15px;\n  text-align: center;\n  border: 0;\n  box-sizing: border-box;\n  background-color: white;\n}\n\n.sort-button-selected {\n  border-bottom: #5b88bd 2px solid;\n}\n\n.line {\n  display: inline-block;\n  width: 10px;\n  height: 10px;\n  border-radius: 10px;\n  margin: 2px;\n  background-color: black;\n}\n\n.load {\n  margin: auto;\n}\n\n.load .line:nth-last-child(1) {\n  animation: loadingC .6s .1s linear infinite;\n}\n\n.load .line:nth-last-child(2) {\n  animation: loadingC .6s .2s linear infinite;\n}\n\n.load .line:nth-last-child(3) {\n  animation: loadingC .6s .3s linear infinite;\n}\n\n@keyframes loadingC {\n  0 {\n    transform: translate(0, 0);\n  }\n  50% {\n    transform: translate(0, 15px);\n  }\n  100% {\n    transform: translate(0, 0);\n  }\n}\n\n.span-right {\n  float: right;\n}\n\n.vk-switch {\n  background-color: #bccde0;\n  width: 28px;\n  height: 9px;\n  border-radius: 45px;\n  float: right;\n  margin-top: 3px;\n}\n\n.vk-switch::after {\n  background-color: #5181b8;\n  left: 13px;\n  content: '';\n  float: left;\n  position: relative;\n  width: 13px;\n  height: 13px;\n  border-radius: 50%;\n  border: 1px solid #5181b8;\n  top: -3px;\n  transition: left 0.3s ease;\n}\n\n.vk-switch-left::after {\n  border: 1px solid #b4bfcc;\n  background-color: #fff;\n  left: 0;\n}\n\n.vk-switch-container {\n  margin: 2px;\n  margin-left: 10px;\n}\n\n.sort-row {\n  padding-left: 0;\n  padding-right: 0;\n}\n\n.cross {\n  padding: 10px 0;\n  width: 10px;\n  height: 10px;\n}\n\nimg.cross-right {\n  width: 10px;\n  height: 10px;\n}\n\n.page-header-content-self {\n  padding-top: 5px;\n  padding-bottom: 5px;\n  color: white;\n}\n\n.page-header-content-self div {\n  padding: 8px;\n  float: left;\n}\n\n.avatar {\n  height: 32px;\n  width: 32px;\n  border-radius: 16px;\n}\n\n.tag-right {\n  padding: 5px;\n  font-size: 0.6em;\n}\n\nspan.filtered {\n  background-color: #E1E5EB;\n}\n", ""]);
+exports.push([module.i, "body {\n  background-color: #EDEEF0;\n  margin: 0;\n  font-family: -apple-system,BlinkMacSystemFont,Roboto,Helvetica Neue,sans-serif;\n}\n\na {\n  text-decoration: none;\n  cursor: pointer;\n}\n\n.page-header {\n  height: 42px;\n  background-color: #4A76A8;\n}\n\n.page-content {\n  margin: 0 auto;\n  width: 960px;\n  display: flex;\n  height: 100%;\n  position: sticky;\n}\n\n.page-header-content {\n  margin: 0 auto;\n  width: 960px;\n  display: flex;\n  justify-content: space-between;\n}\n\n.page-header-content-logo {\n  float: left;\n}\n\n.page-header-content h2 {\n  margin: 0;\n  padding-top: 5px;\n  color: white;\n}\n\n.page-content-navigation {\n  margin-top: 15px;\n}\n\n.page-content-content {\n  padding-top: 15px;\n  padding-bottom: 2px;\n  min-width: 400px;\n  display: flex;\n}\n\n.page-content-content-wrap {\n  width: 300px;\n  background-color: white;\n  max-height: 100%;\n  border-radius: 2px 2px 0 0;\n  box-shadow: 0 1px 0 0 #d7d8db, 0 0 0 1px #e3e4e8;\n  overflow-y: auto;\n}\n\n.page-content-content-wrap a {\n  color: #285473;\n}\n\n.page-content-content-content {\n  background-color: white;\n  max-height: 100%;\n  border-radius: 2px 2px 0 0;\n  box-shadow: 0 1px 0 0 #d7d8db, 0 0 0 1px #e3e4e8;\n}\n\n.page-content-link {\n  display: block;\n  white-space: nowrap;\n  padding: 10px;\n  color: #285473;\n}\n\n.page-content-link:hover {\n  background-color: #E1E5EB;\n}\n\n.content-item {\n  padding: 10px;\n  height: 30px;\n  box-shadow: 0 1px 0 0 #d7d8db;\n}\n\n.page-content-link-item {\n  height: 20px;\n}\n\n.page-content-link-item div {\n  float: left;\n}\n\n.page-content-link-item div:nth-child(3) {\n  float: right;\n}\n\n.page-content-link-item:hover {\n  background-color: #EDEEF0;\n  cursor: pointer;\n}\n\n.content-item input {\n  border: 0px;\n}\n\ninput[type=\"text\"]:focus {\n  outline: none;\n}\n\n.content-flex {\n  display: flex;\n}\n\n.content-flex-row {\n  align-content: start;\n  flex-wrap: wrap;\n  overflow-y: auto;\n}\n\n.content-flex-column {\n  flex-direction: column;\n  overflow-y: auto;\n}\n\n@media screen and (min-height: 0px) and (max-height: 720px) {\n  .content-flex {\n    height: 480px;\n  }\n  .page-content-content {\n    height: 540px;\n  }\n  .page-content-content-content {\n    width: 680px;\n  }\n}\n\n@media screen and (min-height: 700px) and (max-height: 1500px) {\n  .content-flex {\n    height: 640px;\n  }\n  .page-content-content {\n    height: 700px;\n  }\n  .page-content-content-content {\n    width: 740px;\n  }\n}\n\n.content-flex-modal {\n  display: flex;\n  align-content: start;\n  flex-wrap: wrap;\n  overflow-y: auto;\n  height: 220px;\n}\n\n.content-flex-item {\n  padding-top: 10px;\n  padding-bottom: 10px;\n  height: 80px;\n  width: 100px;\n  text-align: center;\n  overflow: hidden;\n  position: relative;\n}\n\n.content-flex-item a {\n  color: black;\n}\n\n.content-flex-item:hover {\n  background-color: #E1E5EB;\n  cursor: pointer;\n  z-index: 2;\n  overflow: visible;\n}\n\n.content-flex-item-column {\n  width: 480px;\n  text-align: left;\n  height: 30px;\n  padding: 10px;\n  overflow: visible;\n}\n\nimg.icon {\n  width: 50px;\n  height: 50px;\n  cursor: pointer;\n}\n\nimg.item {\n  width: 20px;\n  height: 20px;\n  margin-right: 5px;\n}\n\n.modal-container {\n  position: fixed;\n  left: 0;\n  top: 0;\n  text-align: center;\n  background-color: rgba(0, 0, 0, 0.7);\n  width: 100%;\n  height: 100%;\n  z-index: 10;\n}\n\n.modal {\n  cursor: auto;\n  z-index: 100;\n  height: 336px;\n  width: 500px;\n  background-color: white;\n  margin: 116px auto;\n  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.35);\n  outline: none;\n  border-radius: 5px;\n}\n\n.modal-header {\n  border-radius: 5px 5px 0 0;\n  width: 100%;\n  height: 54px;\n  background-color: #4A76A8;\n}\n\n.modal-header-title {\n  padding: 1px;\n}\n\n.modal-header-title p {\n  color: white;\n}\n\n.modal-content {\n  padding: 20px;\n  height: 240px;\n  background-color: #F7F7F7;\n}\n\n.modal-content__img img {\n  width: 100px;\n}\n\n.vk-button {\n  background-color: #5b88bd;\n  text-decoration: none;\n  float: right;\n  padding: 7px 16px 8px;\n  margin-left: 10px;\n  font-size: 12.5px;\n  display: inline-block;\n  zoom: 1;\n  cursor: pointer;\n  white-space: nowrap;\n  outline: none;\n  font-family: -apple-system,BlinkMacSystemFont,Roboto,Helvetica Neue,sans-serif;\n  vertical-align: top;\n  line-height: 15px;\n  text-align: center;\n  color: #fff;\n  border: 0;\n  border-radius: 4px;\n  box-sizing: border-box;\n}\n\n.vk-input {\n  background: #fff;\n  color: #000;\n  border: 1px solid #c0cad5 !important;\n  padding: 5px;\n  vertical-align: top;\n  margin: 0;\n  overflow: auto;\n  outline: 0;\n  line-height: 150%;\n  word-wrap: break-word;\n  width: 200px;\n  cursor: text;\n}\n\n.modal-footer {\n  margin-top: 80px;\n}\n\n.content-item__title {\n  cursor: text;\n  text-align: center;\n  padding: 0 5px;\n  max-width: 90px;\n  margin: 0 auto;\n  text-overflow: ellipsis;\n  white-space: pre-wrap;\n  overflow: hidden;\n}\n\n.content-flex-item:hover .content-item__title {\n  white-space: normal;\n  background: #E1E5EB;\n  overflow: visible;\n  word-break: break-all;\n}\n\n.content-item__title-col {\n  font-size: 1em;\n  float: left;\n  max-width: 300px;\n  text-align: left;\n}\n\n.content-item__input {\n  border: 1px solid #c0cad5;\n  cursor: text;\n  margin-top: 4px;\n  width: 100%;\n  outline: 0;\n  line-height: 150%;\n}\n\n.page-content-item__input {\n  width: 100px;\n  border: 1px solid #c0cad5;\n  cursor: text;\n  outline: 0;\n  line-height: 150%;\n}\n\n.item-right {\n  cursor: pointer;\n  padding: 5px;\n  width: 20px;\n  height: 20px;\n  float: right;\n  vertical-align: top;\n}\n\n.item-left {\n  cursor: pointer;\n  padding: 5px;\n  width: 20px;\n  height: 20px;\n  float: left;\n  vertical-align: top;\n}\n\n.item-name {\n  float: left;\n  padding: 5px;\n  height: 20px;\n}\n\n.checked {\n  background-color: #E1E5EB;\n}\n\n.button-secondary {\n  background-color: #e5ebf1;\n  color: #55677d;\n}\n\n.node-layout {\n  margin-left: 10px;\n}\n\n.search {\n  width: 120px;\n}\n\n.tags {\n  margin: 5px;\n  display: flex;\n  flex-wrap: wrap;\n  justify-content: space-between;\n}\n\n.tag-button {\n  margin-bottom: 5px;\n  margin-left: 2px;\n}\n\n.sort-button {\n  text-decoration: none;\n  float: left;\n  padding: 7px 16px 8px;\n  font-size: 12.5px;\n  display: inline-block;\n  zoom: 1;\n  cursor: pointer;\n  white-space: nowrap;\n  outline: none;\n  font-family: -apple-system,BlinkMacSystemFont,Roboto,Helvetica Neue,sans-serif;\n  vertical-align: top;\n  line-height: 15px;\n  text-align: center;\n  border: 0;\n  box-sizing: border-box;\n  background-color: white;\n}\n\n.sort-button-selected {\n  border-bottom: #5b88bd 2px solid;\n}\n\n.line {\n  display: inline-block;\n  width: 10px;\n  height: 10px;\n  border-radius: 10px;\n  margin: 2px;\n  background-color: black;\n}\n\n.load {\n  margin: auto;\n}\n\n.load .line:nth-last-child(1) {\n  animation: loadingC .6s .1s linear infinite;\n}\n\n.load .line:nth-last-child(2) {\n  animation: loadingC .6s .2s linear infinite;\n}\n\n.load .line:nth-last-child(3) {\n  animation: loadingC .6s .3s linear infinite;\n}\n\n@keyframes loadingC {\n  0 {\n    transform: translate(0, 0);\n  }\n  50% {\n    transform: translate(0, 15px);\n  }\n  100% {\n    transform: translate(0, 0);\n  }\n}\n\n.span-right {\n  float: right;\n}\n\n.vk-switch {\n  background-color: #bccde0;\n  width: 28px;\n  height: 9px;\n  border-radius: 45px;\n  float: right;\n  margin-top: 3px;\n}\n\n.vk-switch::after {\n  background-color: #5181b8;\n  left: 13px;\n  content: '';\n  float: left;\n  position: relative;\n  width: 13px;\n  height: 13px;\n  border-radius: 50%;\n  border: 1px solid #5181b8;\n  top: -3px;\n  transition: left 0.3s ease;\n}\n\n.vk-switch-left::after {\n  border: 1px solid #b4bfcc;\n  background-color: #fff;\n  left: 0;\n}\n\n.vk-switch-container {\n  margin: 2px;\n  margin-left: 10px;\n}\n\n.sort-row {\n  padding-left: 0;\n  padding-right: 0;\n}\n\n.cross {\n  padding: 10px 0;\n  width: 10px;\n  height: 10px;\n}\n\nimg.cross-right {\n  width: 10px;\n  height: 10px;\n}\n\n.page-header-content-self {\n  padding-top: 5px;\n  padding-bottom: 5px;\n  color: white;\n}\n\n.page-header-content-self div {\n  padding: 8px;\n  float: left;\n}\n\n.avatar {\n  height: 32px;\n  width: 32px;\n  border-radius: 16px;\n}\n\n.tag-right {\n  padding: 5px;\n  font-size: 0.6em;\n}\n\nspan.filtered {\n  background-color: #E1E5EB;\n}\n\n.item-title {\n  float: left !important;\n  max-width: 170px;\n  overflow: hidden;\n  text-overflow: ellipsis;\n  white-space: nowrap;\n}\n\n.item-avatar {\n  width: 30px;\n  height: 30px;\n  margin-top: -5px;\n  border-radius: 15px;\n  margin-right: 5px;\n}\n", ""]);
 
 // exports
 
@@ -55393,6 +55358,157 @@ module.exports = function (css) {
 	return fixedCss;
 };
 
+
+/***/ }),
+/* 313 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+Object.defineProperty(exports, "__esModule", {
+    value: true
+});
+
+var _extends = Object.assign || function (target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i]; for (var key in source) { if (Object.prototype.hasOwnProperty.call(source, key)) { target[key] = source[key]; } } } return target; };
+
+var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+
+var _react = __webpack_require__(0);
+
+var _react2 = _interopRequireDefault(_react);
+
+var _propTypes = __webpack_require__(1);
+
+var _propTypes2 = _interopRequireDefault(_propTypes);
+
+var _constants = __webpack_require__(2);
+
+var _redux = __webpack_require__(4);
+
+var _reactRedux = __webpack_require__(5);
+
+var _document = __webpack_require__(16);
+
+var _drag = __webpack_require__(82);
+
+var _folder = __webpack_require__(21);
+
+var _modal = __webpack_require__(14);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
+
+function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
+
+var TrashComponent = function (_React$Component) {
+    _inherits(TrashComponent, _React$Component);
+
+    function TrashComponent() {
+        var _ref;
+
+        var _temp, _this, _ret;
+
+        _classCallCheck(this, TrashComponent);
+
+        for (var _len = arguments.length, args = Array(_len), _key = 0; _key < _len; _key++) {
+            args[_key] = arguments[_key];
+        }
+
+        return _ret = (_temp = (_this = _possibleConstructorReturn(this, (_ref = TrashComponent.__proto__ || Object.getPrototypeOf(TrashComponent)).call.apply(_ref, [this].concat(args))), _this), _this.handleDragOver = function (e) {
+            if ((_this.props.source === _constants.dragSource.file || _this.props.source === _constants.dragSource.folder) && _this.props.allowDrag) {
+                e.preventDefault();
+            }
+        }, _this.handleDrop = function (e) {
+            if (_this.props.source === _constants.dragSource.file && _this.props.allowDrag) {
+                _this.props.deleteDocs(_constants.makeUrls.makeCustomFile(_this.props.id), _this.props.id);
+                _this.props.dropOver();
+            }
+            if (_this.props.source === _constants.dragSource.folder && _this.props.allowDrag) {
+                _this.props.deleteFolders(_constants.makeUrls.makeCustomFolder(_this.props.id), _this.props.id, _this.props.root);
+                _this.props.dropOver();
+            }
+        }, _this.handleOpenDelete = function () {
+            if (_this.props.countDocs) {
+                _this.props.modalOpen();
+                _this.props.setModal(_constants.modalType.documentDelete);
+            }
+        }, _temp), _possibleConstructorReturn(_this, _ret);
+    }
+
+    _createClass(TrashComponent, [{
+        key: 'renderTrash',
+        value: function renderTrash() {
+            if (this.props.source === _constants.dragSource.file || this.props.source === _constants.dragSource.folder) {
+                if (this.props.allowDrag) {
+                    return _constants.items.trashGood;
+                }
+                return _constants.items.trashBad;
+            }
+            return _constants.items.trash;
+        }
+    }, {
+        key: 'render',
+        value: function render() {
+            return _react2.default.createElement('img', { className: 'item-right',
+                src: this.renderTrash(),
+                onDragOver: this.handleDragOver,
+                onDrop: this.handleDrop,
+                onClick: this.handleOpenDelete
+            });
+        }
+    }]);
+
+    return TrashComponent;
+}(_react2.default.Component);
+
+TrashComponent.propTypes = {
+    deleteDocs: _propTypes2.default.func.isRequired,
+    dropOver: _propTypes2.default.func.isRequired,
+    deleteFolders: _propTypes2.default.func.isRequired,
+    modalOpen: _propTypes2.default.func.isRequired,
+    setModal: _propTypes2.default.func.isRequired,
+    allowDrag: _propTypes2.default.bool.isRequired,
+    source: _propTypes2.default.string,
+    countDocs: _propTypes2.default.number.isRequired,
+    id: _propTypes2.default.number
+};
+
+
+var mapStoreToProps = function mapStoreToProps(state) {
+    return {
+        // isLoading: state.folder.isLoading,
+        // folderList: state.folder.folderList,
+        // folderTileList: state.folder.folderTileList,
+        // page: state.folder.page,
+        // count: state.folder.count,
+        allowDrag: state.drag.allowDrag,
+        source: state.drag.source,
+        id: state.drag.id,
+        // filter: state.page.filter.folder,
+        // sort: state.page.sort.folder.name,
+        // filterSelect: state.page.filterSelect.folder,
+        // isLoadingMore: state.folder.isLoadingMore,
+        // lang: state.page.lang,
+        countDocs: state.document.countCheck
+        // sortDirect: state.page.sort.folder.isDirect,
+    };
+};
+
+var mapDispatchToProps = function mapDispatchToProps(dispatch) {
+    return _extends({}, (0, _redux.bindActionCreators)({
+        deleteDocs: _document.deleteDocs,
+        dropOver: _drag.dropOver,
+        deleteFolders: _folder.deleteFolders,
+        modalOpen: _modal.modalOpen,
+        setModal: _modal.setModal
+    }, dispatch));
+};
+
+exports.default = (0, _reactRedux.connect)(mapStoreToProps, mapDispatchToProps)(TrashComponent);
 
 /***/ })
 /******/ ]);

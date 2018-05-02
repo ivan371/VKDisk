@@ -453,3 +453,17 @@ img.cross-right{
 span.filtered{
     background-color: $hover-color;
 }
+.item-title{
+    float: left !important;
+    max-width: 170px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+.item-avatar{
+    width: 30px;
+    height: 30px;
+    margin-top: -5px;
+    border-radius: 15px;
+    margin-right: 5px;
+}

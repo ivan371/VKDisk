@@ -9,17 +9,8 @@ export default class RowHeaderComponent extends React.Component {
         filter: PropTypes.string.isRequired,
         filterSelect: PropTypes.string.isRequired,
         setFilter: PropTypes.func.isRequired,
-        allowDrag: PropTypes.bool.isRequired,
-        dropOver: PropTypes.func.isRequired,
-        deleteDocs: PropTypes.func.isRequired,
-        deleteFolders: PropTypes.func.isRequired,
-        source: PropTypes.string,
-        id: PropTypes.number,
         root: PropTypes.number,
         lang: PropTypes.string.isRequired,
-        modalOpen: PropTypes.func.isRequired,
-        setModal: PropTypes.func.isRequired,
-        countDocs: PropTypes.number.isRequired,
         sortDirect: PropTypes.bool.isRequired,
         changeSortDirection: PropTypes.func.isRequired,
         sort: PropTypes.string.isRequired,
@@ -31,36 +22,12 @@ export default class RowHeaderComponent extends React.Component {
         isSort: false,
     };
 
-    handleOpenDelete = () => {
-        if (this.props.countDocs) {
-            this.props.modalOpen();
-            this.props.setModal(modalType.documentDelete);
-        }
-    };
-
     handleSortOpen = () => {
         this.setState({isSort: !this.state.isSort})
     };
 
-    handleDragOver = (e) => {
-        if ((this.props.source === dragSource.file || this.props.source === dragSource.folder) && this.props.allowDrag) {
-            e.preventDefault();
-        }
-    };
-
     handleChange = (e) => {
         this.setState({ [e.target.name]: e.target.value });
-    };
-
-    handleDrop = (e) => {
-        if (this.props.source === dragSource.file && this.props.allowDrag) {
-            this.props.deleteDocs(makeUrls.makeCustomFile(this.props.id), this.props.id);
-            this.props.dropOver();
-        }
-        if (this.props.source === dragSource.folder && this.props.allowDrag) {
-            this.props.deleteFolders(makeUrls.makeCustomFolder(this.props.id), this.props.id, this.props.root);
-            this.props.dropOver();
-        }
     };
 
     handleFilter = (e) => {
@@ -77,16 +44,6 @@ export default class RowHeaderComponent extends React.Component {
             this.props.setSort(e.target.value, apps.folder);
         }
     };
-
-    renderTrash() {
-        if (this.props.source === dragSource.file || this.props.source === dragSource.folder) {
-            if (this.props.allowDrag) {
-                return items.trashGood;
-            }
-            return items.trashBad;
-        }
-        return items.trash;
-    }
 
     renderSearch() {
         if(this.props.folder === folderType.chat) {
@@ -140,12 +97,6 @@ export default class RowHeaderComponent extends React.Component {
         return (
             <div className="content-item">
                 {this.renderSearch()}
-                <img className="item-right"
-                     src={ this.renderTrash() }
-                     onDragOver={ this.handleDragOver }
-                     onDrop={ this.handleDrop }
-                     onClick={ this.handleOpenDelete }
-                />
                 {this.renderSort()}
             </div>
         )

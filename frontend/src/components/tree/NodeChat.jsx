@@ -29,6 +29,7 @@ class NodeChatComponent extends React.Component {
                 key={ nodeId }
                 folders={ this.props.folders }
                 title={ this.props.folders[nodeId].title }
+                icon={ this.props.folders[nodeId].icon }
                 folder={ this.props.folder }
             />));
         }

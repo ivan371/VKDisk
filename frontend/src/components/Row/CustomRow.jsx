@@ -29,12 +29,6 @@ class CustomRowComponent extends React.Component {
         count: PropTypes.number.isRequired,
         page: PropTypes.number.isRequired,
         loadFoldersMore: PropTypes.func.isRequired,
-        source: PropTypes.string,
-        allowDrag: PropTypes.bool.isRequired,
-        dropOver: PropTypes.func.isRequired,
-        deleteDocs: PropTypes.func.isRequired,
-        deleteFolders: PropTypes.func.isRequired,
-        id: PropTypes.number,
         filter: PropTypes.string.isRequired,
         filterSelect: PropTypes.string.isRequired,
         setFilter: PropTypes.func.isRequired,
@@ -43,8 +37,6 @@ class CustomRowComponent extends React.Component {
         setSort: PropTypes.func.isRequired,
         sort: PropTypes.string.isRequired,
         lang: PropTypes.string.isRequired,
-        modalOpen: PropTypes.func.isRequired,
-        setModal: PropTypes.func.isRequired,
         countDocs: PropTypes.number.isRequired,
         loadChatRoot: PropTypes.func.isRequired,
         sortDirect: PropTypes.bool.isRequired,
@@ -126,20 +118,11 @@ class CustomRowComponent extends React.Component {
                         folder={this.props.folder}
                         filter={this.props.filter}
                         filterSelect={this.props.filterSelect}
-                        allowDrag={this.props.allowDrag}
-                        dropOver={this.props.dropOver}
-                        id={this.props.id}
-                        source={this.props.source}
                         setFilter={this.props.setFilter}
-                        deleteDocs={this.props.deleteDocs}
-                        deleteFolders={this.props.deleteFolders}
                         setSort={this.props.setSort}
                         sort={this.props.sort}
                         root={parseInt(this.props.params.id) || null}
                         lang={this.props.lang}
-                        modalOpen={this.props.modalOpen}
-                        setModal={this.props.setModal}
-                        countDocs={this.props.countDocs}
                         sortDirect={this.props.sortDirect}
                         changeSortDirection={this.props.changeSortDirection}
                     />
@@ -176,16 +159,11 @@ const mapDispatchToProps = dispatch => ({
         loadUnTreeFolders,
         folderUnMount,
         loadFoldersMore,
-        dropOver,
-        deleteDocs,
-        deleteFolders,
         setFilter,
         loadFilterFolders,
         filterFolders,
         setSort,
         loadUser,
-        modalOpen,
-        setModal,
         loadChatRoot,
         changeSortDirection
     }, dispatch),
