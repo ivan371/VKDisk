@@ -8,11 +8,14 @@ from pdfminer.pdfinterp import PDFResourceManager, PDFPageInterpreter
 from pdfminer.converter import TextConverter
 from pdfminer.layout import LAParams
 from pdfminer.pdfpage import PDFPage
+from wand.image import Image
+
 try:
     from tesserocr import PyTessBaseAPI
 except:
     PyTessBaseAPI = None
 from io import StringIO
+
 
 class Parser:
 
@@ -55,25 +58,37 @@ class pdfParser(Parser):
         codec = 'utf-8'
         laparams = LAParams()
         device = TextConverter(rsrcmgr, retstr, codec=codec, laparams=laparams)
-        fp = open("test.pdf", 'rb')
-        interpreter = PDFPageInterpreter(rsrcmgr, device)
-        password = ""
-        maxpages = 0
-        caching = True
-        pagenos = set()
+        try:
+            fp = open("test.pdf", 'rb')
+            interpreter = PDFPageInterpreter(rsrcmgr, device)
+            password = ""
+            maxpages = 0
+            caching = True
+            pagenos = set()
 
-        for page in PDFPage.get_pages(fp, pagenos, maxpages=maxpages, password=password, caching=caching,
-                                      check_extractable=True):
-            interpreter.process_page(page)
+            for page in PDFPage.get_pages(fp, pagenos, maxpages=maxpages, password=password, caching=caching,
+                                          check_extractable=True):
+                interpreter.process_page(page)
 
-        text = retstr.getvalue()
+            text = retstr.getvalue()
 
-        fp.close()
-        device.close()
-        retstr.close()
-        text = "".join(text.split("\n"))
-        os.remove("test.pdf")
-        return text
+            fp.close()
+            device.close()
+            retstr.close()
+            text = "".join(text.split("\n"))
+            os.remove("test.pdf")
+            return text
+        except:
+            text = ""
+            with Image(filename="test.pdf") as img:
+                img.save(filename="kek.png")
+            for file in os.listdir(os.curdir):
+                if file.endswith(".png") and file.startswith("kek"):
+                    api = PyTessBaseAPI()
+                    api.SetImageFile(file)
+                    text += api.GetUTF8Text()
+                    os.remove(file)
+            return text
 
 
 class pptxParser(Parser):
@@ -97,7 +112,6 @@ class pptxParser(Parser):
                     for run in paragraph.runs:
                         text_runs.append(run.text)
         text = "".join(text_runs)
-        os.remove("test.pdf")
         os.remove("test.pptx")
         return text
 
@@ -160,7 +174,7 @@ class imageParser(Parser):
 
 
 ListOfExtensionsYouCanOpenWithNanoOrVim = (".txt", ".csv", ".sln", ".csproj", ".cs", ".py", ".cpp", ".c", ".hpp",
-                                           ".h", ".js", ".html", ".data", ".css", ".f90", ".f")
+                                           ".h", ".js", ".html", ".data", ".css", ".f90", ".f", ".json", ".xml")
 ImageExtension = (".gif", ".jpg", ".jpeg", ".png")
 
 

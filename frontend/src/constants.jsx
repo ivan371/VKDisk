@@ -184,13 +184,13 @@ export const view = {
 };
 
 export const tags = [
-    {
-        id: 8,
-        name: 'clear',
-        value: '',
-        type: 'filter',
-        filterName: 'name',
-    },
+    // {
+    //     id: 8,
+    //     name: 'clear',
+    //     value: '',
+    //     type: 'filter',
+    //     filterName: 'name',
+    // },
     {
         id: 1,
         name: 'pdf',
@@ -237,6 +237,27 @@ export const tags = [
         id: 9,
         name: 'gif',
         value: '.gif',
+        type: 'filter',
+        filterName: 'name',
+    },
+    {
+        id: 10,
+        name: 'zip',
+        value: '.zip',
+        type: 'filter',
+        filterName: 'name',
+    },
+    {
+        id: 11,
+        name: 'txt',
+        value: '.txt',
+        type: 'filter',
+        filterName: 'name',
+    },
+    {
+        id: 12,
+        name: 'djvu',
+        value: '.djvu',
         type: 'filter',
         filterName: 'name',
     },

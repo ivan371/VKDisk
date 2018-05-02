@@ -86,5 +86,9 @@ export const language = {
     reallyDeleteFiles: {
         ru: (count) => `Вы действительно хотите удалить ${count} файл?`,
         en: (count) => `Are you really want to delete ${count} files?`
+    },
+    clear: {
+        ru: 'Очистить',
+        en: 'Clear'
     }
 };

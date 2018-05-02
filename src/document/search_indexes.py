@@ -7,7 +7,8 @@ from elasticsearch_dsl import (
     Keyword,
     Text,
     Integer,
-    Object
+    Object,
+    Boolean
 )
 
 
@@ -29,6 +30,7 @@ class DocumentIndex(DocType):
     )
 
     created = Date()
+    is_owner = Boolean(fields={'raw': Keyword()})
 
     class Meta:
         index = 'document'

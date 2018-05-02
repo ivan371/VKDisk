@@ -27,7 +27,7 @@ class DocumentSerializer(serializers.HyperlinkedModelSerializer):
     class Meta:
         model = Document
         fields = ('id', 'title', 'author', 'folder', 'vk_url')
-        read_only_fields = ('id_owner', 'id_source', 'type')
+        read_only_fields = ('id_owner', 'id_source', 'type', 'is_owner')
 
     def get_url(self, obj):
         base, query = obj.vk_doc.url.split("?")
@@ -75,7 +75,7 @@ class DocumentDataSerializer(ElasticModelSerializer):
     class Meta:
         model = Document
         es_model = DocumentIndex
-        fields = ('id', 'title', 'text', 'created', 'folder', 'author', 'vk_url')
+        fields = ('id', 'title', 'text', 'created', 'folder', 'author', 'vk_url', 'is_owner')
 
     def get_url(self, obj):
         base, query = obj.vk_doc.url.split("?")

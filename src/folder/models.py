@@ -16,6 +16,7 @@ class Folder(Named, Authored):
                                      (u'sorted', u'sorted'), (u'favorite', u'favorite')),
                             max_length=128, default=u'folder', verbose_name=u'type of folder')
     root = models.ForeignKey('self', on_delete=models.CASCADE, null=True, blank=True, verbose_name=_(u'root'))
+    icon = models.TextField(default=None, null=True, blank=True)
 
     def __str__(self):
         return u'[{}] {}'.format(self.pk, self.title)

@@ -30,6 +30,7 @@ export default class DocsFilterHeader extends React.Component {
 
     handleChange = (e) => {
         this.setState({ [e.target.name]: e.target.value });
+        this.props.setFilter(e.target.value, this.state.filterSelect, apps.docs);
     };
 
     handleCheck = () => {
@@ -60,22 +61,23 @@ export default class DocsFilterHeader extends React.Component {
                 onKeyDown={ this.handleFilterEnter }
                 name="filter"
                 value={ this.state.filter }
-            /><datalist id="extension-list">
-                <option value="pdf" />
-                <option value="doc" />
-                <option value="xls" />
-                <option value="docx" />
-                <option value="zip" />
-                <option value="djvu" />
-                <option value="xlsx" />
-                <option value="gif" />
-                <option value="png" />
-                <option value="jpg" />
-                <option value="gz" />
-                <option value="txt" />
-                <option value="tex" />
-                <option value="py" />
-            </datalist>
+            />
+            {/*<datalist id="extension-list">*/}
+                {/*<option value="pdf" />*/}
+                {/*<option value="doc" />*/}
+                {/*<option value="xls" />*/}
+                {/*<option value="docx" />*/}
+                {/*<option value="zip" />*/}
+                {/*<option value="djvu" />*/}
+                {/*<option value="xlsx" />*/}
+                {/*<option value="gif" />*/}
+                {/*<option value="png" />*/}
+                {/*<option value="jpg" />*/}
+                {/*<option value="gz" />*/}
+                {/*<option value="txt" />*/}
+                {/*<option value="tex" />*/}
+                {/*<option value="py" />*/}
+            {/*</datalist>*/}
         </React.Fragment>);
     }
 }

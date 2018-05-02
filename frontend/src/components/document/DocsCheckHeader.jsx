@@ -2,6 +2,7 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import { modalType, items } from '../../constants';
 import {language} from '../language';
+import Trash from '../Trash';
 
 export default class DocsCheckHeader extends React.Component {
     static propTypes = {
@@ -79,6 +80,7 @@ export default class DocsCheckHeader extends React.Component {
                     </React.Fragment> : null}
                 { this.props.countCheckFile === 1 && !this.props.countCheckFolder ? <button className="vk-button" onClick={ this.handleRenameDoc }>{language.rename[this.props.lang]}</button> : null }
                 { this.props.countCheckFolder === 1 && !this.props.countCheckFile ? <button className="vk-button" onClick={ this.handleRenameFolder }>{language.rename[this.props.lang]}</button> : null }
+                <Trash />
             </React.Fragment>);
         }
         return (<React.Fragment>
@@ -89,6 +91,7 @@ export default class DocsCheckHeader extends React.Component {
                 </React.Fragment> : null}
             { this.props.countCheckFile === 1 && !this.props.countCheckFolder ? <button className="vk-button" onClick={ this.handleRenameDoc }>{language.rename[this.props.lang]}</button> : null }
             { this.props.countCheckFolder === 1 && !this.props.countCheckFile ? <button className="vk-button" onClick={ this.handleRenameFolder }>{language.rename[this.props.lang]}</button> : null }
+            <Trash />
         </React.Fragment>);
     }
 }

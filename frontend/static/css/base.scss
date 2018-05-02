@@ -28,9 +28,11 @@ a{
 .page-header-content{
     margin: 0 auto;
     width: $width;
+    display: flex;
+    justify-content: space-between;
 }
 .page-header-content-logo{
-    width: $navigation-width;
+    float: left;
 }
 .page-header-content h2{
     margin: 0;
@@ -429,4 +431,39 @@ img.item{
 img.cross-right{
     width: 10px;
     height: 10px;
+}
+.page-header-content-self{
+    padding-top: 5px;
+    padding-bottom: 5px;
+    color: white;
+}
+.page-header-content-self div{
+    padding: 8px;
+    float: left;
+}
+.avatar{
+    height: 32px;
+    width: 32px;
+    border-radius: 16px;
+}
+.tag-right{
+    padding: 5px;
+    font-size: 0.6em;
+}
+span.filtered{
+    background-color: $hover-color;
+}
+.item-title{
+    float: left !important;
+    max-width: 170px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+.item-avatar{
+    width: 30px;
+    height: 30px;
+    margin-top: -5px;
+    border-radius: 15px;
+    margin-right: 5px;
 }

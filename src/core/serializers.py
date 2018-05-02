@@ -13,6 +13,12 @@ class UserSerializer(serializers.ModelSerializer):
         fields = ('id', 'lang')
 
 
+class UserCurrentSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = User
+        fields = ('id', 'lang', 'first_name', 'last_name', 'avatar')
+
+
 class UserViewSet(viewsets.GenericViewSet, mixins.UpdateModelMixin, mixins.RetrieveModelMixin):
     queryset = User.objects.all()
     serializer_class = UserSerializer
@@ -21,5 +27,5 @@ class UserViewSet(viewsets.GenericViewSet, mixins.UpdateModelMixin, mixins.Retri
     def current(self, request, *args, **kwargs):
         if not request.user.is_authenticated:
             raise AuthenticationFailed()
-        serializer = self.get_serializer_class()(request.user)
+        serializer = UserCurrentSerializer(request.user)
         return Response(serializer.data)

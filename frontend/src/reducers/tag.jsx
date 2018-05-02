@@ -1,8 +1,9 @@
 import update from 'react-addons-update';
-import { TAG_OPEN } from '../actions/tag';
+import {SELECTED_TAG, TAG_OPEN} from '../actions/tag';
 
 const initalState = {
     isOpen: false,
+    selected: null,
 };
 
 export default function tag(store = initalState, action) {
@@ -12,6 +13,12 @@ export default function tag(store = initalState, action) {
                 isOpen: {
                     $set: !store.isOpen,
                 },
+            });
+        case SELECTED_TAG:
+            return update(store, {
+                selected: {
+                    $set: action.tag,
+                }
             });
         default:
             return store;

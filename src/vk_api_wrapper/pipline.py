@@ -7,6 +7,11 @@ def add_vk_id_to_user(strategy, uid, user, is_new=False, *args, **kwargs):
         strategy.storage.user.changed(user)
 
 
+def get_user_avatars(backend, strategy, details, response, user=None, *args, **kwargs):
+    user.avatar = response.get('photo', None)
+    user.save()
+
+
 def load_user_dialogs(backend, details, response, uid, user, *args, **kwargs):
     social = kwargs.get('social') or \
              backend.strategy.storage.user.get_social_auth(backend.name, uid)

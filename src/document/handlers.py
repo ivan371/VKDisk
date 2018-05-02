@@ -4,7 +4,6 @@ from django.db.models.signals import post_save
 
 from vk_api_wrapper.models import DocAttachment
 from .models import Document
-from core.parser import GetText
 from .tasks import load_document_text
 
 

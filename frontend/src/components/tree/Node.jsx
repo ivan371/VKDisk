@@ -8,6 +8,7 @@ export default class NodeComponent extends React.Component {
         id: PropTypes.number.isRequired,
         folder: PropTypes.string.isRequired,
         title: PropTypes.string.isRequired,
+        icon: PropTypes.string,
         nodeList: PropTypes.array,
         folders: PropTypes.object,
         foldersRecursiveList: PropTypes.array,
@@ -19,6 +20,16 @@ export default class NodeComponent extends React.Component {
             return items.arrow;
         }
         return items.arrowRight;
+    }
+
+    renderAvatar() {
+        if (this.props.folder === folderType.chat) {
+            if (this.props.icon)
+                return <div><img className="item-avatar" src={this.props.icon }/></div>
+            else
+                return <div><img className="item-avatar" src={format.folder}/></div>
+        }
+        return null;
     }
 
     render() {
@@ -43,6 +54,7 @@ export default class NodeComponent extends React.Component {
                 folder={ this.props.folder }
                 folders={ this.props.folders }
                 title={ this.props.folders[nodeId].title }
+                icon={ this.props.folders[nodeId].icon }
                 foldersRecursiveList={ this.props.foldersRecursiveList }
                 nodeList={ this.props.folders[nodeId].hasOwnProperty('folder_set')
                 && this.props.foldersRecursiveList.indexOf(nodeId) !== -1
@@ -54,7 +66,8 @@ export default class NodeComponent extends React.Component {
                 <Link to={ link }>
                     <div className="content-item page-content-link-item">
                         <div><img className="item" src={ this.renderImage() } /></div>
-                        <div>{this.props.title}</div>
+                        { this.renderAvatar() }
+                        <div className="item-title">{this.props.title}</div>
                     </div>
                 </Link>
                 <div className="node-layout">

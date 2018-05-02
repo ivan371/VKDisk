@@ -6,7 +6,7 @@ import { Link } from 'react-router-dom';
 import {apps, folderType, format, items} from '../../constants';
 import Node from './Node';
 import Tags from '../tag/Tags';
-import {tagOpen} from "../../actions/tag";
+import {tagOpen, tagSelect} from '../../actions/tag';
 import {language} from '../language';
 import {setFilter} from '../../actions/page';
 
@@ -16,6 +16,7 @@ class NodeTagComponent extends React.Component {
         tagOpen: PropTypes.func.isRequired,
         lang: PropTypes.string.isRequired,
         setFilter: PropTypes.func.isRequired,
+        tagSelect: PropTypes.func.isRequired,
     };
 
     handleOpen = () => {
@@ -24,6 +25,7 @@ class NodeTagComponent extends React.Component {
 
     handleClearTag = () => {
         this.props.setFilter('', 'created', apps.docs);
+        this.props.tagSelect('');
     };
 
     renderImage() {
@@ -43,7 +45,7 @@ class NodeTagComponent extends React.Component {
                 <div className="content-item page-content-link-item" onClick={ this.handleOpen }>
                     <div><img className="item" src={ this.renderImage() } /></div>
                     <div>{language.tags[this.props.lang]}</div>
-                    {this.props.isOpen ? <div><img className="item cross-right" src={ items.clear } onClick={ this.handleClearTag }/></div> : null}
+                    {this.props.isOpen ? <div><div className="tag-right" src={ items.clear } onClick={ this.handleClearTag }>{language.clear[this.props.lang]}</div></div> : null}
                 </div>
                 <div className="node-layout">
                     { this.renderTags() }
@@ -61,7 +63,8 @@ const mapStoreToProps = (state, props) => ({
 const mapDispatchToProps = dispatch => ({
     ...bindActionCreators({
         tagOpen,
-        setFilter
+        setFilter,
+        tagSelect
     }, dispatch),
 });
 
