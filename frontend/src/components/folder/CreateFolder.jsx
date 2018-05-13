@@ -18,6 +18,12 @@ class CreateFolderComponent extends React.Component {
         title: '',
     };
 
+    handleEnter = (e) => {
+        if (e.keyCode === 13) {
+            this.handleCreate();
+        }
+    };
+
     handleCreate = (e) => {
         if (this.props.folder === folderType.folder) {
             this.props.createFolder(makeUrls.makeFilterFoldersFolder(this.props.id), this.state.title);
@@ -51,6 +57,7 @@ class CreateFolderComponent extends React.Component {
                             value={ this.state.title }
                             className="vk-input"
                             onChange={ this.handleChange }
+                            onKeyDown={ this.handleEnter }
                             placeholder="enter a folder name"
                         />
                     </div>

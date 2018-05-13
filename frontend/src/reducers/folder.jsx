@@ -95,17 +95,11 @@ export default function folder(store = initalState, action) {
             return update(store, {
                 isRecursiveLoading: {
                     $set: false,
-                },
-                isLoading: {
-                    $set: false,
-                },
+                }
             });
         case LOAD_RECURSIVE_FOLDERS_SUCCESS:
             return update(store, {
                 isRecursiveLoading: {
-                    $set: true,
-                },
-                isLoading: {
                     $set: true,
                 },
                 foldersRecursiveList: {

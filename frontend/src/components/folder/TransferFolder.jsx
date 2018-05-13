@@ -8,6 +8,7 @@ import { folderType, makeUrls, modalType, urls } from '../../constants';
 import { bulkCreateDocs, bulkUpdateDocs } from '../../actions/document';
 import { modalOpen } from '../../actions/modal';
 import {setLink} from "../../actions/page";
+import {language} from '../language';
 
 class CreateFolderComponent extends React.Component {
     static propTypes = {
@@ -24,8 +25,8 @@ class CreateFolderComponent extends React.Component {
     };
 
     componentDidMount() {
-        this.props.loadTransferFolders(makeUrls.makeRootFoldersFolder());
-        this.props.setLink(makeUrls.makeRootFoldersFolder());
+        this.props.loadTransferFolders(urls.folder.transferFolderUrl);
+        this.props.setLink(urls.folder.transferFolderUrl);
     }
 
     componentWillReceiveProps(nextProps) {
@@ -54,16 +55,22 @@ class CreateFolderComponent extends React.Component {
                 <div className="modal-header">
                     <div className="modal-header-title">
                         {this.props.modal !== modalType.folderTransfer ?
-                            <p>Переместить файлы</p> : <p>Копировать файлы</p>}
+                            <p>{language.replaceFiles[this.props.lang]}</p> : <p>{language.copyFiles[this.props.lang]}</p>}
                     </div>
                 </div>
                 <div className="modal-content">
                     <div className="content-flex-modal">
-                        <FoldersTile isModal folder={ folderType.modal } />
+                        {this.props.isLoading ?
+                        <FoldersTile isModal folder={ folderType.modal } /> :
+                            <div className="load">
+                                <div className="line"/>
+                                <div className="line"/>
+                                <div className="line"/>
+                            </div>}
                     </div>
                     {this.props.modal !== modalType.folderTransfer ?
-                        <button className="vk-button" onClick={ this.handleBulkUpdate }>Переместить</button> :
-                        <button className="vk-button" onClick={ this.handleBulkCreate }>Копировать</button>}
+                        <button className="vk-button" onClick={ this.handleBulkUpdate }>{language.replace[this.props.lang]}</button> :
+                        <button className="vk-button" onClick={ this.handleBulkCreate }>{language.copy[this.props.lang]}</button>}
                 </div>
             </React.Fragment>
         );
@@ -76,6 +83,8 @@ const mapStoreToProps = state => ({
     checkList: state.document.checkList,
     modal: state.modal.modal,
     link: state.page.link.modal,
+    isLoading: state.folder.isTransferLoading,
+    lang: state.page.lang,
 });
 
 const mapDispatchToProps = dispatch => ({
