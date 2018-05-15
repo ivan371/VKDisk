@@ -5,7 +5,7 @@ import { withRouter } from 'react-router-dom';
 import PropTypes from 'prop-types';
 import {apps, folderType, makeUrls, urls, view, makeElasticUrls, makeElastic} from '../../constants';
 import { checkAll, docsUnMount, loadDocs, loadDocsMore } from '../../actions/document';
-import { filterFolders, loadFilterFolders, loadRecursiveFolders, loadRoot } from '../../actions/folder';
+import {checkAllFolders, filterFolders, loadFilterFolders, loadRecursiveFolders, loadRoot} from '../../actions/folder';
 import { modalOpen, setModal } from '../../actions/modal';
 import FoldersTile from '../tile/FoldersTile';
 import DocsTile from '../tile/DocsTile';
@@ -87,7 +87,11 @@ class DocsComponent extends React.Component {
                     this.props.isElastic
                 ));
                 this.props.filterFolders(parseInt(this.props.params.id));
-                this.props.loadRecursiveFolders(makeUrls.makeFolderRecursive(this.props.params.id))
+                this.props.loadRecursiveFolders(makeUrls.makeFolderRecursive(this.props.params.id));
+                if (this.props.countCheckDocs)
+                    this.props.checkAll();
+                if (this.props.countCheckFolders)
+                    this.props.checkAllFolders();
             }
         }
         if (this.props.folder === folderType.root) {
@@ -186,6 +190,8 @@ const mapStoreToProps = state => ({
     view: state.page.view,
     isLoadingMore: state.document.isLoadingMore,
     isElastic: state.page.isElastic,
+    countCheckDocs: state.document.countCheck,
+    countCheckFolder: state.folder.countCheck,
 });
 
 const mapDispatchToProps = dispatch => ({
@@ -202,6 +208,7 @@ const mapDispatchToProps = dispatch => ({
         clearFilter,
         filterFolders,
         loadRoot,
+        checkAllFolders,
     }, dispatch),
 });
 
