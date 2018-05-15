@@ -86,6 +86,8 @@ class DocsComponent extends React.Component {
                     !this.props.sortDirect,
                     this.props.isElastic
                 ));
+                this.props.filterFolders(parseInt(this.props.params.id));
+                this.props.loadRecursiveFolders(makeUrls.makeFolderRecursive(this.props.params.id))
             }
         }
         if (this.props.folder === folderType.root) {

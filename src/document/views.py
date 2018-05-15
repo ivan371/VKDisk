@@ -169,11 +169,11 @@ class DocumentViewSet(viewsets.ModelViewSet):
                     q = q.order_by('title')
             if self.request.query_params['sort'] == 'created':
                 if 'reverse' in self.request.query_params:
-                    q = q.order_by('-created')
-                else:
                     q = q.order_by('created')
+                else:
+                    q = q.order_by('-created')
         else:
-            q = q.order_by('created')
+            q = q.order_by('-created')
         return q
 
 

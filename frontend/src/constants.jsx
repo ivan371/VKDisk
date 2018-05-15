@@ -5,6 +5,7 @@ export const urls = {
         customFolderUrl: '/api/v1/folders/',
         sortFolderUrl: '/api/v1/folders/?sorted&&',
         folderFolderUrl: '/api/v1/folders/?type=folder&&',
+        transferFolderUrl: '/api/v1/folders/?transfer'
     },
     docs: {
         docsUrl: '/api/v1/documents/',
