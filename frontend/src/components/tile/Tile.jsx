@@ -151,6 +151,12 @@ class TileComponent extends React.Component {
             } else if (this.props.type === tileType.folder) {
                 this.props.checkFolder(this.props.id);
             }
+            if (this.props.renamedIdFile) {
+                this.props.renameDoc();
+            }
+            if (this.props.renamedIdFolder) {
+                this.props.renameFolder();
+            }
         } else {
             this.props.switchFolder(this.props.id);
         }
@@ -212,12 +218,7 @@ class TileComponent extends React.Component {
             return (<img
                 style={ this.props.view === view.col ? { float: 'left' } : null }
                 className={ this.props.view === view.col ? 'item' : 'icon' }
-                onDragStart={ this.handleDragStart }
                 src={ imageUrl }
-                onDragOver={ this.handleDragOver }
-                draggable="true"
-                onDrop={ this.handleDrop }
-                onDragEnd={ this.handleDragEnd }
             />);
         }
         return null;
@@ -236,7 +237,15 @@ class TileComponent extends React.Component {
 
     render() {
         return (
-            <div className={ this.renderClassName() } onClick={ this.handleClick } >
+            <div
+                className={ this.renderClassName() }
+                onClick={ this.handleClick }
+                onDragStart={ this.handleDragStart }
+                onDragOver={ this.handleDragOver }
+                draggable="true"
+                onDrop={ this.handleDrop }
+                onDragEnd={ this.handleDragEnd }
+            >
                 { this.renderItem() }
                 {!this.isRenamed() ?
                     <div
