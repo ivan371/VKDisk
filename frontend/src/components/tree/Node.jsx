@@ -16,7 +16,7 @@ export default class NodeComponent extends React.Component {
 
     renderImage() {
         if (this.props.folder === folderType.folder
-            && this.props.foldersRecursiveList.indexOf(this.props.id) !== -1) {
+            && this.props.foldersRecursiveList.indexOf(this.props.id) !== -1 && this.props.nodeList.length) {
             return items.arrow;
         }
         return items.arrowRight;

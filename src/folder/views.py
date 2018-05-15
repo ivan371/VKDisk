@@ -81,6 +81,8 @@ class FolderViewSet(viewsets.ModelViewSet):
                 q = q.filter(root_id=int(self.request.query_params['folder']))
         if 'type' in self.request.query_params:
             q = q.filter(type=self.request.query_params['type'])
+        if 'transfer' in self.request.query_params:
+            q = q.filter(type='folder', root=None)
         if 'root' in self.request.query_params:
             q = q.filter(type='folder')
         if 'filter' in self.request.query_params:
