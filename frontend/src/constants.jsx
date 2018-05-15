@@ -82,7 +82,7 @@ export const makeElastic = {
         if (isElastic) {
             return makeElasticUrls.makeDocsMoreRoot(sort, filter, reverse, page);
         } else {
-            return makeUrls.makeDocsMoreSortRoot(sort, filter, reverse, page, value);
+            return makeUrls.makeDocsMoreSortRoot(sort, value, reverse, page, filter);
         }
     },
 };

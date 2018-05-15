@@ -121,7 +121,7 @@ class DocsHeaderComponent extends React.Component {
             type = this.props.folders[parseInt(this.props.params.id)].type;
             title = (<React.Fragment>
                 <img src={ items.back } className="item-left" onClick={ this.handleGoBack } />
-                <div className="item-name">{this.props.folders[this.props.params.id].title} ({language.files[this.props.lang](this.props.count)})</div>
+                <div className="item-name">{this.props.folders[this.props.params.id].title} ({language.yourHave[this.props.lang](this.props.count)})</div>
             </React.Fragment>);
         }
         if (this.state.isLang) {
