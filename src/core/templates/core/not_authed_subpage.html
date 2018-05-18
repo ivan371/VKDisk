@@ -12,8 +12,9 @@
         <h1>VK Disk</h1>
         <p>This is a web service to see all files, which were sent or received in VK.</p>
         <hr>
-        <p>To work with VK Disk you should install our browser extension.</p>
-        <div>
+        <p class="page-content__title-web">To work with VK Disk you should install our browser extension.</p>
+        <p class="page-content__title-mobile">To work with VK Disk you should install android application or use laptop to install browser extension.</p>
+        <div class="page-content__buttons-web">
             <a href="https://chrome.google.com/webstore/detail/vk-disk-extension/dhgkmbagnlalgppimhkncdfbedfibnjj"
                class="vk-button">
                 <img class="chrome-icon" src="{% static "img/chrome.png" %}"/> <span class="vk-button__span">Chrome extension</span>
@@ -21,6 +22,12 @@
             <a href="https://addons.mozilla.org/ru/firefox/addon/vk-disk-extension/"
                class="vk-button">
                 <img class="chrome-icon" src="{% static "img/firefox.png" %}"/> <span class="vk-button__span">Firefox extension</span>
+            </a>
+        </div>
+        <div class="page-content__buttons-mobile vk-button-mobile">
+            <a href="sp4.park.bmstu.cloud/static/apps/vk_disk_android.apk"
+               class="vk-button">
+                <img class="chrome-icon" src="{% static "img/logo.png" %}"/> <span class="vk-button__span">Install apk</span>
             </a>
         </div>
         <p class="page-content__comment">* If you are using chrome-based browser (such as Opera, Yandex.Browser and etc.), please install chrome extension</p>
