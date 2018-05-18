@@ -88,10 +88,10 @@ class DocsComponent extends React.Component {
                 ));
                 this.props.filterFolders(parseInt(this.props.params.id));
                 this.props.loadRecursiveFolders(makeUrls.makeFolderRecursive(this.props.params.id));
-                if (this.props.countCheckDocs)
-                    this.props.checkAll();
-                if (this.props.countCheckFolders)
-                    this.props.checkAllFolders();
+                // if (this.props.countCheckDocs)
+                //     this.props.checkAll();
+                // if (this.props.countCheckFolders)
+                //     this.props.checkAllFolders();
             }
         }
         if (this.props.folder === folderType.root) {

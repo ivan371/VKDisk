@@ -2,6 +2,7 @@ import React from 'react';
 import {Link, withRouter} from 'react-router-dom';
 import {connect} from 'react-redux';
 import PropTypes from 'prop-types'
+import {items} from '../constants';
 
 const VkLink = ({ link, content }) => (
     <Link to={ link }>
@@ -23,7 +24,9 @@ class LayoutComponent extends React.PureComponent {
                 <div className="page-header">
                     <div className="page-header-content" >
                         <div className="page-header-content-logo">
-                            <h2>VK DISK</h2>
+                            <Link to="/">
+                                <img className="page-header__logo" src={items.logo}/>
+                            </Link>
                         </div>
                         {this.props.isLoading ? '' : <div className="page-header-content-self">
                             <div>{`${this.props.user.first_name} ${this.props.user.last_name}`}</div>

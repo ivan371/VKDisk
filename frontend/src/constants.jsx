@@ -162,7 +162,8 @@ export const items = {
     arrowRight: '/static/img/arrowRight.png',
     on: '/static/img/on.png',
     off: '/static/img/off.png',
-    settings: '/static/img/settings.png'
+    settings: '/static/img/settings.png',
+    logo: '/static/img/logo.png'
 };
 
 export function makeFormat(fileUrl) {

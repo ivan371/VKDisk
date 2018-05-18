@@ -151,12 +151,6 @@ class TileComponent extends React.Component {
             } else if (this.props.type === tileType.folder) {
                 this.props.checkFolder(this.props.id);
             }
-            if (this.props.renamedIdFile) {
-                this.props.renameDoc();
-            }
-            if (this.props.renamedIdFolder) {
-                this.props.renameFolder();
-            }
         } else {
             this.props.switchFolder(this.props.id);
         }
