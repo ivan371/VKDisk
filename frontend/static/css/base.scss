@@ -455,7 +455,7 @@ span.filtered{
 }
 .item-title{
     float: left !important;
-    max-width: 170px;
+    max-width: 169px;
     overflow: hidden;
     text-overflow: ellipsis;
     white-space: nowrap;
@@ -466,4 +466,7 @@ span.filtered{
     margin-top: -5px;
     border-radius: 15px;
     margin-right: 5px;
+}
+.page-header__logo{
+    height: 42px;
 }

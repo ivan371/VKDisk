@@ -12,25 +12,69 @@ h1{
     font-weight: 400;
     line-height: 19px;
 }
-
+.logo-icon{
+    height: 42px;
+    float: left;
+}
 .page-header{
     height: 42px;
     background-color: #4A76A8;
 }
 .page-content{
-    margin: 15px auto;
-    width: 840px;
-    background-color: white;
-    border-radius: 2px 2px 0 0;
-    box-shadow: 0 1px 0 0 #d7d8db, 0 0 0 1px #e3e4e8;
+    max-width: 840px;
     padding: 1.25rem;
 }
-.page-header-content{
-    margin: 0 auto;
-    width: 960px;
+@media screen and (min-width: 0px) and (max-width: 720px){
+    .page-header-content-logo{
+        width: 100px;
+        margin: 0 auto;
+    }
+    .page-content__title-web{
+        display: none;
+    }
+    .page-content__title-mobile{
+        display: block;
+    }
+    .page-content__buttons-web{
+        display: none;
+    }
+    .page-content__buttons-mobile{
+        display: block;
+    }
+    .page-content__comment{
+        display: none;
+    }
+    body {
+        background-color: white;
+
+    }
 }
-.page-header-content-logo{
-    width: 139px;
+@media screen and (min-width: 700px){
+    .page-header-content{
+        margin: 0 auto;
+        max-width: 880px;
+    }
+    .page-header-content-logo{
+        display: none;
+    }
+    .page-content__title-web{
+        display: block;
+    }
+    .page-content__title-mobile{
+        display: none;
+    }
+    .page-content__buttons-web{
+        display: block;
+    }
+    .page-content__buttons-mobile{
+        display: none;
+    }
+    .page-content{
+        margin: 15px auto;
+        background-color: white;
+        border-radius: 2px 2px 0 0;
+        box-shadow: 0 1px 0 0 #d7d8db, 0 0 0 1px #e3e4e8;
+    }
 }
 .page-header-content h2{
     margin: 0;
@@ -86,4 +130,7 @@ hr{
     border-bottom: none;
     border-right: none;
     border-left: none;
+}
+.vk-button-mobile{
+    text-align: center;
 }

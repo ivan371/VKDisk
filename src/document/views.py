@@ -75,7 +75,8 @@ class DocumentViewSet(viewsets.ModelViewSet):
                 folder_id=int(self.request.query_params['folder']),
                 author=self.request.user,
                 title=d.title,
-                vk_doc_id=d.vk_doc_id
+                vk_doc_id=d.vk_doc_id,
+                created=datetime.now()
             )
                 for d in documents
             ]
@@ -84,7 +85,8 @@ class DocumentViewSet(viewsets.ModelViewSet):
                 folder=None,
                 author=self.request.user,
                 title=d.title,
-                vk_doc_id=d.vk_doc_id
+                vk_doc_id=d.vk_doc_id,
+                created=datetime.now()
             )
                 for d in documents
             ]

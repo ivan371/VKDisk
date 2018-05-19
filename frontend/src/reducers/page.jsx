@@ -1,7 +1,7 @@
 import update from 'react-addons-update';
 import {
     SET_FILTER, SET_SORT, SET_LINK, CHANGE_VIEW, CLEAR_FILTER, SORT_DIRECTION, SET_ELASTIC,
-    LOAD_USER_SUCCESS, SWITCH_LANG, LOAD_USER
+    LOAD_USER_SUCCESS, SWITCH_LANG, LOAD_USER, LOAD_LANG
 } from '../actions/page';
 import { view } from '../constants';
 
@@ -126,6 +126,13 @@ export default function page(store = initalStore, action) {
                 isLoading: {
                     $set: true,
                 }
+            })
+        }
+        case LOAD_LANG: {
+            return update(store, {
+                isLoading: {
+                    $set: false,
+                },
             })
         }
         case LOAD_USER_SUCCESS: {
