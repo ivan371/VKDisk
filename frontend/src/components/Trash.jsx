@@ -19,7 +19,9 @@ class TrashComponent extends React.Component {
         allowDrag: PropTypes.bool.isRequired,
         source: PropTypes.string,
         countDocs: PropTypes.number.isRequired,
+        count: PropTypes.number.isRequired,
         id: PropTypes.number,
+        checkList: PropTypes.array,
     };
 
     handleDragOver = (e) => {
@@ -43,6 +45,9 @@ class TrashComponent extends React.Component {
         if (this.props.countDocs) {
             this.props.modalOpen();
             this.props.setModal(modalType.documentDelete);
+        }
+        if (!this.props.countDocs && this.props.count === 1) {
+            this.props.deleteFolders(makeUrls.makeCustomFolder(this.props.checkList[0]), this.props.checkList[0], this.props.root);
         }
     };
 
@@ -68,21 +73,12 @@ class TrashComponent extends React.Component {
 }
 
 const mapStoreToProps = state => ({
-    // isLoading: state.folder.isLoading,
-    // folderList: state.folder.folderList,
-    // folderTileList: state.folder.folderTileList,
-    // page: state.folder.page,
-    // count: state.folder.count,
+    count: state.folder.countCheck,
     allowDrag: state.drag.allowDrag,
     source: state.drag.source,
     id: state.drag.id,
-    // filter: state.page.filter.folder,
-    // sort: state.page.sort.folder.name,
-    // filterSelect: state.page.filterSelect.folder,
-    // isLoadingMore: state.folder.isLoadingMore,
-    // lang: state.page.lang,
     countDocs: state.document.countCheck,
-    // sortDirect: state.page.sort.folder.isDirect,
+    checkList: state.folder.checkList,
 });
 
 const mapDispatchToProps = dispatch => ({

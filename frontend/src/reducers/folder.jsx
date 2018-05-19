@@ -54,6 +54,9 @@ function filterRoot(folders) {
 }
 
 export default function folder(store = initalState, action) {
+    if (action.type === FOLDER_CREATE) {
+        action.payload.entities.folder[action.payload.result].folder_set = [];
+    }
     if (action.hasOwnProperty('payload')) {
         if (action.payload !== undefined) {
             if (action.payload.hasOwnProperty('entities')) {
@@ -311,6 +314,13 @@ export default function folder(store = initalState, action) {
                 });
             } else {
                 store = update(store, {
+                    folders: {
+                        [store.folders[action.payload.id].root]: {
+                            folder_set: {
+                                $splice: [[store.folders[store.folders[action.payload.id].root].folder_set.indexOf(action.payload.id), 1]],
+                            },
+                        },
+                    },
                     folderList: {
                         $splice: [[index, 1]],
                     },

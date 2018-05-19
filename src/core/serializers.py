@@ -10,12 +10,6 @@ from rest_framework import serializers, viewsets, mixins
 class UserSerializer(serializers.ModelSerializer):
     class Meta:
         model = User
-        fields = ('id', 'lang')
-
-
-class UserCurrentSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = User
         fields = ('id', 'lang', 'first_name', 'last_name', 'avatar')
 
 
@@ -27,5 +21,4 @@ class UserViewSet(viewsets.GenericViewSet, mixins.UpdateModelMixin, mixins.Retri
     def current(self, request, *args, **kwargs):
         if not request.user.is_authenticated:
             raise AuthenticationFailed()
-        serializer = UserCurrentSerializer(request.user)
-        return Response(serializer.data)
+        return Response(self.get_serializer(request.user).data)

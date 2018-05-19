@@ -13,7 +13,7 @@ class FolderFilteredPrimaryKeyRelatedField(serializers.PrimaryKeyRelatedField):
         return queryset.filter(author=request.user, type='folder')
 
 
-class FolderSimpleSerializer(serializers.HyperlinkedModelSerializer):
+class FolderSimpleSerializer(serializers.ModelSerializer):
     author = serializers.PrimaryKeyRelatedField(many=False, read_only=True)
     root = serializers.PrimaryKeyRelatedField(many=False, read_only=True)
 
