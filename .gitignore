@@ -19,7 +19,7 @@ collected_static
 *.doc
 *.docx
 *.txt
-*.png
-*.jpeg
+#*.png
+#*.jpeg
 *.jpg
 *.gif
