@@ -26059,7 +26059,8 @@ var mapStoreToProps = function mapStoreToProps(state) {
         source: state.drag.source,
         id: state.drag.id,
         countDocs: state.document.countCheck,
-        checkList: state.folder.checkList
+        checkList: state.folder.checkList,
+        root: state.drag.id ? state.folder.folders[state.drag.id].root : null
     };
 };
 
@@ -49951,16 +49952,17 @@ function folder() {
                 });
             } else {
                 store = (0, _reactAddonsUpdate2.default)(store, {
-                    folders: _defineProperty({}, store.folders[action.payload.id].root, {
-                        folder_set: {
-                            $splice: [[store.folders[store.folders[action.payload.id].root].folder_set.indexOf(action.payload.id), 1]]
-                        }
-                    }),
                     folderList: {
                         $splice: [[index, 1]]
                     }
                 });
-                delete store.folders[action.payload.id];
+                if (store.folders[action.payload.id].root && store.folders[action.payload.id].root.hasOwnProperty('folder_set')) {
+                    store = (0, _reactAddonsUpdate2.default)(store, _defineProperty({}, store.folders[action.payload.id].root, {
+                        folder_set: {
+                            $splice: [[store.folders[store.folders[action.payload.id].root].folder_set.indexOf(action.payload.id), 1]]
+                        }
+                    }));
+                }
             }
             return (0, _reactAddonsUpdate2.default)(store, {
                 folderTileList: {
