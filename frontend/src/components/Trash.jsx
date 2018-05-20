@@ -79,6 +79,7 @@ const mapStoreToProps = state => ({
     id: state.drag.id,
     countDocs: state.document.countCheck,
     checkList: state.folder.checkList,
+    root: state.drag.id ? state.folder.folders[state.drag.id].root: null,
 });
 
 const mapDispatchToProps = dispatch => ({
