@@ -314,18 +314,19 @@ export default function folder(store = initalState, action) {
                 });
             } else {
                 store = update(store, {
-                    folders: {
+                    folderList: {
+                        $splice: [[index, 1]],
+                    },
+                });
+                if (store.folders[action.payload.id].root && store.folders[action.payload.id].root.hasOwnProperty('folder_set')) {
+                    store = update(store, {
                         [store.folders[action.payload.id].root]: {
                             folder_set: {
                                 $splice: [[store.folders[store.folders[action.payload.id].root].folder_set.indexOf(action.payload.id), 1]],
                             },
                         },
-                    },
-                    folderList: {
-                        $splice: [[index, 1]],
-                    },
-                });
-                delete store.folders[action.payload.id];
+                    })
+                }
             }
             return update(store, {
                 folderTileList: {
