@@ -81,7 +81,7 @@ social-auth-core==1.7.0
 SpeechRecognition==3.6.3
 sqlparse==0.2.4
 tensorboard==1.7.0
-tensorflow==1.7.0
+tensorflow==1.12.2
 termcolor==1.1.0
 tesserocr==2.2.2
 textract==1.6.1
