@@ -22,7 +22,7 @@ djangorestframework-recursive==0.1.2
 -e git://github.com/liberation/django-elasticsearch@302d8d08a77848c9816e0d2c6bf2e42c5c4c3a22#egg=django_elasticsearch
 django-rest-elasticsearch==0.4
 django-widget-tweaks==1.4.1
-djangorestframework==3.7.7
+djangorestframework==3.9.1
 docx==0.2.4
 docx2txt==0.6
 EbookLib==0.16
